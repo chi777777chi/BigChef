@@ -16,7 +16,7 @@
 		68CE26CA2DD88BFF00365F01 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26C92DD88BFF00365F01 /* FirebaseFirestore */; };
 		68CE26CC2DD88C6200365F01 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CB2DD88C6200365F01 /* FirebaseCore */; };
 		68CE26CE2DD88C6200365F01 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CD2DD88C6200365F01 /* FirebaseStorage */; };
-		A1B054042DDF10FA00C5B28D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A1B054032DDF10FA00C5B28D /* GoogleService-Info.plist */; };
+		9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */; };
 		A1B0547F2DDF1FE100C5B28D /* butter.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A1B054632DDF1FE100C5B28D /* butter.usdz */; };
 		A1B054802DDF1FE100C5B28D /* flip.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A1B054692DDF1FE100C5B28D /* flip.usdz */; };
 		A1B054812DDF1FE100C5B28D /* sprinkle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A1B0546E2DDF1FE100C5B28D /* sprinkle.usdz */; };
@@ -58,7 +58,7 @@
 		30AB0E1D2DD64F2700101557 /* ChefHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChefHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30DC27062DD591D00081F80C /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
 		30DC27082DD591E20081F80C /* RealityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealityKit.framework; path = System/Library/Frameworks/RealityKit.framework; sourceTree = SDKROOT; };
-		A1B054032DDF10FA00C5B28D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A1B054552DDF1FE100C5B28D /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatEggAnimation.swift; sourceTree = "<group>"; };
 		A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownAnimation.swift; sourceTree = "<group>"; };
@@ -161,7 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				A1B0547E2DDF1FE100C5B28D /* AR */,
-				A1B054032DDF10FA00C5B28D /* GoogleService-Info.plist */,
 				FCCA81082DD7BC8E003346E7 /* Routing */,
 				30501B4C2DC332B100CB2198 /* Shared */,
 				30D9E0552DA60DC0001CDE03 /* ChefHelper */,
@@ -169,6 +168,7 @@
 				30A657B12DC61CB90032C368 /* Coordinators */,
 				30DC27052DD591D00081F80C /* Frameworks */,
 				30AB0E1D2DD64F2700101557 /* ChefHelper.app */,
+				9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -328,11 +328,11 @@
 				A1B054882DDF1FE100C5B28D /* countdown.usdz in Resources */,
 				A1B054892DDF1FE100C5B28D /* flame_large.usdz in Resources */,
 				A1B0548A2DDF1FE100C5B28D /* cut.usdz in Resources */,
+				9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */,
 				A1B0548B2DDF1FE100C5B28D /* flame_medium.usdz in Resources */,
 				A1B0548C2DDF1FE100C5B28D /* ingredient.usdz in Resources */,
 				A1B0548D2DDF1FE100C5B28D /* garlic.usdz in Resources */,
 				A1B0548E2DDF1FE100C5B28D /* pourLiquid.usdz in Resources */,
-				A1B054042DDF10FA00C5B28D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,7 +507,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ChefHelper/Preview Content\"";
-				DEVELOPMENT_TEAM = NS9C26NG58;
+				DEVELOPMENT_TEAM = K6ZK2249ST;
 				ENABLE_PREVIEWS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -526,7 +526,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yunn.ChefHelper1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rong.ChefHelper12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -545,7 +545,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ChefHelper/Preview Content\"";
-				DEVELOPMENT_TEAM = NS9C26NG58;
+				DEVELOPMENT_TEAM = K6ZK2249ST;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ChefHelper/Info.plist;
@@ -563,7 +563,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yunn.ChefHelper1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rong.ChefHelper12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = singlefile;

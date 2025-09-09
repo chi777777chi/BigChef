@@ -34,10 +34,13 @@ final class AppCoordinator: Coordinator {
             addChildCoordinator(mainCoordinator)
             mainCoordinator.start()
         } else {
-            // 用戶未登入，啟動登入流程
-            let authCoordinator = AuthCoordinator(navigationController: navigationController, appCoordinator: self)
-            addChildCoordinator(authCoordinator)
-            authCoordinator.start()
+//            // 用戶未登入，啟動登入流程
+//            let authCoordinator = AuthCoordinator(navigationController: navigationController, appCoordinator: self)
+//            addChildCoordinator(authCoordinator)
+//            authCoordinator.start()
+            let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self)
+            addChildCoordinator(mainCoordinator)
+            mainCoordinator.start()
         }
     }
     
