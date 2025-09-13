@@ -27,8 +27,22 @@ final class NetworkService: NetworkServiceProtocol {
             let session = URLSession(configuration: configuration)
             session.dataTaskPublisher(for: url)
                 .tryMap { (data, response) -> Data in
-                    guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw NetworkError.invalidResponse }
-                    return data
+                    guard let httpResponse = response as? HTTPURLResponse else { 
+                        throw NetworkError.invalidResponse 
+                    }
+                    
+                    switch httpResponse.statusCode {
+                    case 200:
+                        return data
+                    case 404:
+                        throw NetworkError.unknown("找不到請求的資源")
+                    case 410:
+                        throw NetworkError.unknown("服務不可用")
+                    case 500...599:
+                        throw NetworkError.unknown("伺服器內部錯誤")
+                    default:
+                        throw NetworkError.unknown("HTTP \(httpResponse.statusCode)")
+                    }
                 }
                 .decode(type: decodeType.self, decoder: JSONDecoder())
                 .receive(on: RunLoop.main)

@@ -27,7 +27,7 @@ struct HistoryView: View {
 
             // 月曆選擇器
             DatePicker(
-                "Select Date",
+                "選擇日期",
                 selection: $viewModel.selectedDate,
                 displayedComponents: [.date]
             )

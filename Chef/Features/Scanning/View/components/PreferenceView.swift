@@ -7,7 +7,7 @@ struct PreferenceView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Preference").font(.title2).bold()
+            Text("偏好設定").font(.title2).bold()
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("製作方式（選填）")

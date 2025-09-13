@@ -20,12 +20,12 @@ struct DishDetailView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("\(dish.calories) Calories")
+                    Text("\(dish.calories) 卡路里")
                         .font(.footnote)
                         .foregroundColor(.pink)
                 }
 
-                Text("By Yogesh Patel")
+                Text("作者：Yogesh Patel")
                     .font(.callout)
                     .foregroundColor(.secondary)
 
@@ -92,7 +92,7 @@ struct DishDetailView: View {
 
             VStack(alignment: .leading, spacing: 16) {
 
-                Text("Descrption")
+                Text("描述")
                     .font(.title3)
                     .fontWeight(.semibold)
 
@@ -107,7 +107,7 @@ struct DishDetailView: View {
                     Button {
 
                     } label: {
-                        Text("Read more")
+                        Text("閱讀更多")
                             .foregroundColor(.pink)
                     }
                 }
@@ -117,7 +117,7 @@ struct DishDetailView: View {
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Price")
+                    Text("價格")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
 
@@ -130,7 +130,7 @@ struct DishDetailView: View {
                 Button {
 
                 } label: {
-                    Text("Add to Cart")
+                    Text("加入購物車")
                         .foregroundColor(.pink)
                         .fontWeight(.medium)
                         .padding(8)

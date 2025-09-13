@@ -12,7 +12,7 @@ struct ActionButtonsView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
-                    Text("Scan")
+                    Text("掃描")
                         .font(.headline)
                         .foregroundColor(.brandOrange)
                 }
@@ -23,7 +23,7 @@ struct ActionButtonsView: View {
             }
 
             Button(action: onGenerate) {
-                Text("Generate Recipe")
+                Text("生成食譜")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

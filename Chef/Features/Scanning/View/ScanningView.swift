@@ -27,7 +27,7 @@ struct ScanningView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Recipe Generator")
+            .navigationTitle("食譜生成器")
             .navigationBarTitleDisplayMode(.large)
             .modifier(SheetModifier(state: state, viewModel: viewModel))
             .modifier(AlertModifier(state: state))

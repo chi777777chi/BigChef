@@ -22,7 +22,7 @@ struct RecipeView: View {
                         .overlay(Circle().stroke(Color.gray, lineWidth: 2))
                         .padding(.top, 20)
 
-                    Text("RECIPE")
+                    Text("食譜")
                         .font(.headline)
                         .foregroundColor(.orange)
 
@@ -36,7 +36,7 @@ struct RecipeView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
 
-                    Text("Ingredients")
+                    Text("食材")
                         .font(.subheadline)
                         .foregroundColor(.gray)
 
@@ -124,8 +124,8 @@ struct RecipeView: View {
     )
 
     let response = SuggestRecipeResponse(
-        dish_name: "SALAD",
-        dish_description: "A light healthy dish",
+        dish_name: "健康沙拉",
+        dish_description: "一道清爽健康的料理",
         ingredients: [sampleIngredient],
         equipment: [sampleEquipment],
         recipe: [sampleStep, sampleStep]
