@@ -18,22 +18,12 @@ enum FoodRecognitionViewState {
 
 struct FoodRecognitionView: View {
     @StateObject private var viewModel: FoodRecognitionViewModel
-    @State private var showingImagePicker = false
     @State private var descriptionHint = ""
+    @EnvironmentObject private var coordinator: FoodRecognitionCoordinator
 
-    // 根據 ViewModel 狀態計算當前視圖狀態
+    // 使用 ViewModel 的計算屬性
     private var currentViewState: FoodRecognitionViewState {
-        if let error = viewModel.error {
-            return .error(error)
-        } else if let result = viewModel.recognitionResult {
-            return .result(result)
-        } else if viewModel.isLoading {
-            return .recognizing
-        } else if viewModel.hasSelectedImage {
-            return .imageSelected
-        } else {
-            return .initial
-        }
+        viewModel.currentViewState
     }
 
     init(viewModel: FoodRecognitionViewModel) {
@@ -77,7 +67,7 @@ struct FoodRecognitionView: View {
             }
         }
         .imageSourcePicker(
-            isPresented: $showingImagePicker,
+            isPresented: $viewModel.showImageSourcePicker,
             selectedImage: $viewModel.selectedImage,
             onImageSelected: { image in
                 viewModel.handleImageSelection(image)
@@ -140,28 +130,50 @@ struct FoodRecognitionView: View {
 
             // Change Image Button
             Button("重新選擇圖片") {
-                showingImagePicker = true
+                viewModel.selectImageSource()
             }
             .foregroundColor(.brandOrange)
+            .disabled(!viewModel.canSelectNewImage)
         }
     }
 
     private var recognizingStateView: some View {
         VStack(spacing: 32) {
-            // Loading Animation
+            // Loading Animation with Progress
             VStack(spacing: 24) {
-                ProgressView()
-                    .scaleEffect(1.5)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .brandOrange))
+                if viewModel.shouldShowProgress {
+                    ProgressView(value: viewModel.recognitionProgress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .brandOrange))
+                        .scaleEffect(1.2)
+                } else {
+                    ProgressView()
+                        .scaleEffect(1.5)
+                        .progressViewStyle(CircularProgressViewStyle(tint: .brandOrange))
+                }
 
-                Text("正在辨識中...")
+                Text(viewModel.progressDescription)
                     .font(.title3)
                     .fontWeight(.medium)
 
-                Text("AI 正在分析您的食物圖片，請稍候")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
+                if viewModel.isRetrying {
+                    Text("正在重試辨識，請稍候...")
+                        .font(.body)
+                        .foregroundColor(.orange)
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text("AI 正在分析您的食物圖片，請稍候")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                // 顯示進度百分比
+                if viewModel.shouldShowProgress {
+                    Text("\(Int(viewModel.recognitionProgress * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.brandOrange)
+                        .fontWeight(.semibold)
+                }
             }
 
             // Selected Image (smaller)
@@ -185,10 +197,81 @@ struct FoodRecognitionView: View {
                 viewModel.retryRecognition()
             },
             onUseIngredients: {
-                // TODO: 實作使用食材功能
-                print("使用這些食材")
+                handleUseIngredients(from: response)
+            },
+            onUseSelectedIngredients: { selectedIngredients, selectedEquipment in
+                handleUseSelectedIngredients(
+                    ingredientIds: selectedIngredients,
+                    equipmentIds: selectedEquipment,
+                    from: response
+                )
             }
         )
+    }
+
+    // MARK: - Helper Methods
+
+    /// 處理使用食材功能
+    private func handleUseIngredients(from response: FoodRecognitionResponse) {
+        print("🧑‍🍳 使用辨識結果生成食譜")
+
+        // 提取所有食材和器具名稱
+        let ingredients = response.allIngredients.map { $0.name }
+        let equipment = response.allEquipment.map { $0.name }
+        let descriptionHint = response.primaryFood?.description ?? ""
+
+        // 使用 Coordinator 導航到食譜生成
+        coordinator.navigateToRecipeGeneration(
+            ingredients: ingredients,
+            equipment: equipment,
+            descriptionHint: descriptionHint
+        )
+
+        // 顯示成功提示
+        coordinator.showSuccess(message: "正在為您生成食譜...")
+    }
+
+    /// 處理使用選中的食材功能
+    private func handleUseSelectedIngredients(
+        ingredientIds: Set<UUID>,
+        equipmentIds: Set<UUID>,
+        from response: FoodRecognitionResponse
+    ) {
+        print("🧑‍🍳 使用選中的食材生成食譜")
+
+        // 從 ID 集合中找出對應的食材和器具名稱
+        let selectedIngredients = response.allIngredients
+            .filter { ingredientIds.contains($0.id) }
+            .map { $0.name }
+
+        let selectedEquipment = response.allEquipment
+            .filter { equipmentIds.contains($0.id) }
+            .map { $0.name }
+
+        // 如果沒有選擇任何食材或器具，顯示提示
+        guard !selectedIngredients.isEmpty || !selectedEquipment.isEmpty else {
+            coordinator.showError(NSError(
+                domain: "FoodRecognition",
+                code: 0,
+                userInfo: [NSLocalizedDescriptionKey: "請至少選擇一種食材或器具"]
+            ))
+            return
+        }
+
+        let descriptionHint = response.primaryFood?.description ?? ""
+
+        // 使用 Coordinator 導航到食譜生成
+        coordinator.navigateToRecipeGeneration(
+            ingredients: selectedIngredients,
+            equipment: selectedEquipment,
+            descriptionHint: descriptionHint
+        )
+
+        // 顯示成功提示
+        let ingredientCount = selectedIngredients.count
+        let equipmentCount = selectedEquipment.count
+        let message = "已選擇 \(ingredientCount) 種食材和 \(equipmentCount) 種器具，正在生成食譜..."
+        coordinator.showSuccess(message: message)
     }
 
     private func errorStateView(_ error: FoodRecognitionError) -> some View {
@@ -200,7 +283,7 @@ struct FoodRecognitionView: View {
                 viewModel.retryRecognition()
             },
             onSelectNewImage: {
-                showingImagePicker = true
+                viewModel.selectImageSource()
             }
         )
     }
@@ -233,7 +316,7 @@ struct FoodRecognitionView: View {
             )
             .contentShape(Rectangle())
             .onTapGesture {
-                showingImagePicker = true
+                viewModel.selectImageSource()
             }
     }
 
@@ -241,7 +324,7 @@ struct FoodRecognitionView: View {
         HStack(spacing: 16) {
             // Camera Button
             Button(action: {
-                showingImagePicker = true
+                viewModel.showCameraAction()
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "camera.fill")
@@ -255,10 +338,11 @@ struct FoodRecognitionView: View {
                 .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
+            .disabled(!viewModel.canSelectNewImage)
 
             // Photo Library Button
             Button(action: {
-                showingImagePicker = true
+                viewModel.showPhotoLibraryAction()
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "photo.on.rectangle")
@@ -272,6 +356,7 @@ struct FoodRecognitionView: View {
                 .foregroundColor(.brandOrange)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
+            .disabled(!viewModel.canSelectNewImage)
         }
     }
 

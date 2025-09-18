@@ -13,11 +13,26 @@ struct FoodRecognitionResultView: View {
     let selectedImage: UIImage?
     let onRetry: () -> Void
     let onUseIngredients: () -> Void
+    let onUseSelectedIngredients: ((Set<UUID>, Set<UUID>) -> Void)?
 
     @State private var expandedFoodIds: Set<UUID> = []
     @State private var selectedIngredients: Set<UUID> = []
     @State private var selectedEquipment: Set<UUID> = []
     @State private var showSelectionMode = false
+
+    init(
+        result: FoodRecognitionResponse,
+        selectedImage: UIImage?,
+        onRetry: @escaping () -> Void,
+        onUseIngredients: @escaping () -> Void,
+        onUseSelectedIngredients: ((Set<UUID>, Set<UUID>) -> Void)? = nil
+    ) {
+        self.result = result
+        self.selectedImage = selectedImage
+        self.onRetry = onRetry
+        self.onUseIngredients = onUseIngredients
+        self.onUseSelectedIngredients = onUseSelectedIngredients
+    }
 
     var body: some View {
         ScrollView {
@@ -196,7 +211,13 @@ struct FoodRecognitionResultView: View {
                         title: "使用選中的食材和器具",
                         icon: "checkmark.circle",
                         isEnabled: !selectedIngredients.isEmpty || !selectedEquipment.isEmpty,
-                        action: onUseIngredients
+                        action: {
+                            if let callback = onUseSelectedIngredients {
+                                callback(selectedIngredients, selectedEquipment)
+                            } else {
+                                onUseIngredients()
+                            }
+                        }
                     )
 
                     Button("取消選擇") {
@@ -302,6 +323,9 @@ struct FoodRecognitionResultView: View {
             },
             onUseIngredients: {
                 print("使用食材")
+            },
+            onUseSelectedIngredients: { ingredients, equipment in
+                print("使用選中的食材：\(ingredients.count) 個，器具：\(equipment.count) 個")
             }
         )
     }
