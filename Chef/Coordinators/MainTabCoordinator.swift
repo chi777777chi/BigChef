@@ -35,7 +35,7 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
             .tabItem {
                 Label("首頁", systemImage: "house.fill")
             }
-            
+
             // Scanning Tab
             NavigationStack {
                 ScanningTabView(coordinator: self)
@@ -43,7 +43,15 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
             .tabItem {
                 Label("掃描", systemImage: "camera.fill")
             }
-            
+
+            // Food Recognition Tab
+            NavigationStack {
+                FoodRecognitionTabView(coordinator: self)
+            }
+            .tabItem {
+                Label("辨識", systemImage: "camera.viewfinder")
+            }
+
             // Settings Tab
             NavigationStack {
                 SettingsView()
@@ -134,7 +142,7 @@ private struct HomeTabView: View {
 private struct ScanningTabView: View {
     @ObservedObject var coordinator: MainTabCoordinator
     @State private var scanningCoordinator: ScanningCoordinator?
-    
+
     var body: some View {
         Group {
             if let scanningCoordinator = scanningCoordinator {
@@ -155,6 +163,33 @@ private struct ScanningTabView: View {
                     .onAppear {
                         scanningCoordinator = ScanningCoordinator(navigationController: coordinator.navigationController)
                         coordinator.addChildCoordinator(scanningCoordinator!)
+                    }
+            }
+        }
+    }
+}
+
+private struct FoodRecognitionTabView: View {
+    @ObservedObject var coordinator: MainTabCoordinator
+    @State private var foodRecognitionCoordinator: FoodRecognitionCoordinator?
+    @State private var viewModel: FoodRecognitionViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel = viewModel {
+                FoodRecognitionView(viewModel: viewModel)
+            } else {
+                ProgressView()
+                    .onAppear {
+                        let newFoodRecognitionCoordinator = FoodRecognitionCoordinator(
+                            navigationController: coordinator.navigationController,
+                            parentCoordinator: coordinator
+                        )
+                        coordinator.addChildCoordinator(newFoodRecognitionCoordinator)
+                        self.foodRecognitionCoordinator = newFoodRecognitionCoordinator
+
+                        let newViewModel = FoodRecognitionViewModel()
+                        self.viewModel = newViewModel
                     }
             }
         }
