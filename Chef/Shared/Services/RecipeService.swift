@@ -52,6 +52,62 @@ enum RecipeService {
             throw error
         }
     }
+    // MARK: - 食物辨識 async 函式
+    static func recognizeFood(using request: FoodRecognitionRequest) async throws -> FoodRecognitionResponse {
+        guard let url = URL(string: "\(baseURL)/api/v1/recipe/food") else {
+            print("❌ 無效的食物辨識 URL")
+            throw NetworkError.invalidURL
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.timeoutInterval = 30.0 // 設定 30 秒超時
+
+        do {
+            let jsonData = try JSONEncoder().encode(request)
+            urlRequest.httpBody = jsonData
+
+            let requestInfo = """
+            🟢 發送食物辨識請求：
+            描述提示：\(request.descriptionHint)
+            圖片大小：\(request.image.count) 字元
+            """
+            print(requestInfo)
+        } catch {
+            print("❌ 食物辨識請求編碼失敗：\(error)")
+            throw error
+        }
+
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ 食物辨識：無效的伺服器回應")
+            throw NetworkError.invalidResponse
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print("❌ 食物辨識：HTTP 錯誤：\(httpResponse.statusCode)")
+            throw NetworkError.httpError(httpResponse.statusCode)
+        }
+
+        do {
+            let decoded = try JSONDecoder().decode(FoodRecognitionResponse.self, from: data)
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("✅ AI 回傳食物辨識結果：\n\(jsonString)")
+                print("📝 辨識摘要：\(decoded.summary)")
+                print("🍽️ 辨識出 \(decoded.recognizedFoods.count) 種食物")
+            }
+            return decoded
+        } catch {
+            if let raw = String(data: data, encoding: .utf8) {
+                print("🔴 食物辨識 AI 回傳原始資料：\n\(raw)")
+            }
+            print("❌ 食物辨識解碼失敗：\(error)")
+            throw error
+        }
+    }
+
     // MARK: - 掃描圖片為食材與設備
     static func scanImageForIngredients(using request: ScanImageRequest) async throws -> ScanImageResponse {
         guard let url = URL(string: "\(baseURL)/api/v1/recipe/ingredient") else {
