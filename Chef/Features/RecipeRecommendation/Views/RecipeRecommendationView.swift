@@ -10,6 +10,8 @@ import SwiftUI
 struct RecipeRecommendationView: View {
     @StateObject private var viewModel: RecipeRecommendationViewModel
     @EnvironmentObject private var coordinator: RecipeRecommendationCoordinator
+    @State private var showingIngredientInput = false
+    @State private var showingEquipmentInput = false
 
     init(viewModel: RecipeRecommendationViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -17,123 +19,226 @@ struct RecipeRecommendationView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 32) {
-                    // Header Section
-                    VStack(spacing: 16) {
-                        Image(systemName: "lightbulb.fill")
-                            .font(.system(size: 80))
-                            .foregroundColor(.brandOrange)
-
-                        Text("食譜推薦")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-
-                        Text("根據您現有的食材和器具，AI 將為您推薦最適合的食譜")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
-
-                    // Coming Soon Section
-                    VStack(spacing: 20) {
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                Color.brandOrange.opacity(0.3),
-                                style: StrokeStyle(lineWidth: 2, dash: [10, 5])
-                            )
-                            .frame(height: 200)
-                            .overlay(
-                                VStack(spacing: 16) {
-                                    Image(systemName: "wrench.and.screwdriver.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.brandOrange.opacity(0.7))
-
-                                    VStack(spacing: 8) {
-                                        Text("功能建構中")
-                                            .font(.headline)
-                                            .foregroundColor(.primary)
-
-                                        Text("我們正在為您準備智能食譜推薦功能")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                            .multilineTextAlignment(.center)
-                                    }
-                                }
-                            )
-
-                        // Feature Preview Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("即將推出的功能：")
-                                .font(.headline)
-                                .foregroundColor(.brandOrange)
-
-                            VStack(alignment: .leading, spacing: 8) {
-                                FeatureItem(
-                                    icon: "list.clipboard",
-                                    title: "食材清單管理",
-                                    description: "輸入您現有的食材"
-                                )
-
-                                FeatureItem(
-                                    icon: "fork.knife",
-                                    title: "器具選擇",
-                                    description: "選擇可用的廚房器具"
-                                )
-
-                                FeatureItem(
-                                    icon: "slider.horizontal.3",
-                                    title: "偏好設定",
-                                    description: "設定料理方式和口味偏好"
-                                )
-
-                                FeatureItem(
-                                    icon: "sparkles",
-                                    title: "AI 智能推薦",
-                                    description: "獲得個人化的食譜建議"
-                                )
-                            }
-                        }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+            Group {
+                switch viewModel.state {
+                case .idle, .configuring:
+                    mainConfigurationView
+                case .loading:
+                    RecommendationLoadingView()
+                case .success(let result):
+                    RecommendationResultView(result: result, viewModel: viewModel)
+                case .error(let error):
+                    RecommendationErrorView(error: error) {
+                        Task { await viewModel.retryRecommendation() }
                     }
                 }
-                .padding()
             }
-            .navigationTitle("推薦")
+            .navigationTitle("食譜推薦")
             .navigationBarTitleDisplayMode(.large)
+        }
+        .sheet(isPresented: $showingIngredientInput) {
+            IngredientInputView { ingredient in
+                viewModel.addIngredient(ingredient)
+            }
+        }
+        .sheet(isPresented: $showingEquipmentInput) {
+            EquipmentInputView { equipment in
+                viewModel.addEquipment(equipment)
+            }
+        }
+    }
+
+    // MARK: - Main Configuration View
+
+    private var mainConfigurationView: some View {
+        ScrollView {
+            VStack(spacing: 28) {
+                // Logo Section
+                logoSection
+
+                // Ingredients Section
+                ingredientsSection
+
+                // Equipment Section
+                equipmentSection
+
+                // Preferences Section
+                preferencesSection
+
+                // Action Button
+                recommendationButton
+            }
+            .padding()
+        }
+    }
+
+    // MARK: - View Components
+
+    private var logoSection: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "lightbulb.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.brandOrange)
+
+            Text("根據您的食材和器具推薦最適合的食譜")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    private var ingredientsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            RecommendationSectionHeader(
+                title: "可用食材",
+                onAdd: { showingIngredientInput = true }
+            )
+
+            if viewModel.availableIngredients.isEmpty {
+                EmptyStateView(
+                    icon: "carrot.fill",
+                    message: "點擊 + 新增您擁有的食材",
+                    buttonTitle: "新增食材",
+                    buttonAction: { showingIngredientInput = true }
+                )
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(Array(viewModel.availableIngredients.enumerated()), id: \.element.id) { index, ingredient in
+                        IngredientListItemView(
+                            ingredient: ingredient,
+                            onDelete: {
+                                withAnimation(.easeInOut) {
+                                    viewModel.removeIngredient(at: index)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+
+    private var equipmentSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            RecommendationSectionHeader(
+                title: "可用器具",
+                onAdd: { showingEquipmentInput = true }
+            )
+
+            if viewModel.availableEquipment.isEmpty {
+                EmptyStateView(
+                    icon: "frying.pan.fill",
+                    message: "點擊 + 新增您擁有的廚房器具",
+                    buttonTitle: "新增器具",
+                    buttonAction: { showingEquipmentInput = true }
+                )
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(Array(viewModel.availableEquipment.enumerated()), id: \.element.id) { index, equipment in
+                        EquipmentListItemView(
+                            equipment: equipment,
+                            onDelete: {
+                                withAnimation(.easeInOut) {
+                                    viewModel.removeEquipment(at: index)
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+
+    private var preferencesSection: some View {
+        PreferenceSettingView(viewModel: viewModel)
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+    }
+
+    private var recommendationButton: some View {
+        Button(action: {
+            Task {
+                await viewModel.startRecommendation()
+            }
+        }) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .font(.title3)
+                Text("推薦食譜")
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                viewModel.canRequestRecommendation ? Color.brandOrange : Color.gray
+            )
+            .foregroundColor(.white)
+            .cornerRadius(12)
+        }
+        .disabled(!viewModel.canRequestRecommendation)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.canRequestRecommendation)
+    }
+}
+
+// MARK: - Supporting Views
+
+private struct RecommendationSectionHeader: View {
+    let title: String
+    let onAdd: () -> Void
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.headline)
+                .fontWeight(.semibold)
+
+            Spacer()
+
+            Button(action: onAdd) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(.brandOrange)
+                    .font(.title2)
+            }
         }
     }
 }
 
-// MARK: - Feature Item Component
-
-private struct FeatureItem: View {
+private struct EmptyStateView: View {
     let icon: String
-    let title: String
-    let description: String
+    let message: String
+    let buttonTitle: String
+    let buttonAction: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 16) {
             Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(.brandOrange)
-                .frame(width: 30)
+                .font(.system(size: 40))
+                .foregroundColor(.gray)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.subheadline)
+            Text(message)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+
+            Button(action: buttonAction) {
+                Text(buttonTitle)
+                    .font(.body)
                     .fontWeight(.medium)
-
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.brandOrange)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .background(Color.brandOrange.opacity(0.1))
+                    .cornerRadius(8)
             }
-
-            Spacer()
         }
+        .padding(.vertical, 20)
     }
 }
 
