@@ -20,10 +20,13 @@ final class RecipeRecommendationViewModel: ObservableObject {
     @Published var recommendationResult: RecipeRecommendationResponse?
     @Published var errorMessage: String?
     @Published var retryCount = 0
+    @Published var isFormValid: Bool = false
+    @Published var validationErrors: [String] = []
 
     // MARK: - Private Properties
     private let recommendationService: RecipeRecommendationService
     private var cancellables = Set<AnyCancellable>()
+    private var currentTask: Task<Void, Never>?
     private let maxRetryCount = 3
 
     // MARK: - Computed Properties
@@ -45,12 +48,14 @@ final class RecipeRecommendationViewModel: ObservableObject {
 
     var canRequestRecommendation: Bool {
         switch state {
-        case .configuring:
-            return !availableIngredients.isEmpty && validateForm()
+        case .configuring, .idle:
+            return isFormValid
         case .error:
-            return !availableIngredients.isEmpty && validateForm()
-        default:
+            return isFormValid
+        case .loading:
             return false
+        case .success:
+            return true // Allow re-recommendation from success state
         }
     }
 
@@ -100,13 +105,30 @@ final class RecipeRecommendationViewModel: ObservableObject {
         setupObservations()
     }
 
+    deinit {
+        currentTask?.cancel()
+        cancellables.removeAll()
+    }
+
+    // MARK: - Public Methods - Task Management
+
+    func cancelCurrentRequest() {
+        currentTask?.cancel()
+        currentTask = nil
+
+        if case .loading = state {
+            updateState(.configuring)
+        }
+    }
+
     // MARK: - Private Methods
 
     private func setupObservations() {
-        // 監控食材和設備變化來更新狀態
-        Publishers.CombineLatest($availableIngredients, $availableEquipment)
-            .sink { [weak self] ingredients, equipment in
+        // 監控食材和設備變化來更新狀態和驗證表單
+        Publishers.CombineLatest3($availableIngredients, $availableEquipment, $preference)
+            .sink { [weak self] ingredients, equipment, preference in
                 self?.updateStateBasedOnInput()
+                self?.validateFormData()
             }
             .store(in: &cancellables)
     }
@@ -132,53 +154,96 @@ final class RecipeRecommendationViewModel: ObservableObject {
         }
     }
 
-    private func validateForm() -> Bool {
+    private func validateFormData() {
+        validationErrors.removeAll()
+
         // 檢查必須有食材
         guard !availableIngredients.isEmpty else {
-            return false
+            validationErrors.append("請至少新增一種食材")
+            isFormValid = false
+            return
         }
 
         // 檢查食材資料完整性
-        for ingredient in availableIngredients {
-            if ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-               ingredient.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                return false
+        for (index, ingredient) in availableIngredients.enumerated() {
+            if ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                validationErrors.append("食材 \(index + 1): 請輸入食材名稱")
+            }
+            if ingredient.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                validationErrors.append("食材 \(index + 1): 請選擇食材類型")
+            }
+            if ingredient.amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                validationErrors.append("食材 \(index + 1): 請輸入數量")
             }
         }
 
         // 檢查設備資料完整性（如果有的話）
-        for equipment in availableEquipment {
-            if equipment.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-               equipment.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                return false
+        for (index, equipment) in availableEquipment.enumerated() {
+            if equipment.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                validationErrors.append("設備 \(index + 1): 請輸入設備名稱")
+            }
+            if equipment.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                validationErrors.append("設備 \(index + 1): 請選擇設備類型")
             }
         }
 
-        return true
+        // 檢查偏好設定
+        if let cookingMethod = preference.cookingMethod, cookingMethod.isEmpty {
+            validationErrors.append("請選擇烹飪方式")
+        }
+
+        if let servingSize = preference.servingSize, servingSize.isEmpty {
+            validationErrors.append("請選擇份量")
+        }
+
+        isFormValid = validationErrors.isEmpty
+    }
+
+    private func validateForm() -> Bool {
+        validateFormData()
+        return isFormValid
     }
 
     private func handleRecommendationError(_ error: Error) {
         retryCount += 1
 
-        if let recommendationError = error as? RecipeRecommendationError {
-            updateState(.error(recommendationError))
+        let recommendationError: RecipeRecommendationError
+
+        if let recError = error as? RecipeRecommendationError {
+            recommendationError = recError
+        } else if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                recommendationError = .networkError("請檢查網路連線")
+            case .timedOut:
+                recommendationError = .networkError("請求超時，請稍後再試")
+            case .cannotFindHost:
+                recommendationError = .networkError("無法連接到伺服器")
+            default:
+                recommendationError = .networkError("網路錯誤：\(urlError.localizedDescription)")
+            }
         } else {
-            let wrappedError = RecipeRecommendationError.networkError(error.localizedDescription)
-            updateState(.error(wrappedError))
+            recommendationError = .networkError("未知錯誤：\(error.localizedDescription)")
         }
+
+        updateState(.error(recommendationError))
     }
 
     // MARK: - Public Methods - 食材管理
 
     func addIngredient(_ ingredient: AvailableIngredient) {
-        availableIngredients.append(ingredient)
+        withAnimation(.easeInOut) {
+            availableIngredients.append(ingredient)
+        }
         print("🥬 RecipeRecommendationViewModel: 新增食材 - \(ingredient.name)")
     }
 
     func removeIngredient(at index: Int) {
         guard index < availableIngredients.count else { return }
         let removedIngredient = availableIngredients[index]
-        availableIngredients.remove(at: index)
+        withAnimation(.easeInOut) {
+            availableIngredients.remove(at: index)
+        }
         print("🗑️ RecipeRecommendationViewModel: 移除食材 - \(removedIngredient.name)")
     }
 
@@ -201,14 +266,18 @@ final class RecipeRecommendationViewModel: ObservableObject {
     // MARK: - Public Methods - 設備管理
 
     func addEquipment(_ equipment: AvailableEquipment) {
-        availableEquipment.append(equipment)
+        withAnimation(.easeInOut) {
+            availableEquipment.append(equipment)
+        }
         print("🔧 RecipeRecommendationViewModel: 新增設備 - \(equipment.name)")
     }
 
     func removeEquipment(at index: Int) {
         guard index < availableEquipment.count else { return }
         let removedEquipment = availableEquipment[index]
-        availableEquipment.remove(at: index)
+        withAnimation(.easeInOut) {
+            availableEquipment.remove(at: index)
+        }
         print("🗑️ RecipeRecommendationViewModel: 移除設備 - \(removedEquipment.name)")
     }
 
@@ -265,30 +334,53 @@ final class RecipeRecommendationViewModel: ObservableObject {
     // MARK: - Public Methods - 推薦流程
 
     func startRecommendation() async {
+        // Cancel any existing request
+        currentTask?.cancel()
+
         guard canRequestRecommendation else {
             print("❌ RecipeRecommendationViewModel: 無法開始推薦 - 表單驗證失敗")
+            if !isFormValid {
+                updateState(.error(.validationFailed("請檢查表單輸入")))
+            }
             return
         }
 
         print("🍳 RecipeRecommendationViewModel: 開始食譜推薦")
         updateState(.loading)
-        retryCount = 0
-
-        do {
-            let response = try await recommendationService.recommendRecipe(
-                ingredients: availableIngredients,
-                equipment: availableEquipment,
-                preference: preference
-            )
-
-            recommendationResult = response
-            updateState(.success(response))
-            print("✅ RecipeRecommendationViewModel: 推薦成功")
-
-        } catch {
-            print("❌ RecipeRecommendationViewModel: 推薦失敗 - \(error.localizedDescription)")
-            handleRecommendationError(error)
+        if case .success = state {
+            // Don't reset retry count if re-recommending from success state
+        } else {
+            retryCount = 0
         }
+
+        currentTask = Task {
+            do {
+                let response = try await recommendationService.recommendRecipe(
+                    ingredients: availableIngredients,
+                    equipment: availableEquipment,
+                    preference: preference
+                )
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    recommendationResult = response
+                    updateState(.success(response))
+                    print("✅ RecipeRecommendationViewModel: 推薦成功")
+                }
+
+            } catch {
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    print("❌ RecipeRecommendationViewModel: 推薦失敗 - \(error.localizedDescription)")
+                    handleRecommendationError(error)
+                }
+            }
+        }
+
+        await currentTask?.value
+        currentTask = nil
     }
 
     func retryRecommendation() async {

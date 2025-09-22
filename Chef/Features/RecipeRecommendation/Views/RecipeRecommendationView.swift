@@ -67,9 +67,45 @@ struct RecipeRecommendationView: View {
 
                 // Action Button
                 recommendationButton
+
+                // Validation Errors
+                if !viewModel.validationErrors.isEmpty {
+                    validationErrorsSection
+                }
             }
             .padding()
         }
+    }
+
+    private var validationErrorsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.red)
+                Text("請修正以下問題：")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.red)
+                Spacer()
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(viewModel.validationErrors, id: \.self) { error in
+                    HStack(alignment: .top, spacing: 8) {
+                        Text("•")
+                            .foregroundColor(.red)
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                        Spacer()
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.red.opacity(0.1))
+        .cornerRadius(8)
+        .transition(.opacity.combined(with: .scale))
     }
 
     // MARK: - View Components

@@ -90,7 +90,8 @@ struct RecommendationErrorView: View {
                     }
                 } else {
                     Button(action: {
-                        // Navigate back to configuration
+                        // Reset to configuration state via ViewModel
+                        // This will be handled by the parent view
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "pencil")
@@ -107,7 +108,8 @@ struct RecommendationErrorView: View {
                 }
 
                 Button(action: {
-                    // Navigate to help or contact support
+                    // Show help information - could be handled by coordinator
+                    print("顯示幫助信息")
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "questionmark.circle")

@@ -13,12 +13,18 @@ struct IngredientInputView: View {
     @State private var amount = ""
     @State private var selectedUnit = "個"
     @State private var preparation = ""
+    @State private var validationErrors: [String] = []
 
     let ingredientTypes = ["主食", "蔬菜", "肉類", "蛋類", "海鮮", "調料", "其他"]
     let units = ["個", "顆", "片", "克", "毫升", "湯匙", "茶匙", "少許", "適量"]
 
     let onSave: (AvailableIngredient) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    private var isFormValid: Bool {
+        validateForm()
+        return validationErrors.isEmpty
+    }
 
     var body: some View {
         NavigationView {
@@ -143,18 +149,20 @@ struct IngredientInputView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") {
-                        let ingredient = AvailableIngredient(
-                            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-                            type: selectedType,
-                            amount: amount.trimmingCharacters(in: .whitespacesAndNewlines),
-                            unit: selectedUnit,
-                            preparation: preparation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "無特殊處理" : preparation.trimmingCharacters(in: .whitespacesAndNewlines)
-                        )
-                        onSave(ingredient)
-                        dismiss()
+                        if isFormValid {
+                            let ingredient = AvailableIngredient(
+                                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                                type: selectedType,
+                                amount: amount.trimmingCharacters(in: .whitespacesAndNewlines),
+                                unit: selectedUnit,
+                                preparation: preparation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "無特殊處理" : preparation.trimmingCharacters(in: .whitespacesAndNewlines)
+                            )
+                            onSave(ingredient)
+                            dismiss()
+                        }
                     }
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .foregroundColor(canSave ? .brandOrange : .gray)
+                    .disabled(!isFormValid)
+                    .foregroundColor(isFormValid ? .brandOrange : .gray)
                 }
             }
         }
@@ -165,6 +173,25 @@ struct IngredientInputView: View {
     private var canSave: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    // MARK: - Private Methods
+
+    private func validateForm() -> Bool {
+        validationErrors.removeAll()
+
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedAmount = amount.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmedName.isEmpty {
+            validationErrors.append("請輸入食材名稱")
+        }
+
+        if trimmedAmount.isEmpty {
+            validationErrors.append("請輸入數量")
+        }
+
+        return validationErrors.isEmpty
     }
 
     // MARK: - Helper Methods

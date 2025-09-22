@@ -67,11 +67,20 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     // MARK: - Navigation Methods
 
     /// 顯示食譜詳細信息
-    func showRecipeDetail(_ recipe: SuggestRecipeResponse) {
-        print("📄 RecipeRecommendationCoordinator: 顯示食譜詳細信息")
-        let coordinator = RecipeCoordinator(navigationController: navigationController)
-        addChildCoordinator(coordinator)
-        coordinator.showRecipeDetail(recipe)
+    func showRecipeDetail(_ recipe: RecipeRecommendationResponse) {
+        print("📄 RecipeRecommendationCoordinator: 顯示食譜詳細信息 - \(recipe.dishName)")
+
+        // Create a detail view for the recommendation result
+        // For now, we can show an alert with the recipe name
+        // Later this can be connected to a detailed recipe view
+        showSuccess(message: "查看詳細食譜：\(recipe.dishName)")
+    }
+
+    /// 顯示食譜推薦結果的詳細頁面
+    func showRecommendationDetail(_ result: RecipeRecommendationResponse) {
+        print("📋 RecipeRecommendationCoordinator: 顯示推薦結果詳細頁面")
+        // This can be extended to show a dedicated detailed view
+        showRecipeDetail(result)
     }
 
     /// 顯示錯誤提示

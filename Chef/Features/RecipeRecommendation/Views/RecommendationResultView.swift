@@ -188,9 +188,9 @@ struct RecommendationResultView: View {
                 .cornerRadius(12)
             }
 
-            // View Detail Button (for future integration)
+            // View Detail Button
             Button(action: {
-                // TODO: Navigate to detailed recipe view
+                coordinator.showRecommendationDetail(result)
             }) {
                 HStack(spacing: 8) {
                     Image(systemName: "doc.text")

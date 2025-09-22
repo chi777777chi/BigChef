@@ -13,6 +13,7 @@ struct EquipmentInputView: View {
     @State private var selectedSize = "中等"
     @State private var selectedMaterial = ""
     @State private var selectedPowerSource = "無"
+    @State private var validationErrors: [String] = []
 
     let equipmentTypes = ["鍋具", "刀具", "電器", "餐具", "其他"]
     let sizes = ["小型", "中等", "大型"]
@@ -21,6 +22,11 @@ struct EquipmentInputView: View {
 
     let onSave: (AvailableEquipment) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    private var isFormValid: Bool {
+        validateForm()
+        return validationErrors.isEmpty
+    }
 
     var body: some View {
         NavigationView {
@@ -143,18 +149,20 @@ struct EquipmentInputView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") {
-                        let equipment = AvailableEquipment(
-                            name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-                            type: selectedType,
-                            size: selectedSize,
-                            material: selectedMaterial,
-                            powerSource: selectedPowerSource
-                        )
-                        onSave(equipment)
-                        dismiss()
+                        if isFormValid {
+                            let equipment = AvailableEquipment(
+                                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                                type: selectedType,
+                                size: selectedSize,
+                                material: selectedMaterial,
+                                powerSource: selectedPowerSource
+                            )
+                            onSave(equipment)
+                            dismiss()
+                        }
                     }
-                    .disabled(!canSave)
-                    .foregroundColor(canSave ? .brandOrange : .gray)
+                    .disabled(!isFormValid)
+                    .foregroundColor(isFormValid ? .brandOrange : .gray)
                 }
             }
         }
@@ -164,6 +172,20 @@ struct EquipmentInputView: View {
 
     private var canSave: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    // MARK: - Private Methods
+
+    private func validateForm() -> Bool {
+        validationErrors.removeAll()
+
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if trimmedName.isEmpty {
+            validationErrors.append("請輸入器具名稱")
+        }
+
+        return validationErrors.isEmpty
     }
 
     // MARK: - Helper Methods
