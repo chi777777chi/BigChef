@@ -18,8 +18,27 @@ struct IngredientInputView: View {
     let ingredientTypes = ["主食", "蔬菜", "肉類", "蛋類", "海鮮", "調料", "其他"]
     let units = ["個", "顆", "片", "克", "毫升", "湯匙", "茶匙", "少許", "適量"]
 
+    let editingIngredient: AvailableIngredient?
     let onSave: (AvailableIngredient) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    var isEditing: Bool {
+        editingIngredient != nil
+    }
+
+    init(editingIngredient: AvailableIngredient? = nil, onSave: @escaping (AvailableIngredient) -> Void) {
+        self.editingIngredient = editingIngredient
+        self.onSave = onSave
+
+        // 如果是編輯模式，預填現有資料
+        if let ingredient = editingIngredient {
+            self._name = State(initialValue: ingredient.name)
+            self._selectedType = State(initialValue: ingredient.type)
+            self._amount = State(initialValue: ingredient.amount)
+            self._selectedUnit = State(initialValue: ingredient.unit)
+            self._preparation = State(initialValue: ingredient.preparation == "無特殊處理" ? "" : ingredient.preparation)
+        }
+    }
 
     private var isFormValid: Bool {
         validateForm()
@@ -137,7 +156,7 @@ struct IngredientInputView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .navigationTitle("新增食材")
+            .navigationTitle(isEditing ? "編輯食材" : "新增食材")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -148,7 +167,7 @@ struct IngredientInputView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
+                    Button(isEditing ? "更新" : "完成") {
                         if isFormValid {
                             let ingredient = AvailableIngredient(
                                 name: name.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -219,7 +238,7 @@ struct IngredientInputView: View {
 // MARK: - Preview
 
 #Preview {
-    IngredientInputView { ingredient in
+    IngredientInputView(editingIngredient: nil) { ingredient in
         print("保存食材: \(ingredient)")
     }
 }

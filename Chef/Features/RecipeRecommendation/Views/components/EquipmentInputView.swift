@@ -20,8 +20,27 @@ struct EquipmentInputView: View {
     let materials = ["不鏽鋼", "鐵", "鋁", "不沾", "陶瓷", "玻璃", "塑膠", "木材", "其他"]
     let powerSources = ["無", "電", "瓦斯", "電池"]
 
+    let editingEquipment: AvailableEquipment?
     let onSave: (AvailableEquipment) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    var isEditing: Bool {
+        editingEquipment != nil
+    }
+
+    init(editingEquipment: AvailableEquipment? = nil, onSave: @escaping (AvailableEquipment) -> Void) {
+        self.editingEquipment = editingEquipment
+        self.onSave = onSave
+
+        // 如果是編輯模式，預填現有資料
+        if let equipment = editingEquipment {
+            self._name = State(initialValue: equipment.name)
+            self._selectedType = State(initialValue: equipment.type)
+            self._selectedSize = State(initialValue: equipment.size)
+            self._selectedMaterial = State(initialValue: equipment.material)
+            self._selectedPowerSource = State(initialValue: equipment.powerSource)
+        }
+    }
 
     private var isFormValid: Bool {
         validateForm()
@@ -137,7 +156,7 @@ struct EquipmentInputView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            .navigationTitle("新增器具")
+            .navigationTitle(isEditing ? "編輯器具" : "新增器具")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -148,7 +167,7 @@ struct EquipmentInputView: View {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") {
+                    Button(isEditing ? "更新" : "完成") {
                         if isFormValid {
                             let equipment = AvailableEquipment(
                                 name: name.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -222,7 +241,7 @@ struct EquipmentInputView: View {
 // MARK: - Preview
 
 #Preview {
-    EquipmentInputView { equipment in
+    EquipmentInputView(editingEquipment: nil) { equipment in
         print("保存器具: \(equipment)")
     }
 }

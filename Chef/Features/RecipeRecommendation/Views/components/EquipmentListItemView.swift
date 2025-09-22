@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EquipmentListItemView: View {
     let equipment: AvailableEquipment
+    let onEdit: () -> Void
     let onDelete: () -> Void
 
     var body: some View {
@@ -53,11 +54,21 @@ struct EquipmentListItemView: View {
                 }
             }
 
-            // Delete Button
-            Button(action: onDelete) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.red)
-                    .font(.title3)
+            // Action Buttons
+            HStack(spacing: 12) {
+                // Edit Button
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.blue)
+                        .font(.title3)
+                }
+
+                // Delete Button
+                Button(action: onDelete) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                }
             }
         }
         .padding(.vertical, 8)
@@ -65,6 +76,9 @@ struct EquipmentListItemView: View {
         .background(Color(.systemBackground))
         .cornerRadius(8)
         .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+        .onTapGesture {
+            onEdit() // 點擊整個項目也能編輯
+        }
     }
 
     // MARK: - Helper Methods
@@ -97,6 +111,7 @@ struct EquipmentListItemView: View {
                 material: "不沾",
                 powerSource: "電"
             ),
+            onEdit: {},
             onDelete: {}
         )
 
@@ -108,6 +123,7 @@ struct EquipmentListItemView: View {
                 material: "不鏽鋼",
                 powerSource: ""
             ),
+            onEdit: {},
             onDelete: {}
         )
     }

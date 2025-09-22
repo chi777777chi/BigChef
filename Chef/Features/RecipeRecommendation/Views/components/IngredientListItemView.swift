@@ -9,6 +9,7 @@ import SwiftUI
 
 struct IngredientListItemView: View {
     let ingredient: AvailableIngredient
+    let onEdit: () -> Void
     let onDelete: () -> Void
 
     var body: some View {
@@ -45,11 +46,21 @@ struct IngredientListItemView: View {
                 }
             }
 
-            // Delete Button
-            Button(action: onDelete) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.red)
-                    .font(.title3)
+            // Action Buttons
+            HStack(spacing: 12) {
+                // Edit Button
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.blue)
+                        .font(.title3)
+                }
+
+                // Delete Button
+                Button(action: onDelete) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .font(.title3)
+                }
             }
         }
         .padding(.vertical, 8)
@@ -57,6 +68,9 @@ struct IngredientListItemView: View {
         .background(Color(.systemBackground))
         .cornerRadius(8)
         .shadow(color: .gray.opacity(0.2), radius: 2, x: 0, y: 1)
+        .onTapGesture {
+            onEdit() // 點擊整個項目也能編輯
+        }
     }
 
     // MARK: - Helper Methods
@@ -93,6 +107,7 @@ struct IngredientListItemView: View {
                 unit: "顆",
                 preparation: "打散"
             ),
+            onEdit: {},
             onDelete: {}
         )
 
@@ -104,6 +119,7 @@ struct IngredientListItemView: View {
                 unit: "顆",
                 preparation: ""
             ),
+            onEdit: {},
             onDelete: {}
         )
     }

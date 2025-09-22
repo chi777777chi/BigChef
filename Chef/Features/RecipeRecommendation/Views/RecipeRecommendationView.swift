@@ -12,6 +12,8 @@ struct RecipeRecommendationView: View {
     @EnvironmentObject private var coordinator: RecipeRecommendationCoordinator
     @State private var showingIngredientInput = false
     @State private var showingEquipmentInput = false
+    @State private var editingIngredientIndex: Int? = nil
+    @State private var editingEquipmentIndex: Int? = nil
 
     init(viewModel: RecipeRecommendationViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -37,13 +39,27 @@ struct RecipeRecommendationView: View {
             .navigationBarTitleDisplayMode(.large)
         }
         .sheet(isPresented: $showingIngredientInput) {
-            IngredientInputView { ingredient in
-                viewModel.addIngredient(ingredient)
+            IngredientInputView(
+                editingIngredient: editingIngredientIndex != nil ? viewModel.availableIngredients[editingIngredientIndex!] : nil
+            ) { ingredient in
+                if let index = editingIngredientIndex {
+                    viewModel.updateIngredient(at: index, with: ingredient)
+                } else {
+                    viewModel.addIngredient(ingredient)
+                }
+                editingIngredientIndex = nil
             }
         }
         .sheet(isPresented: $showingEquipmentInput) {
-            EquipmentInputView { equipment in
-                viewModel.addEquipment(equipment)
+            EquipmentInputView(
+                editingEquipment: editingEquipmentIndex != nil ? viewModel.availableEquipment[editingEquipmentIndex!] : nil
+            ) { equipment in
+                if let index = editingEquipmentIndex {
+                    viewModel.updateEquipment(at: index, with: equipment)
+                } else {
+                    viewModel.addEquipment(equipment)
+                }
+                editingEquipmentIndex = nil
             }
         }
     }
@@ -124,24 +140,49 @@ struct RecipeRecommendationView: View {
     }
 
     private var ingredientsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            RecommendationSectionHeader(
-                title: "可用食材",
-                onAdd: { showingIngredientInput = true }
-            )
+        VStack(alignment: .center, spacing: 12) {
+            // 置中的標題
+            Text("可用食材")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             if viewModel.availableIngredients.isEmpty {
-                EmptyStateView(
-                    icon: "carrot.fill",
-                    message: "點擊 + 新增您擁有的食材",
-                    buttonTitle: "新增食材",
-                    buttonAction: { showingIngredientInput = true }
-                )
+                // 空狀態：置中的新增按鈕
+                VStack(spacing: 16) {
+                    Image(systemName: "carrot.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+
+                    Text("點擊新增您擁有的食材")
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+
+                    Button(action: {
+                        editingIngredientIndex = nil
+                        showingIngredientInput = true
+                    }) {
+                        Text("新增食材")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 12)
+                            .background(Color.brandOrange)
+                            .cornerRadius(8)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
             } else {
+                // 有食材時：顯示列表
                 VStack(spacing: 8) {
                     ForEach(Array(viewModel.availableIngredients.enumerated()), id: \.element.id) { index, ingredient in
                         IngredientListItemView(
                             ingredient: ingredient,
+                            onEdit: {
+                                editingIngredientIndex = index
+                                showingIngredientInput = true
+                            },
                             onDelete: {
                                 withAnimation(.easeInOut) {
                                     viewModel.removeIngredient(at: index)
@@ -150,6 +191,24 @@ struct RecipeRecommendationView: View {
                         )
                     }
                 }
+
+                // 列表下方的置中新增按鈕
+                Button(action: {
+                    editingIngredientIndex = nil
+                    showingIngredientInput = true
+                }) {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("新增更多食材")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.brandOrange)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.brandOrange.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .padding(.top, 8)
             }
         }
         .padding()
@@ -158,24 +217,49 @@ struct RecipeRecommendationView: View {
     }
 
     private var equipmentSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            RecommendationSectionHeader(
-                title: "可用器具",
-                onAdd: { showingEquipmentInput = true }
-            )
+        VStack(alignment: .center, spacing: 12) {
+            // 置中的標題
+            Text("可用器具")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             if viewModel.availableEquipment.isEmpty {
-                EmptyStateView(
-                    icon: "frying.pan.fill",
-                    message: "點擊 + 新增您擁有的廚房器具",
-                    buttonTitle: "新增器具",
-                    buttonAction: { showingEquipmentInput = true }
-                )
+                // 空狀態：置中的新增按鈕
+                VStack(spacing: 16) {
+                    Image(systemName: "frying.pan.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+
+                    Text("點擊新增您擁有的廚房器具")
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+
+                    Button(action: {
+                        editingEquipmentIndex = nil
+                        showingEquipmentInput = true
+                    }) {
+                        Text("新增器具")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 12)
+                            .background(Color.brandOrange)
+                            .cornerRadius(8)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
             } else {
+                // 有器具時：顯示列表
                 VStack(spacing: 8) {
                     ForEach(Array(viewModel.availableEquipment.enumerated()), id: \.element.id) { index, equipment in
                         EquipmentListItemView(
                             equipment: equipment,
+                            onEdit: {
+                                editingEquipmentIndex = index
+                                showingEquipmentInput = true
+                            },
                             onDelete: {
                                 withAnimation(.easeInOut) {
                                     viewModel.removeEquipment(at: index)
@@ -184,6 +268,24 @@ struct RecipeRecommendationView: View {
                         )
                     }
                 }
+
+                // 列表下方的置中新增按鈕
+                Button(action: {
+                    editingEquipmentIndex = nil
+                    showingEquipmentInput = true
+                }) {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("新增更多器具")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.brandOrange)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.brandOrange.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                .padding(.top, 8)
             }
         }
         .padding()
@@ -223,60 +325,7 @@ struct RecipeRecommendationView: View {
     }
 }
 
-// MARK: - Supporting Views
-
-private struct RecommendationSectionHeader: View {
-    let title: String
-    let onAdd: () -> Void
-
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.headline)
-                .fontWeight(.semibold)
-
-            Spacer()
-
-            Button(action: onAdd) {
-                Image(systemName: "plus.circle.fill")
-                    .foregroundColor(.brandOrange)
-                    .font(.title2)
-            }
-        }
-    }
-}
-
-private struct EmptyStateView: View {
-    let icon: String
-    let message: String
-    let buttonTitle: String
-    let buttonAction: () -> Void
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 40))
-                .foregroundColor(.gray)
-
-            Text(message)
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
-            Button(action: buttonAction) {
-                Text(buttonTitle)
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .foregroundColor(.brandOrange)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Color.brandOrange.opacity(0.1))
-                    .cornerRadius(8)
-            }
-        }
-        .padding(.vertical, 20)
-    }
-}
+// MARK: - Supporting Views (置中設計已整合到主要區塊中)
 
 // MARK: - Preview
 
