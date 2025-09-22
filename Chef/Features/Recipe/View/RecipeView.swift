@@ -8,9 +8,13 @@ import SwiftUI
 
 struct RecipeView: View {
     @ObservedObject var viewModel: RecipeViewModel
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
+            // 自定義導航欄
+            customNavigationBar
+
             ScrollView {
                 VStack(spacing: 16) {
                     // 頂部圖片
@@ -84,6 +88,58 @@ struct RecipeView: View {
             }
             .padding()
         }
+    }
+
+    // MARK: - Custom Navigation Bar
+    private var customNavigationBar: some View {
+        HStack {
+            // 返回按鈕
+            Button(action: {
+                if viewModel.onBackRequested != nil {
+                    viewModel.backButtonTapped()
+                } else {
+                    dismiss()
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("返回")
+                        .font(.system(size: 16, weight: .medium))
+                }
+                .foregroundColor(.primary)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(20)
+            }
+
+            Spacer()
+
+            // 食譜標題（居中顯示）
+            Text("食譜詳情")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.primary)
+
+            Spacer()
+
+            // 右側收藏按鈕
+            Button(action: {
+                // TODO: 實作收藏功能
+                print("收藏按鈕被點擊")
+            }) {
+                Image(systemName: "heart")
+                    .font(.system(size: 20))
+                    .foregroundColor(.pink)
+                    .padding(8)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+        .background(
+            Color(.systemBackground)
+                .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1)
+        )
     }
 }
 

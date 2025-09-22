@@ -14,6 +14,7 @@ final class RecipeViewModel: ObservableObject {
     let dishDescription: String
     let steps: [RecipeStep]
     var onCookRequested: (() -> Void)?
+    var onBackRequested: (() -> Void)?
 
     init(response: SuggestRecipeResponse) {
         
@@ -26,5 +27,11 @@ final class RecipeViewModel: ObservableObject {
     }
     func cookButtonTapped() {
         print("🍳 cookButtonTapped 被觸發")
-        onCookRequested?() }
+        onCookRequested?()
+    }
+
+    func backButtonTapped() {
+        print("⬅️ backButtonTapped 被觸發")
+        onBackRequested?()
+    }
 }

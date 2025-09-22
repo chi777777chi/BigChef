@@ -38,10 +38,9 @@ final class HomeCoordinator: Coordinator {
     
     // MARK: - Navigation Methods
     func showDishDetail(_ dish: Dish) {
-        // TODO: 實作顯示菜品詳情的導航
         let detailView = DishDetailView(dish: dish)
         let hostingController = UIHostingController(rootView: detailView)
-        navigationController.setViewControllers([hostingController], animated: false)
+        navigationController.pushViewController(hostingController, animated: true)
         print("顯示菜品詳情: \(dish.name)")
     }
     

@@ -66,11 +66,18 @@ final class RecipeCoordinator: Coordinator, ObservableObject {
         viewModel.onCookRequested = { [weak self] in
             self?.startCooking(with: recipe.recipe)
         }
+        viewModel.onBackRequested = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
         pushRecipeView(with: viewModel)
     }
     
     func showRecipeEdit(_ recipe: SuggestRecipeResponse) {
-        pushRecipeView(with: RecipeViewModel(response: recipe))
+        let viewModel = RecipeViewModel(response: recipe)
+        viewModel.onBackRequested = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        pushRecipeView(with: viewModel)
     }
     
     func showScanning() {

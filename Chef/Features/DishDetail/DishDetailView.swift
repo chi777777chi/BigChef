@@ -162,6 +162,9 @@ struct DishDetailView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(UIColor.secondarySystemBackground))
 
+        .navigationTitle(dish.name)
+        .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(false)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
