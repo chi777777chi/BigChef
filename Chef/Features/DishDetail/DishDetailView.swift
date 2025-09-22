@@ -20,9 +20,16 @@ struct DishDetailView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
-                    Text("\(dish.calories) 卡路里")
-                        .font(.footnote)
-                        .foregroundColor(.pink)
+                    if let rating = dish.rating, rating > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                                .font(.footnote)
+                            Text(String(format: "%.1f", rating))
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
 
                 Text("作者：Yogesh Patel")
@@ -35,10 +42,17 @@ struct DishDetailView: View {
             HStack(alignment: .top) {
 
                 VStack(alignment: .leading, spacing: 16) {
-                    RatingView(
-                        imageName: "star.fill",
-                        text: "4.9"
-                    )
+                    if let rating = dish.rating, rating > 0 {
+                        RatingView(
+                            imageName: "star.fill",
+                            text: String(format: "%.1f", rating)
+                        )
+                    } else {
+                        RatingView(
+                            imageName: "star",
+                            text: "N/A"
+                        )
+                    }
 
                     RideView()
                         .padding(.bottom, 40)
@@ -163,7 +177,7 @@ struct DishDetailView: View {
 
 struct DishDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DishDetailView(dish: .init(id: "", name: "Cassava Flakes", description: "Cassava Flakes", image: "https://p3y6v9e6.stackpathcdn.com/wp-content/uploads/zikoko/2020/03/D1sPmD5XQAA7Hjh.jpg", calories: 120))
+        DishDetailView(dish: .init(id: "", name: "Cassava Flakes", description: "Cassava Flakes", image: "https://p3y6v9e6.stackpathcdn.com/wp-content/uploads/zikoko/2020/03/D1sPmD5XQAA7Hjh.jpg", rating: 4.5))
     }
 }
 

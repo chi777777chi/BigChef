@@ -73,22 +73,41 @@ struct PopularDishesView: View {
                         .lineLimit(2)
                     
                     HStack(spacing: 8) {
-                        // 熱量
-                        Label(dish.formattedCalories, systemImage: "flame.fill")
-                            .font(.caption)
-                            .foregroundColor(.pink)
-                        
-                        Spacer()
-                        
-                        // 評分
-                        HStack(spacing: 2) {
-                            ForEach(0..<5) { _ in
-                                Image(systemName: "star.fill")
-                                    .renderingMode(.template)
-                                    .foregroundColor(.yellow)
-                                    .font(.caption2)
+                        // 評分顯示 (如果有評分的話)
+                        if let rating = dish.rating, rating > 0 {
+                            HStack(spacing: 2) {
+                                let fullStars = Int(rating)
+                                let hasHalfStar = rating.truncatingRemainder(dividingBy: 1) >= 0.5
+
+                                // 滿星
+                                ForEach(0..<fullStars, id: \.self) { _ in
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.yellow)
+                                        .font(.caption2)
+                                }
+
+                                // 半星
+                                if hasHalfStar && fullStars < 5 {
+                                    Image(systemName: "star.leadinghalf.filled")
+                                        .foregroundColor(.yellow)
+                                        .font(.caption2)
+                                }
+
+                                // 空星
+                                let emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
+                                ForEach(0..<emptyStars, id: \.self) { _ in
+                                    Image(systemName: "star")
+                                        .foregroundColor(.gray.opacity(0.3))
+                                        .font(.caption2)
+                                }
                             }
+
+                            Text(String(format: "%.1f", rating))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
+
+                        Spacer()
                     }
                 }
             }
@@ -114,7 +133,7 @@ struct PopularDishesView_Previews: PreviewProvider {
                         name: "測試菜品2",
                         description: "這是一個較長的描述文字，用來測試多行文字的顯示效果。",
                         image: "https://picsum.photos/202",
-                        calories: 400
+                        rating: 4.3
                     ),
                     isFavorite: true,
                     onTap: { print("菜品被點擊") },

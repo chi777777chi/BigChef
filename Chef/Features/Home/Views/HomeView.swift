@@ -51,6 +51,9 @@ struct HomeView: View {
             VStack(alignment: .leading, spacing: 20) {
                 // 頂部導航欄
                 topNavigationBar
+
+                // 資料來源指示器
+                dataSourceIndicator
                 
                 if let unwrappedAllDishes = viewModel.allDishes {
                     // 菜品分類
@@ -70,6 +73,9 @@ struct HomeView: View {
                 }
                 
                 Spacer(minLength: 80)
+            }
+            .refreshable {
+                viewModel.refreshDishes()
             }
         }
         .background(Color(UIColor.secondarySystemBackground).edgesIgnoringSafeArea(.all))
@@ -97,7 +103,58 @@ struct HomeView: View {
         .padding(.horizontal)
         .padding(.top)
     }
-    
+
+    // MARK: - Data Source Indicator
+    private var dataSourceIndicator: some View {
+        VStack(spacing: 8) {
+            if !viewModel.dataSourceMessage.isEmpty {
+                HStack {
+                    Text(viewModel.dataSourceMessage)
+                        .font(.caption)
+                        .foregroundColor(viewModel.isUsingRealData ? .green : .orange)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(viewModel.isUsingRealData ? Color.green.opacity(0.1) : Color.orange.opacity(0.1))
+                        )
+
+                    Spacer()
+
+                    // 重新整理按鈕
+                    Button(action: {
+                        viewModel.refreshDishes()
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(.blue)
+                            .font(.caption)
+                    }
+                }
+                .padding(.horizontal)
+            }
+
+            // Debug 模式額外資訊
+            #if DEBUG
+            if viewModel.viewState == .dataLoaded {
+                HStack {
+                    Text("📱 Debug: \(viewModel.isUsingRealData ? "API 資料" : "模擬資料")")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    if let dishes = viewModel.allDishes {
+                        Text("熱門: \(dishes.populars.count) | 推薦: \(dishes.specials.count)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.horizontal)
+            }
+            #endif
+        }
+    }
+
     // MARK: - Category Section
     private func categorySection(categories: [DishCategory]) -> some View {
         VStack(alignment: .leading) {
