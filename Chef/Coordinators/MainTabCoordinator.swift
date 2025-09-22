@@ -41,7 +41,7 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
                 ScanningTabView(coordinator: self)
             }
             .tabItem {
-                Label("掃描", systemImage: "camera.fill")
+                Label("食譜", systemImage: "camera.fill")
             }
 
             // Food Recognition Tab
@@ -50,6 +50,14 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
             }
             .tabItem {
                 Label("辨識", systemImage: "camera.viewfinder")
+            }
+
+            // Recipe Recommendation Tab
+            NavigationStack {
+                RecipeRecommendationTabView(coordinator: self)
+            }
+            .tabItem {
+                Label("推薦", systemImage: "lightbulb.fill")
             }
 
             // Settings Tab
@@ -189,6 +197,33 @@ private struct FoodRecognitionTabView: View {
                         self.foodRecognitionCoordinator = newFoodRecognitionCoordinator
 
                         let newViewModel = FoodRecognitionViewModel()
+                        self.viewModel = newViewModel
+                    }
+            }
+        }
+    }
+}
+
+private struct RecipeRecommendationTabView: View {
+    @ObservedObject var coordinator: MainTabCoordinator
+    @State private var recipeRecommendationCoordinator: RecipeRecommendationCoordinator?
+    @State private var viewModel: RecipeRecommendationViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel = viewModel {
+                RecipeRecommendationView(viewModel: viewModel)
+            } else {
+                ProgressView()
+                    .onAppear {
+                        let newRecipeRecommendationCoordinator = RecipeRecommendationCoordinator(
+                            navigationController: coordinator.navigationController,
+                            parentCoordinator: coordinator
+                        )
+                        coordinator.addChildCoordinator(newRecipeRecommendationCoordinator)
+                        self.recipeRecommendationCoordinator = newRecipeRecommendationCoordinator
+
+                        let newViewModel = RecipeRecommendationViewModel()
                         self.viewModel = newViewModel
                     }
             }

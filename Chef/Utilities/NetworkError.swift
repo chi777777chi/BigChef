@@ -13,7 +13,11 @@ enum NetworkError: Error {
     case invalidResponse
     case unknown(String)
     case serviceUnavailable
-    
+    case httpError(Int)
+    case noData
+    case timeout
+    case decodingError(String)
+
     var localizedDescription: String {
         switch self {
         case .invalidURL:
@@ -24,6 +28,14 @@ enum NetworkError: Error {
             return message
         case .serviceUnavailable:
             return "服務暫時無法使用，請稍後再試"
+        case .httpError(let code):
+            return "HTTP 錯誤：\(code)"
+        case .noData:
+            return "沒有收到資料"
+        case .timeout:
+            return "請求超時，請檢查網路連線"
+        case .decodingError(let message):
+            return "資料解析錯誤：\(message)"
         }
     }
 }
