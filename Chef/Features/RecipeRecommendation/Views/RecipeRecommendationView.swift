@@ -27,13 +27,17 @@ struct RecipeRecommendationView: View {
                 case .idle, .configuring:
                     mainConfigurationView
                 case .loading:
-                    RecommendationLoadingView()
+                    RecommendationLoadingView(onCancel: {
+                        viewModel.cancelCurrentRequest()
+                    })
                 case .success(let result):
                     RecommendationResultView(result: result, viewModel: viewModel, coordinator: coordinator)
                 case .error(let error):
-                    RecommendationErrorView(error: error) {
+                    RecommendationErrorView(error: error, onRetry: {
                         Task { await viewModel.retryRecommendation() }
-                    }
+                    }, onBackToConfiguration: {
+                        viewModel.resetToConfiguring()
+                    })
                 }
             }
             .navigationTitle("食譜推薦")

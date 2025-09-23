@@ -11,6 +11,7 @@ struct RecommendationLoadingView: View {
     @State private var rotationAngle: Double = 0
     @State private var currentMessageIndex = 0
     @State private var messageOpacity: Double = 1.0
+    let onCancel: (() -> Void)?
 
     private let loadingMessages = [
         "🧠 AI 正在分析您的食材...",
@@ -80,6 +81,24 @@ struct RecommendationLoadingView: View {
                         .animation(.easeInOut(duration: 0.3), value: currentMessageIndex)
                 }
             }
+
+            // Cancel Button
+            if let onCancel = onCancel {
+                Button(action: onCancel) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "xmark")
+                            .font(.title3)
+                        Text("取消")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.gray.opacity(0.2))
+                    .foregroundColor(.primary)
+                    .cornerRadius(12)
+                }
+                .padding(.top, 16)
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -111,5 +130,5 @@ struct RecommendationLoadingView: View {
 // MARK: - Preview
 
 #Preview {
-    RecommendationLoadingView()
+    RecommendationLoadingView(onCancel: {})
 }

@@ -81,21 +81,88 @@ class RecipeRecommendationService: RecipeRecommendationServiceProtocol {
 
         // 檢查食材資料完整性
         for (index, ingredient) in ingredients.enumerated() {
-            guard !ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let trimmedName = ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard !trimmedName.isEmpty else {
                 throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材名稱不能為空")
             }
 
             guard !ingredient.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
                 throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材類型不能為空")
             }
+
+            // 檢查是否輸入了器具而不是食材
+            if isLikelyEquipmentName(trimmedName) {
+                throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材「\(trimmedName)」看起來是廚房器具而不是食材")
+            }
         }
 
         // 檢查設備資料完整性（如果有的話）
         for (index, equipment) in equipment.enumerated() {
-            guard !equipment.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let trimmedName = equipment.name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard !trimmedName.isEmpty else {
                 throw RecipeRecommendationError.invalidEquipmentData("第 \(index + 1) 項設備名稱不能為空")
             }
+
+            // 檢查是否輸入了食材而不是器具
+            if isLikelyIngredientName(trimmedName) {
+                throw RecipeRecommendationError.invalidEquipmentData("第 \(index + 1) 項設備「\(trimmedName)」看起來是食材而不是廚房器具")
+            }
         }
+    }
+
+    // MARK: - Validation Helper Methods
+
+    private func isLikelyIngredientName(_ name: String) -> Bool {
+        let commonIngredients = [
+            // 肉類
+            "牛排", "豬肉", "雞肉", "魚", "蝦", "蟹", "羊肉", "鴨肉", "火腿", "香腸",
+            // 蔬菜
+            "白菜", "高麗菜", "花椰菜", "胡蘿蔔", "洋蔥", "蒜", "薑", "蔥", "韭菜", "菠菜",
+            "番茄", "馬鈴薯", "地瓜", "玉米", "豆腐", "豆芽", "青椒", "茄子", "黃瓜",
+            // 主食
+            "米", "麵條", "麵包", "饅頭", "水餃", "包子", "年糕", "麵粉",
+            // 蛋奶類
+            "蛋", "雞蛋", "牛奶", "起司", "奶油", "優格",
+            // 調料
+            "鹽", "糖", "醋", "醬油", "味精", "胡椒", "辣椒", "香菜", "芝麻"
+        ]
+
+        let lowercaseName = name.lowercased()
+        return commonIngredients.contains { ingredient in
+            lowercaseName.contains(ingredient.lowercased())
+        }
+    }
+
+    private func isLikelyEquipmentName(_ name: String) -> Bool {
+        let commonEquipment = [
+            // 鍋具
+            "平底鍋", "炒鍋", "湯鍋", "蒸鍋", "壓力鍋", "電鍋", "砂鍋", "不沾鍋", "鐵鍋", "不鏽鋼鍋",
+            // 刀具
+            "菜刀", "水果刀", "麵包刀", "剁刀", "削皮刀", "刨刀",
+            // 電器
+            "微波爐", "烤箱", "電磁爐", "瓦斯爐", "攪拌機", "果汁機", "咖啡機", "電熱水壺", "烤土司機",
+            "氣炸鍋", "電子鍋", "慢燉鍋", "豆漿機",
+            // 餐具和工具
+            "鍋鏟", "湯勺", "漏勺", "夾子", "開瓶器", "削皮器", "磨刀器", "砧板", "量杯", "打蛋器",
+            "篩子", "漏斗", "保鮮盒", "烘焙紙"
+        ]
+
+        let lowercaseName = name.lowercased()
+
+        // 檢查是否包含常見器具關鍵字
+        let equipmentKeywords = ["鍋", "刀", "機", "爐", "器", "杯", "盤", "碗", "鏟", "勺", "夾", "板"]
+        let hasEquipmentKeyword = equipmentKeywords.contains { keyword in
+            lowercaseName.contains(keyword)
+        }
+
+        // 檢查是否為常見器具名稱
+        let isCommonEquipment = commonEquipment.contains { equipment in
+            lowercaseName.contains(equipment.lowercased()) || equipment.lowercased().contains(lowercaseName)
+        }
+
+        return hasEquipmentKeyword || isCommonEquipment
     }
 
     // MARK: - Data Conversion Methods
@@ -151,7 +218,21 @@ class RecipeRecommendationService: RecipeRecommendationServiceProtocol {
             case .invalidResponse:
                 return .networkError("伺服器回應無效")
             case .httpError(let code):
-                return .apiError("API 錯誤 (\(code))")
+                // 針對特定HTTP錯誤碼提供更詳細的訊息
+                switch code {
+                case 400:
+                    return .validationFailed("請求資料格式錯誤，請檢查輸入的食材和器具名稱是否正確")
+                case 422:
+                    return .validationFailed("輸入資料不符合要求，請確認食材和器具資訊填寫正確")
+                case 500:
+                    return .apiError("伺服器處理錯誤，可能是輸入的器具或食材資訊不正確，請檢查並重新輸入")
+                case 502, 503:
+                    return .networkError("伺服器暫時無法服務，請稍後再試")
+                case 504:
+                    return .networkError("請求超時，請稍後再試")
+                default:
+                    return .apiError("API 錯誤 (\(code))")
+                }
             case .noData:
                 return .networkError("沒有收到資料")
             case .unknown(let message):

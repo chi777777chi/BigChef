@@ -10,6 +10,7 @@ import SwiftUI
 struct RecommendationErrorView: View {
     let error: RecipeRecommendationError
     let onRetry: () -> Void
+    let onBackToConfiguration: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 32) {
@@ -90,8 +91,7 @@ struct RecommendationErrorView: View {
                     }
                 } else {
                     Button(action: {
-                        // Reset to configuration state via ViewModel
-                        // This will be handled by the parent view
+                        onBackToConfiguration?()
                     }) {
                         HStack(spacing: 8) {
                             Image(systemName: "pencil")
@@ -103,6 +103,23 @@ struct RecommendationErrorView: View {
                         .padding(.vertical, 16)
                         .background(Color.brandOrange)
                         .foregroundColor(.white)
+                        .cornerRadius(12)
+                    }
+                }
+
+                // Back to configuration button
+                if let onBackToConfiguration = onBackToConfiguration {
+                    Button(action: onBackToConfiguration) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "arrow.left")
+                                .font(.title3)
+                            Text("返回配置")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.gray.opacity(0.2))
+                        .foregroundColor(.primary)
                         .cornerRadius(12)
                     }
                 }
@@ -175,12 +192,14 @@ private struct ErrorSuggestionView: View {
     VStack(spacing: 30) {
         RecommendationErrorView(
             error: .networkError("網路連線失敗"),
-            onRetry: {}
+            onRetry: {},
+            onBackToConfiguration: {}
         )
 
         RecommendationErrorView(
             error: .noIngredientsProvided,
-            onRetry: {}
+            onRetry: {},
+            onBackToConfiguration: {}
         )
     }
 }
