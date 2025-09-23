@@ -34,8 +34,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         let viewModel = RecipeRecommendationViewModel()
         self.viewModel = viewModel
 
-        let view = RecipeRecommendationView(viewModel: viewModel)
-            .environmentObject(self)
+        let view = RecipeRecommendationView(viewModel: viewModel, coordinator: self)
 
         let hostingController = UIHostingController(rootView: AnyView(view))
         self.hostingController = hostingController
@@ -70,17 +69,40 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     func showRecipeDetail(_ recipe: RecipeRecommendationResponse) {
         print("📄 RecipeRecommendationCoordinator: 顯示食譜詳細信息 - \(recipe.dishName)")
 
-        // Create a detail view for the recommendation result
-        // For now, we can show an alert with the recipe name
-        // Later this can be connected to a detailed recipe view
-        showSuccess(message: "查看詳細食譜：\(recipe.dishName)")
+        let detailView = RecipeDetailView(
+            recommendationResult: recipe,
+            onStartCooking: { [weak self] in
+                self?.startARCooking(with: recipe.recipe)
+            },
+            onBack: { [weak self] in
+                self?.goBack()
+            },
+            onFavorite: {
+                // TODO: Implement favorite functionality
+                print("❤️ 收藏食譜：\(recipe.dishName)")
+            }
+        )
+
+        let hostingController = UIHostingController(rootView: detailView)
+        hostingController.title = recipe.dishName
+        hostingController.navigationItem.largeTitleDisplayMode = .never
+
+        navigationController.pushViewController(hostingController, animated: true)
     }
 
     /// 顯示食譜推薦結果的詳細頁面
     func showRecommendationDetail(_ result: RecipeRecommendationResponse) {
         print("📋 RecipeRecommendationCoordinator: 顯示推薦結果詳細頁面")
-        // This can be extended to show a dedicated detailed view
         showRecipeDetail(result)
+    }
+
+    /// 啟動 AR 烹飪模式
+    func startARCooking(with steps: [RecipeStep]) {
+        print("🥽 RecipeRecommendationCoordinator: 啟動 AR 烹飪模式")
+
+        let cookCoordinator = CookCoordinator(navigationController: navigationController)
+        childCoordinators.append(cookCoordinator)
+        cookCoordinator.start(with: steps)
     }
 
     /// 顯示錯誤提示

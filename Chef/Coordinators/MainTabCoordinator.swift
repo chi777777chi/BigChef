@@ -211,8 +211,8 @@ private struct RecipeRecommendationTabView: View {
 
     var body: some View {
         Group {
-            if let viewModel = viewModel {
-                RecipeRecommendationView(viewModel: viewModel)
+            if let viewModel = viewModel, let coordinator = recipeRecommendationCoordinator {
+                RecipeRecommendationView(viewModel: viewModel, coordinator: coordinator)
             } else {
                 ProgressView()
                     .onAppear {

@@ -11,134 +11,27 @@ struct RecipeView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 自定義導航欄
-            customNavigationBar
-
-            ScrollView {
-                VStack(spacing: 16) {
-                    // 頂部圖片
-                    Image(systemName: "leaf")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.gray, lineWidth: 2))
-                        .padding(.top, 20)
-
-                    Text("食譜")
-                        .font(.headline)
-                        .foregroundColor(.orange)
-
-                    Text(viewModel.dishName)
-                        .font(.title)
-                        .bold()
-
-                    Text(viewModel.dishDescription)
-                        .font(.body)
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-
-                    Text("食材")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-
-                    Text("烹飪步驟")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.top, 10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                    let maxTextWidth = UIScreen.main.bounds.width * 0.8
-
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(viewModel.steps.indices, id: \.self) { index in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("步驟 \(viewModel.steps[index].step_number)：\(viewModel.steps[index].title)")
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                Text(viewModel.steps[index].description)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .padding()
-                            .frame(width: maxTextWidth, alignment: .leading)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
-                        }
-                    }
-                }
-                .padding()
-            }
-
-            // 按鈕區拉出來，不跟著 ScrollView 滾動
-            Button(action: {
+        RecipeDetailView(
+            dishName: viewModel.dishName,
+            dishDescription: viewModel.dishDescription,
+            ingredients: viewModel.ingredients,
+            equipment: viewModel.equipment,
+            recipeSteps: viewModel.steps,
+            showARButton: true,
+            showNavigationBar: true,
+            onStartCooking: {
                 viewModel.cookButtonTapped()
-                // 將跳轉 CameraCookingView 的邏輯放這裡
-            }) {
-                Text("開始烹飪")
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.brandOrange)
-                    .cornerRadius(12)
-            }
-            .padding()
-        }
-    }
-
-    // MARK: - Custom Navigation Bar
-    private var customNavigationBar: some View {
-        HStack {
-            // 返回按鈕
-            Button(action: {
+            },
+            onBack: {
                 if viewModel.onBackRequested != nil {
                     viewModel.backButtonTapped()
                 } else {
                     dismiss()
                 }
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("返回")
-                        .font(.system(size: 16, weight: .medium))
-                }
-                .foregroundColor(.primary)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 12)
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(20)
-            }
-
-            Spacer()
-
-            // 食譜標題（居中顯示）
-            Text("食譜詳情")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.primary)
-
-            Spacer()
-
-            // 右側收藏按鈕
-            Button(action: {
-                // TODO: 實作收藏功能
+            },
+            onFavorite: {
                 print("收藏按鈕被點擊")
-            }) {
-                Image(systemName: "heart")
-                    .font(.system(size: 20))
-                    .foregroundColor(.pink)
-                    .padding(8)
             }
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .background(
-            Color(.systemBackground)
-                .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1)
         )
     }
 }

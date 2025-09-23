@@ -9,14 +9,15 @@ import SwiftUI
 
 struct RecipeRecommendationView: View {
     @StateObject private var viewModel: RecipeRecommendationViewModel
-    @EnvironmentObject private var coordinator: RecipeRecommendationCoordinator
+    let coordinator: RecipeRecommendationCoordinator
     @State private var showingIngredientInput = false
     @State private var showingEquipmentInput = false
     @State private var editingIngredientIndex: Int? = nil
     @State private var editingEquipmentIndex: Int? = nil
 
-    init(viewModel: RecipeRecommendationViewModel) {
+    init(viewModel: RecipeRecommendationViewModel, coordinator: RecipeRecommendationCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
     }
 
     var body: some View {
@@ -28,7 +29,7 @@ struct RecipeRecommendationView: View {
                 case .loading:
                     RecommendationLoadingView()
                 case .success(let result):
-                    RecommendationResultView(result: result, viewModel: viewModel)
+                    RecommendationResultView(result: result, viewModel: viewModel, coordinator: coordinator)
                 case .error(let error):
                     RecommendationErrorView(error: error) {
                         Task { await viewModel.retryRecommendation() }
@@ -330,5 +331,6 @@ struct RecipeRecommendationView: View {
 // MARK: - Preview
 
 #Preview {
-    RecipeRecommendationView(viewModel: RecipeRecommendationViewModel())
+    let coordinator = RecipeRecommendationCoordinator(navigationController: UINavigationController())
+    RecipeRecommendationView(viewModel: RecipeRecommendationViewModel(), coordinator: coordinator)
 }

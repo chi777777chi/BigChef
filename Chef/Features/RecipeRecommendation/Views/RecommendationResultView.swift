@@ -6,11 +6,18 @@
 //
 
 import SwiftUI
+import ARKit
+import AVFoundation
 
 struct RecommendationResultView: View {
     let result: RecipeRecommendationResponse
     @ObservedObject var viewModel: RecipeRecommendationViewModel
-    @EnvironmentObject private var coordinator: RecipeRecommendationCoordinator
+    let coordinator: RecipeRecommendationCoordinator
+
+    // AR 載入狀態
+    @State private var isStartingAR = false
+    @State private var showingARError = false
+    @State private var arError: ARError?
 
     var body: some View {
         ScrollView {
@@ -40,6 +47,28 @@ struct RecommendationResultView: View {
                     viewModel.resetToConfiguring()
                 }
                 .foregroundColor(.brandOrange)
+            }
+        }
+        .alert("AR 功能錯誤", isPresented: $showingARError) {
+            Button("確定") {
+                showingARError = false
+            }
+            if let error = arError, error.showSettingsButton {
+                Button("前往設定") {
+                    if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settingsUrl)
+                    }
+                }
+            }
+        } message: {
+            VStack {
+                if let error = arError {
+                    Text(error.localizedDescription ?? "發生未知錯誤")
+                    if let recovery = error.recoveryMessage {
+                        Text(recovery)
+                            .font(.caption)
+                    }
+                }
             }
         }
     }
@@ -188,23 +217,95 @@ struct RecommendationResultView: View {
                 .cornerRadius(12)
             }
 
-            // View Detail Button
-            Button(action: {
-                coordinator.showRecommendationDetail(result)
-            }) {
+            // Start Cooking Button
+            Button(action: startCooking) {
                 HStack(spacing: 8) {
-                    Image(systemName: "doc.text")
-                        .font(.title3)
-                    Text("查看詳細食譜")
+                    if isStartingAR {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(0.8)
+                    } else {
+                        Image(systemName: "arkit")
+                            .font(.title3)
+                    }
+                    Text("開始烹飪")
                         .fontWeight(.semibold)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(Color.brandOrange.opacity(0.1))
-                .foregroundColor(.brandOrange)
+                .background(Color.brandOrange)
+                .foregroundColor(.white)
                 .cornerRadius(12)
             }
+            .disabled(isStartingAR)
         }
+    }
+
+    // MARK: - Action Methods
+
+    /// 開始烹飪方法
+    private func startCooking() {
+        print("🍳 準備啟動 AR 烹飪模式")
+        print("📋 食譜名稱: \(result.dishName)")
+        print("📝 步驟數量: \(result.recipe.count)")
+
+        isStartingAR = true
+
+        Task {
+            do {
+                // 檢查 AR 支援（真實設備上才檢查）
+                #if !targetEnvironment(simulator)
+                guard ARWorldTrackingConfiguration.isSupported else {
+                    await showARError(.deviceNotSupported)
+                    return
+                }
+
+                // 檢查相機權限
+                let hasPermission = await requestCameraPermission()
+                guard hasPermission else {
+                    await showARError(.cameraPermissionDenied)
+                    return
+                }
+                #endif
+
+                print("✅ AR 前置檢查完成，啟動 AR 烹飪模式")
+                await launchARCooking()
+
+            } catch {
+                await showARError(.unknown(error.localizedDescription))
+            }
+        }
+    }
+
+    private func requestCameraPermission() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            switch AVCaptureDevice.authorizationStatus(for: .video) {
+            case .authorized:
+                continuation.resume(returning: true)
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: .video) { granted in
+                    continuation.resume(returning: granted)
+                }
+            case .denied, .restricted:
+                continuation.resume(returning: false)
+            @unknown default:
+                continuation.resume(returning: false)
+            }
+        }
+    }
+
+    @MainActor
+    private func launchARCooking() {
+        isStartingAR = false
+        coordinator.startARCooking(with: result.recipe)
+    }
+
+    @MainActor
+    private func showARError(_ error: ARError) {
+        arError = error
+        showingARError = true
+        isStartingAR = false
+        print("❌ AR 錯誤: \(error.localizedDescription ?? "未知錯誤")")
     }
 }
 
@@ -316,11 +417,13 @@ private struct ResultEquipmentItemView: View {
     }
 }
 
+
 // MARK: - Preview
 
 #Preview {
     let sampleResponse = RecipeRecommendationResponse.sample()
     let viewModel = RecipeRecommendationViewModel()
+    let coordinator = RecipeRecommendationCoordinator(navigationController: UINavigationController())
 
-    RecommendationResultView(result: sampleResponse, viewModel: viewModel)
+    RecommendationResultView(result: sampleResponse, viewModel: viewModel, coordinator: coordinator)
 }
