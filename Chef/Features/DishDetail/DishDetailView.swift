@@ -9,160 +9,41 @@ import SwiftUI
 
 struct DishDetailView: View {
 
-    let dish: Dish
+    let recipe: Recipe
+
+    @State private var isDescriptionExpanded = false
 
     var body: some View {
-        VStack(spacing: 30) {
+        ScrollView {
+            VStack(spacing: 20) {
 
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .bottom, spacing: 8) {
-                    Text(dish.name)
-                        .font(.title2)
-                        .fontWeight(.bold)
+                // Main Content Card
+                VStack(spacing: 20) {
+                    // Title and Author Section
+                    titleSection
 
-                    if let rating = dish.rating, rating > 0 {
-                        HStack(spacing: 4) {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-                                .font(.footnote)
-                            Text(String(format: "%.1f", rating))
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                    // Image and Info Section
+                    imageAndInfoSection
+
+                    // Description Section
+                    descriptionSection
+
+                    // Additional Info Section
+                    additionalInfoSection
                 }
+                .padding(20)
+                .background(Color.white)
+                .cornerRadius(16)
+                .shadow(color: .gray.opacity(0.1), radius: 8, x: 0, y: 2)
+                .padding(.horizontal)
 
-                Text("作者：Yogesh Patel")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-
+                // Bottom Action Section
+                bottomActionSection
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            HStack(alignment: .top) {
-
-                VStack(alignment: .leading, spacing: 16) {
-                    if let rating = dish.rating, rating > 0 {
-                        RatingView(
-                            imageName: "star.fill",
-                            text: String(format: "%.1f", rating)
-                        )
-                    } else {
-                        RatingView(
-                            imageName: "star",
-                            text: "N/A"
-                        )
-                    }
-
-                    RideView()
-                        .padding(.bottom, 40)
-
-                    VStack(spacing: 16) {
-                        Button {
-
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                        }
-
-                        Button {
-
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                        }
-                    }
-                    .padding(8)
-                    .foregroundColor(.gray)
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.gray, lineWidth: 1)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-
-                }
-
-                Spacer()
-
-                AsyncImage(
-                    url: URL(string: dish.image)!,
-                    content: { image in
-                        image.resizable()
-                            .frame(width: 200, height: 300)
-                            .aspectRatio(contentMode: .fill)
-                    },
-                    placeholder: {
-                        ProgressView()
-                    }
-                )
-                .cornerRadius(10)
-
-            }
-            .frame(maxWidth: .infinity, maxHeight: 350)
-
-
-            VStack(alignment: .leading, spacing: 16) {
-
-                Text("描述")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-
-
-                VStack(alignment: .leading, spacing: 4) {
-
-                    Text(dish.description)
-                        .lineLimit(4)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-
-                    Button {
-
-                    } label: {
-                        Text("閱讀更多")
-                            .foregroundColor(.pink)
-                    }
-                }
-            }
-
-            Spacer()
-
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("價格")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    Text("$137.50")
-                        .font(.headline)
-                }
-
-                Spacer()
-
-                Button {
-
-                } label: {
-                    Text("加入購物車")
-                        .foregroundColor(.pink)
-                        .fontWeight(.medium)
-                        .padding(8)
-                }
-                .buttonStyle(.bordered)
-
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color(UIColor.systemGray5))
-            .cornerRadius(20)
-
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(UIColor.secondarySystemBackground))
+        .background(Color.gray.opacity(0.05))
 
-        .navigationTitle(dish.name)
+        .navigationTitle(recipe.displayName)
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(false)
         .toolbar {
@@ -171,16 +52,299 @@ struct DishDetailView: View {
 
                 } label: {
                     Image(systemName: "heart")
-                        .foregroundColor(.pink)
+                        .foregroundColor(.orange)
                 }
             }
         }
+    }
+
+    // MARK: - View Components
+
+    private var titleSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .bottom, spacing: 8) {
+                Text(recipe.displayName)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                if let rating = recipe.rating, rating > 0 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                            .font(.subheadline)
+                        Text(String(format: "%.1f", rating))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+
+            if let authorName = recipe.authorName, !authorName.isEmpty {
+                Text("作者：\(authorName)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            } else {
+                Text("作者：未知")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    private var imageAndInfoSection: some View {
+        HStack(alignment: .top, spacing: 20) {
+            // Info Tags (Vertical Layout)
+            VStack(alignment: .leading, spacing: 12) {
+                if let rating = recipe.rating, rating > 0 {
+                    InfoTagView(
+                        icon: "star.fill",
+                        label: "評分",
+                        value: String(format: "%.1f", rating),
+                        color: .yellow
+                    )
+                }
+
+                if !recipe.displayTotalTime.isEmpty && recipe.displayTotalTime != "未知" {
+                    InfoTagView(
+                        icon: "clock",
+                        label: "總時間",
+                        value: recipe.displayTotalTime,
+                        color: .blue
+                    )
+                }
+
+                if !recipe.displayPrepTime.isEmpty && recipe.displayPrepTime != "未知" {
+                    InfoTagView(
+                        icon: "timer",
+                        label: "準備",
+                        value: recipe.displayPrepTime,
+                        color: .green
+                    )
+                }
+
+                if !recipe.displayCookTime.isEmpty && recipe.displayCookTime != "未知" {
+                    InfoTagView(
+                        icon: "flame",
+                        label: "烹飪",
+                        value: recipe.displayCookTime,
+                        color: .orange
+                    )
+                }
+
+                if !recipe.displayYield.isEmpty && recipe.displayYield != "未知份量" {
+                    InfoTagView(
+                        icon: "person.2",
+                        label: "份量",
+                        value: recipe.displayYield,
+                        color: .purple
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Recipe Image (Optimized)
+            AsyncImage(url: URL(string: recipe.displayImageUrl)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } placeholder: {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.gray.opacity(0.2))
+                    .overlay(
+                        VStack {
+                            Image(systemName: "photo")
+                                .font(.title2)
+                                .foregroundColor(.gray)
+                            Text("載入中...")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    )
+            }
+            .frame(width: 180, height: 120)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        }
+    }
+
+    private var descriptionSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("描述")
+                .font(.title3)
+                .fontWeight(.semibold)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(recipe.displayDescription)
+                    .lineLimit(isDescriptionExpanded ? nil : 4)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .animation(.easeInOut, value: isDescriptionExpanded)
+
+                if let notes = recipe.notes, !notes.isEmpty {
+                    Text("備註：\(notes)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 4)
+                }
+
+                Button {
+                    withAnimation {
+                        isDescriptionExpanded.toggle()
+                    }
+                } label: {
+                    Text(isDescriptionExpanded ? "收起" : "閱讀更多")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var additionalInfoSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("詳細資訊")
+                .font(.headline)
+                .fontWeight(.semibold)
+
+            VStack(spacing: 8) {
+                if let createdAt = recipe.createdAt {
+                    HStack {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.blue)
+                            .frame(width: 20)
+
+                        Text("發布日期")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        Text(formatDate(createdAt))
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                if let approvalStatus = recipe.approvalStatus {
+                    HStack {
+                        Image(systemName: approvalStatus == "approved" ? "checkmark.seal.fill" : "exclamationmark.triangle")
+                            .foregroundColor(approvalStatus == "approved" ? .green : .orange)
+                            .frame(width: 20)
+
+                        Text("狀態")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        Text(approvalStatus == "approved" ? "已審核" : "待審核")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(approvalStatus == "approved" ? .green : .orange)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var bottomActionSection: some View {
+        VStack(spacing: 16) {
+            // Price Section
+            VStack(spacing: 16) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("價格")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Text("$137.50")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                    }
+
+                    Spacer()
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(12)
+                .shadow(color: .gray.opacity(0.1), radius: 4, x: 0, y: 2)
+
+                // Action Buttons
+                HStack(spacing: 12) {
+                    Button(action: {}) {
+                        HStack {
+                            Image(systemName: "book")
+                            Text("查看食譜")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.orange)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(12)
+                    }
+
+                    Button(action: {}) {
+                        HStack {
+                            Image(systemName: "cart.badge.plus")
+                            Text("加入購物車")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            LinearGradient(
+                                colors: [.orange, .red],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                    }
+                }
+            }
+        }
+        .padding()
+    }
+
+    // Helper function to format date
+    private func formatDate(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+
+        if let date = formatter.date(from: dateString) {
+            let displayFormatter = DateFormatter()
+            displayFormatter.dateStyle = .medium
+            displayFormatter.locale = Locale(identifier: "zh_TW")
+            return displayFormatter.string(from: date)
+        }
+
+        // Try alternative format without milliseconds
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        if let date = formatter.date(from: dateString) {
+            let displayFormatter = DateFormatter()
+            displayFormatter.dateStyle = .medium
+            displayFormatter.locale = Locale(identifier: "zh_TW")
+            return displayFormatter.string(from: date)
+        }
+
+        return dateString
     }
 }
 
 struct DishDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DishDetailView(dish: .init(id: "", name: "Cassava Flakes", description: "Cassava Flakes", image: "https://p3y6v9e6.stackpathcdn.com/wp-content/uploads/zikoko/2020/03/D1sPmD5XQAA7Hjh.jpg", rating: 4.5))
+        DishDetailView(recipe: Recipe.preview)
     }
 }
 
@@ -217,6 +381,74 @@ struct RideView: View {
         .overlay( /// apply a rounded border
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.gray, lineWidth: 1)
+        )
+    }
+}
+
+struct InfoTagView: View {
+    let icon: String
+    let label: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(color)
+                .frame(width: 16)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                Text(value)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(color.opacity(0.08))
+        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(color.opacity(0.2), lineWidth: 1)
+        )
+    }
+}
+
+struct TimeInfoView: View {
+    let icon: String
+    let label: String
+    let time: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundColor(.pink)
+                .frame(width: 16)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                Text(time)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
+        }
+        .padding(.vertical, 6)
+        .padding(.horizontal, 10)
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(.gray.opacity(0.3), lineWidth: 1)
         )
     }
 }

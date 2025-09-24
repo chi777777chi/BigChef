@@ -137,6 +137,9 @@ private struct HomeTabView: View {
                         newViewModel.onSelectDish = { [weak newHomeCoordinator] dish in
                             newHomeCoordinator?.showDishDetail(dish)
                         }
+                        newViewModel.onSelectRecipe = { [weak newHomeCoordinator] recipe in
+                            newHomeCoordinator?.showRecipeDetail(recipe)
+                        }
                         newViewModel.onRequestLogout = { [weak newHomeCoordinator] in
                             newHomeCoordinator?.handleLogout()
                         }

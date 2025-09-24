@@ -228,6 +228,37 @@ extension Recipe {
     }
 
     static let preview = createPreview()
+
+    // Helper method to create Recipe from Dish (for fallback)
+    static func createFromDish(_ dish: Dish) -> Recipe {
+        let jsonData = """
+        {
+            "id": "\(dish.id)",
+            "name": "\(dish.name)",
+            "slug": null,
+            "description": "\(dish.description)",
+            "imageUrl": "\(dish.image)",
+            "prepTime": null,
+            "cookTime": null,
+            "totalTime": null,
+            "recipeYield": null,
+            "rating": \(dish.rating ?? 0.0),
+            "orgUrl": null,
+            "notes": null,
+            "visibility": true,
+            "approvalStatus": "approved",
+            "userId": null,
+            "authorName": null,
+            "reviewedBy": null,
+            "reviewedAt": null,
+            "createdAt": null,
+            "updatedAt": null
+        }
+        """.data(using: .utf8)!
+
+        let decoder = JSONDecoder()
+        return try! decoder.decode(Recipe.self, from: jsonData)
+    }
 }
 
 extension Dish {

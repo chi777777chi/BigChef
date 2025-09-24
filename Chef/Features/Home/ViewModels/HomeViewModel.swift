@@ -51,9 +51,13 @@ final class HomeViewModel: ObservableObject {
     @Published var allDishes: AllDishes?
     @Published var isUsingRealData: Bool = false
     @Published var dataSourceMessage: String = ""
-    
+
+    // Store original Recipe data for detailed display
+    private var recipeMap: [String: Recipe] = [:]
+
     // MARK: - Coordinator Callbacks
     var onSelectDish: ((Dish) -> Void)?
+    var onSelectRecipe: ((Recipe) -> Void)?
     var onRequestLogout: (() -> Void)?
     
     // MARK: - Initialization
@@ -67,7 +71,7 @@ final class HomeViewModel: ObservableObject {
         self.dataSourceMessage = "🔄 正在載入資料..."
 
         print("HomeViewModel: 🚀 開始載入菜品資料...")
-        print("HomeViewModel: 🌐 嘗試連接 API: http://192.168.1.129:8081/api/v1/recipes")
+        print("HomeViewModel: 🌐 嘗試連接 API: http://172.20.10.5:8081/api/v1/recipes")
 
         // First, try to fetch real recipes from API
         service.fetchRecipes(page: 1, size: 20)
@@ -126,6 +130,11 @@ final class HomeViewModel: ObservableObject {
                     print("HomeViewModel: ⚠️ 沒有有效的已批准菜品，切換到模擬資料")
                     self.loadMockData()
                     return
+                }
+
+                // Store original recipes for detailed display
+                for recipe in validRecipes {
+                    self.recipeMap[recipe.id] = recipe
                 }
 
                 // Convert recipes to dishes for existing UI
@@ -210,7 +219,13 @@ final class HomeViewModel: ObservableObject {
     
     // MARK: - User Actions
     func didSelectDish(_ dish: Dish) {
-        onSelectDish?(dish)
+        // Try to find original Recipe for detailed display
+        if let recipe = recipeMap[dish.id] {
+            onSelectRecipe?(recipe)
+        } else {
+            // Fallback to old behavior if no Recipe found
+            onSelectDish?(dish)
+        }
     }
     
     func requestLogout() {

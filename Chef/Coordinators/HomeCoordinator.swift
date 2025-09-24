@@ -27,6 +27,9 @@ final class HomeCoordinator: Coordinator {
         viewModel.onSelectDish = { [weak self] dish in
             self?.showDishDetail(dish)
         }
+        viewModel.onSelectRecipe = { [weak self] recipe in
+            self?.showRecipeDetail(recipe)
+        }
         viewModel.onRequestLogout = { [weak self] in
             self?.handleLogout()
         }
@@ -38,10 +41,17 @@ final class HomeCoordinator: Coordinator {
     
     // MARK: - Navigation Methods
     func showDishDetail(_ dish: Dish) {
-        let detailView = DishDetailView(dish: dish)
+        let detailView = DishDetailView(recipe: Recipe.createFromDish(dish))
         let hostingController = UIHostingController(rootView: detailView)
         navigationController.pushViewController(hostingController, animated: true)
         print("顯示菜品詳情: \(dish.name)")
+    }
+
+    func showRecipeDetail(_ recipe: Recipe) {
+        let detailView = DishDetailView(recipe: recipe)
+        let hostingController = UIHostingController(rootView: detailView)
+        navigationController.pushViewController(hostingController, animated: true)
+        print("顯示食譜詳情: \(recipe.displayName)")
     }
     
     func handleLogout() {

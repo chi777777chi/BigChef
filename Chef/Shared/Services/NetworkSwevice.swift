@@ -16,7 +16,7 @@ protocol NetworkServiceProtocol {
 final class NetworkService: NetworkServiceProtocol {
 
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = "http://192.168.1.129:8081"
+    private let baseURL = "http://172.20.10.5:8081"
 
     func request<T: Decodable>(url: String, decodeType: T.Type) -> Future<T, Error> {
         return Future<T, Error> { [weak self] promise in
