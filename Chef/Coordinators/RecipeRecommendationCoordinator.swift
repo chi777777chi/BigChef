@@ -100,6 +100,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
 
         let detailView = RecipeDetailView(
             recommendationResult: recipe,
+            showNavigationBar: false,  // 使用系統導航欄，保持 tab bar 顯示
             onStartCooking: { [weak self] in
                 self?.startARCooking(with: recipe.recipe)
             },
