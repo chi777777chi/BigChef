@@ -21,8 +21,7 @@ struct RecipeRecommendationView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
+        Group {
                 switch viewModel.state {
                 case .idle, .configuring:
                     mainConfigurationView
@@ -42,7 +41,6 @@ struct RecipeRecommendationView: View {
             }
             .navigationTitle("食譜推薦")
             .navigationBarTitleDisplayMode(.large)
-        }
         .sheet(isPresented: $showingIngredientInput) {
             IngredientInputView(
                 editingIngredient: editingIngredientIndex != nil ? viewModel.availableIngredients[editingIngredientIndex!] : nil

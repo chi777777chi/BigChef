@@ -16,8 +16,7 @@ struct IngredientConfirmationView: View {
     let onCancel: () -> Void
 
     var body: some View {
-        NavigationView {
-            ScrollView {
+        ScrollView {
                 VStack(spacing: 20) {
                     headerSection
                     ingredientsSection
@@ -35,7 +34,6 @@ struct IngredientConfirmationView: View {
                     }
                 }
             }
-        }
         .onAppear {
             viewModel.configure(with: recognitionResult)
         }

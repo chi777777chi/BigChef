@@ -45,6 +45,7 @@ final class CookCoordinator: Coordinator {
     
     func start(with steps: [RecipeStep]) {
         let vc = CookViewController(steps: steps)
+        vc.hidesBottomBarWhenPushed = true  // AR 模式隱藏 tab bar
         navigationController.pushViewController(vc, animated: true)
     }
 }

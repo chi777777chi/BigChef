@@ -12,18 +12,14 @@ struct FoodInfoCardView: View {
     let food: RecognizedFood
     let isExpanded: Bool
     let onToggleExpanded: () -> Void
-    let onSelectFood: (() -> Void)?
-
     init(
         food: RecognizedFood,
         isExpanded: Bool = false,
-        onToggleExpanded: @escaping () -> Void,
-        onSelectFood: (() -> Void)? = nil
+        onToggleExpanded: @escaping () -> Void
     ) {
         self.food = food
         self.isExpanded = isExpanded
         self.onToggleExpanded = onToggleExpanded
-        self.onSelectFood = onSelectFood
     }
 
     var body: some View {
@@ -92,16 +88,6 @@ struct FoodInfoCardView: View {
 
             // 食材和設備統計
             ingredientAndEquipmentStats
-
-            // 動作按鈕（如果提供）
-            if let onSelectFood = onSelectFood {
-                ActionButtonView.success(
-                    title: "使用此食物資訊",
-                    icon: "checkmark.circle",
-                    action: onSelectFood
-                )
-                .padding(.horizontal)
-            }
         }
         .padding(.bottom)
     }
@@ -268,19 +254,13 @@ struct FoodInfoCardView: View {
         FoodInfoCardView(
             food: sampleFood,
             isExpanded: false,
-            onToggleExpanded: {},
-            onSelectFood: {
-                print("選擇了食物")
-            }
+            onToggleExpanded: {}
         )
 
         FoodInfoCardView(
             food: sampleFood,
             isExpanded: true,
-            onToggleExpanded: {},
-            onSelectFood: {
-                print("選擇了食物")
-            }
+            onToggleExpanded: {}
         )
     }
     .padding()

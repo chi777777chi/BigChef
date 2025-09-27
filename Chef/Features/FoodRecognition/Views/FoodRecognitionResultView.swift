@@ -56,7 +56,6 @@ struct FoodRecognitionResultView: View {
             }
             .padding()
         }
-        .navigationBarHidden(true)
     }
 
     // MARK: - 子視圖
@@ -150,9 +149,6 @@ struct FoodRecognitionResultView: View {
                                 expandedFoodIds.insert(food.id)
                             }
                         }
-                    },
-                    onSelectFood: {
-                        // 功能移除：不再支援選擇特定食物
                     }
                 )
             }
@@ -198,7 +194,7 @@ struct FoodRecognitionResultView: View {
             VStack(spacing: 12) {
                 // 生成食譜按鈕 - 直接跳轉到食譜推薦頁面
                 ActionButtonView.primary(
-                    title: "生成食譜",
+                    title: "確認食材",
                     icon: "chef.hat",
                     action: {
                         print("生成食譜按鈕被點擊，直接導航到食譜推薦頁面")
