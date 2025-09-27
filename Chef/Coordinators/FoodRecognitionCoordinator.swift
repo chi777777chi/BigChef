@@ -83,97 +83,87 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         coordinator.showRecipeDetail(recipe)
     }
 
-    /// 從食物辨識結果導航到食譜生成
-    func navigateToRecipeGeneration(with result: FoodRecognitionResponse) {
-        print("🧑‍🍳 FoodRecognitionCoordinator: 從食物辨識結果導航到食譜生成")
+    /// 從食物辨識結果直接導航到食材確認頁面（簡化流程）
+    func navigateToIngredientConfirmation(with result: FoodRecognitionResponse) {
+        print("🔍 FoodRecognitionCoordinator: 直接導航到食材確認頁面，跳過中間步驟")
+        print("   辨識出的食物：\(result.recognizedFoods.map { $0.name }.joined(separator: ", "))")
+        print("   辨識出的食材：\(result.recognizedFoods.flatMap { $0.possibleIngredients }.count) 個")
+        print("   辨識出的器具：\(result.recognizedFoods.flatMap { $0.possibleEquipment }.count) 個")
 
-        guard let primaryFood = result.primaryFood else {
-            print("❌ 沒有主要食物，無法生成食譜")
-            return
-        }
-
-        // 創建食譜建議請求
-        let availableIngredients = result.allIngredients.map { ingredient in
-            Ingredient(
-                name: ingredient.name,
-                type: ingredient.type,
-                amount: "適量",
-                unit: "",
-                preparation: ""
-            )
-        }
-
-        let availableEquipment = result.allEquipment.map { equipment in
-            Equipment(
-                name: equipment.name,
-                type: equipment.type,
-                size: "",
-                material: "",
-                power_source: ""
-            )
-        }
-
-        let preference = Preference(
-            cooking_method: "",
-            dietary_restrictions: [],
-            serving_size: "2人份"
+        let confirmationView = IngredientConfirmationView(
+            recognitionResult: result,
+            onConfirm: { [weak self] selectedIngredients, selectedEquipment in
+                // 獲取辨識出的主要食物名稱，用於生成特定食譜
+                let recognizedFoodName = result.recognizedFoods.first?.name
+                self?.navigateToRecipeGenerationWithFoodName(
+                    ingredients: selectedIngredients,
+                    equipment: selectedEquipment,
+                    recognizedFoodName: recognizedFoodName
+                )
+            },
+            onCancel: { [weak self] in
+                self?.goBack()
+            }
         )
+        .environmentObject(self)
 
-        let request = SuggestRecipeRequest(
-            available_ingredients: availableIngredients,
-            available_equipment: availableEquipment,
-            preference: preference
-        )
+        let hostingController = UIHostingController(rootView: confirmationView)
+        hostingController.title = "確認食材器具"
+        hostingController.navigationItem.largeTitleDisplayMode = .never
 
-        // 導航到食譜生成頁面
-        let coordinator = RecipeCoordinator(navigationController: navigationController)
-        addChildCoordinator(coordinator)
-        coordinator.start() // 使用現有的 start 方法
+        navigationController.pushViewController(hostingController, animated: true)
     }
 
-    /// 使用選中的食材和器具導航到食譜生成
+    /// 從食物辨識結果導航到食譜生成（已廢棄，保留向後兼容）
+    func navigateToRecipeGeneration(with result: FoodRecognitionResponse) {
+        print("🧑‍🍳 FoodRecognitionCoordinator: 從食物辨識結果導航到食譜生成（舊方法）")
+
+        // 直接導航到確認頁面
+        navigateToIngredientConfirmation(with: result)
+    }
+
+
+    /// 基於辨識食物名稱導航到食譜推薦頁面（新的主要方法）
+    func navigateToRecipeGenerationWithFoodName(
+        ingredients: [String],
+        equipment: [String],
+        recognizedFoodName: String? = nil
+    ) {
+        print("🧑‍🍳 FoodRecognitionCoordinator: 基於辨識食物生成食譜")
+        print("  辨識食物：\(recognizedFoodName ?? "未知")")
+        print("  確認食材：\(ingredients)")
+        print("  確認器具：\(equipment)")
+
+        // 直接使用 RecipeRecommendationCoordinator
+        let recipeRecommendationCoordinator = RecipeRecommendationCoordinator(
+            navigationController: navigationController,
+            parentCoordinator: parentCoordinator
+        )
+
+        addChildCoordinator(recipeRecommendationCoordinator)
+
+        // 使用預填資料啟動，包含辨識食物名稱
+        recipeRecommendationCoordinator.startWithPrefillData(
+            ingredients: ingredients,
+            equipment: equipment,
+            recognizedFoodName: recognizedFoodName
+        )
+    }
+
+    /// 使用選中的食材和器具導航到食譜推薦頁面（舊方法，保留向後兼容）
     func navigateToRecipeGeneration(
         ingredients: [String],
         equipment: [String],
         descriptionHint: String? = nil
     ) {
-        print("🧑‍🍳 FoodRecognitionCoordinator: 使用選中的食材導航到食譜生成")
+        print("🧑‍🍳 FoodRecognitionCoordinator: 直接導航到食譜推薦（舊方法）")
 
-        let availableIngredients = ingredients.map { name in
-            Ingredient(
-                name: name,
-                type: "未分類",
-                amount: "適量",
-                unit: "",
-                preparation: ""
-            )
-        }
-
-        let availableEquipment = equipment.map { name in
-            Equipment(
-                name: name,
-                type: "未分類",
-                size: "",
-                material: "",
-                power_source: ""
-            )
-        }
-
-        let preference = Preference(
-            cooking_method: "",
-            dietary_restrictions: [],
-            serving_size: "2人份"
+        // 使用新方法
+        navigateToRecipeGenerationWithFoodName(
+            ingredients: ingredients,
+            equipment: equipment,
+            recognizedFoodName: nil
         )
-
-        let request = SuggestRecipeRequest(
-            available_ingredients: availableIngredients,
-            available_equipment: availableEquipment,
-            preference: preference
-        )
-
-        let coordinator = RecipeCoordinator(navigationController: navigationController)
-        addChildCoordinator(coordinator)
-        coordinator.start() // 使用現有的 start 方法
     }
 
     /// 顯示錯誤提示

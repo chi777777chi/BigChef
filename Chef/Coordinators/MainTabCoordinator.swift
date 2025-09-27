@@ -187,8 +187,9 @@ private struct FoodRecognitionTabView: View {
 
     var body: some View {
         Group {
-            if let viewModel = viewModel {
+            if let viewModel = viewModel, let coordinator = foodRecognitionCoordinator {
                 FoodRecognitionView(viewModel: viewModel)
+                    .environmentObject(coordinator)
             } else {
                 ProgressView()
                     .onAppear {

@@ -12,26 +12,20 @@ struct FoodRecognitionResultView: View {
     let result: FoodRecognitionResponse
     let selectedImage: UIImage?
     let onRetry: () -> Void
-    let onUseIngredients: () -> Void
-    let onUseSelectedIngredients: ((Set<UUID>, Set<UUID>) -> Void)?
+    let onGenerateRecipe: (() -> Void)?  // 新增：直接生成食譜的回調
 
     @State private var expandedFoodIds: Set<UUID> = []
-    @State private var selectedIngredients: Set<UUID> = []
-    @State private var selectedEquipment: Set<UUID> = []
-    @State private var showSelectionMode = false
 
     init(
         result: FoodRecognitionResponse,
         selectedImage: UIImage?,
         onRetry: @escaping () -> Void,
-        onUseIngredients: @escaping () -> Void,
-        onUseSelectedIngredients: ((Set<UUID>, Set<UUID>) -> Void)? = nil
+        onGenerateRecipe: (() -> Void)? = nil
     ) {
         self.result = result
         self.selectedImage = selectedImage
         self.onRetry = onRetry
-        self.onUseIngredients = onUseIngredients
-        self.onUseSelectedIngredients = onUseSelectedIngredients
+        self.onGenerateRecipe = onGenerateRecipe
     }
 
     var body: some View {
@@ -158,10 +152,7 @@ struct FoodRecognitionResultView: View {
                         }
                     },
                     onSelectFood: {
-                        // 使用特定食物的食材和器具
-                        selectedIngredients = Set(food.possibleIngredients.map { $0.id })
-                        selectedEquipment = Set(food.possibleEquipment.map { $0.id })
-                        showSelectionMode = true
+                        // 功能移除：不再支援選擇特定食物
                     }
                 )
             }
@@ -175,11 +166,11 @@ struct FoodRecognitionResultView: View {
                     // 轉換為 PossibleIngredient
                     PossibleIngredient(name: ingredient.name, type: ingredient.type)
                 },
-                selectedIngredients: selectedIngredients,
-                showSelection: showSelectionMode,
+                selectedIngredients: Set<UUID>(),
+                showSelection: false,
                 groupByType: true,
-                onSelectionChanged: { newSelection in
-                    selectedIngredients = newSelection
+                onSelectionChanged: { _ in
+                    // 功能移除：不再支援選擇功能
                 }
             )
         }
@@ -192,11 +183,11 @@ struct FoodRecognitionResultView: View {
                     // 轉換為 PossibleEquipment
                     PossibleEquipment(name: equipment.name, type: equipment.type)
                 },
-                selectedEquipment: selectedEquipment,
-                showSelection: showSelectionMode,
+                selectedEquipment: Set<UUID>(),
+                showSelection: false,
                 groupByType: true,
-                onSelectionChanged: { newSelection in
-                    selectedEquipment = newSelection
+                onSelectionChanged: { _ in
+                    // 功能移除：不再支援選擇功能
                 }
             )
         }
@@ -204,61 +195,24 @@ struct FoodRecognitionResultView: View {
 
     private var actionButtonsSection: some View {
         VStack(spacing: 16) {
-            if showSelectionMode {
-                // 選擇模式下的按鈕
-                VStack(spacing: 12) {
-                    ActionButtonView.success(
-                        title: "使用選中的食材和器具",
-                        icon: "checkmark.circle",
-                        isEnabled: !selectedIngredients.isEmpty || !selectedEquipment.isEmpty,
-                        action: {
-                            if let callback = onUseSelectedIngredients {
-                                callback(selectedIngredients, selectedEquipment)
-                            } else {
-                                onUseIngredients()
-                            }
-                        }
-                    )
-
-                    Button("取消選擇") {
-                        withAnimation {
-                            showSelectionMode = false
-                            selectedIngredients.removeAll()
-                            selectedEquipment.removeAll()
+            VStack(spacing: 12) {
+                // 生成食譜按鈕 - 直接跳轉到食譜推薦頁面
+                ActionButtonView.primary(
+                    title: "生成食譜",
+                    icon: "chef.hat",
+                    action: {
+                        print("生成食譜按鈕被點擊，直接導航到食譜推薦頁面")
+                        if let generateRecipe = onGenerateRecipe {
+                            generateRecipe()
                         }
                     }
-                    .foregroundColor(.brandOrange)
-                }
-            } else {
-                // 一般模式下的按鈕
-                VStack(spacing: 12) {
-                    ActionButtonView.success(
-                        title: "使用所有食材",
-                        icon: "checkmark.circle",
-                        action: onUseIngredients
-                    )
+                )
 
-                    ActionButtonView.secondary(
-                        title: "選擇特定食材",
-                        icon: "checklist",
-                        action: {
-                            withAnimation {
-                                showSelectionMode = true
-                                // 預設選擇主要食物的食材
-                                if let primaryFood = result.recognizedFoods.first {
-                                    selectedIngredients = Set(primaryFood.possibleIngredients.map { $0.id })
-                                    selectedEquipment = Set(primaryFood.possibleEquipment.map { $0.id })
-                                }
-                            }
-                        }
-                    )
-
-                    ActionButtonView.secondary(
-                        title: "重新辨識",
-                        icon: "arrow.clockwise",
-                        action: onRetry
-                    )
-                }
+                ActionButtonView.secondary(
+                    title: "重新辨識",
+                    icon: "arrow.clockwise",
+                    action: onRetry
+                )
             }
         }
         .padding(.top)
@@ -321,11 +275,8 @@ struct FoodRecognitionResultView: View {
             onRetry: {
                 print("重新辨識")
             },
-            onUseIngredients: {
-                print("使用食材")
-            },
-            onUseSelectedIngredients: { ingredients, equipment in
-                print("使用選中的食材：\(ingredients.count) 個，器具：\(equipment.count) 個")
+            onGenerateRecipe: {
+                print("生成食譜")
             }
         )
     }

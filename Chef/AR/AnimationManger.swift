@@ -17,6 +17,7 @@ class AnimationManager {
 
     private var lastGenerateTime: CFTimeInterval = 0
     private let minInterval: CFTimeInterval = 0.35
+    private let maxRetries: Int = 2
 
     init() {
         self.model = AnimationManager.sharedModel
@@ -38,11 +39,13 @@ class AnimationManager {
     
     @MainActor func selectTypeAndParameters(for step: String, from arView: ARView) async -> (AnimationType, AnimationParams)? {
         if step == lastStep, let cached = lastResult {
+            print("🔄 使用快取結果：\(step)")
             return cached
         }
         // 若兩次請求間隔過短，直接回傳快取
         let now = CACurrentMediaTime()
         if now - lastGenerateTime < minInterval, let cached = lastResult {
+            print("⏱️ 請求間隔過短，使用快取結果")
             return cached
         }
         lastGenerateTime = now
@@ -100,54 +103,100 @@ class AnimationManager {
         print("📨 發送 Prompt：\(promptText)")
         let textPart = ModelContent.Part.text(promptText)
         let imagePart = ModelContent.Part.png(screenshot.pngData()!)
-        do {
-            let response = try await model.generateContent(textPart, imagePart)
-            var raw = response.text?
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            raw = raw
-                .replacingOccurrences(of: "```json", with: "")
-                .replacingOccurrences(of: "```", with: "")
-                .replacingOccurrences(of: "`", with: "")
-            if let start = raw.firstIndex(where: { $0 == "{" }) {
-                raw = String(raw[start...])
-            }
-            guard let data = raw.data(using: .utf8) else {
-                print("⚠️ 無法將回傳轉為 Data：\(raw)")
-                return nil
-            }
-            let decoder = JSONDecoder()
-            let result = try decoder.decode(CombinedResult.self, from: data)
-            guard let animationType = AnimationType(rawValue: result.type) else {
-                print("❌ 無效的 AnimationType：\(result.type)")
-                return nil
-            }
-            let container = result.container.flatMap { Container(rawValue: $0) }
-            let params = AnimationParams(
-                coordinate:  result.coordinate,
-                container:   container,
-                ingredient:  result.ingredient,
-                color:       result.color,
-                time:        result.time,
-                temperature: result.temperature,
-                flameLevel:  result.flameLevel
-            )
-            lastStep = step
-            lastResult = (animationType, params)
+
+        // 重試邏輯
+        for attempt in 1...maxRetries {
             do {
-                let jsonData = try JSONEncoder().encode(params)
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    print("✅ 選擇類型：\(animationType)，參數 JSON：\(jsonString)")
-                } else {
-                    print("✅ 選擇類型：\(animationType)，參數無法轉成 JSON")
+                print("🔄 嘗試第 \(attempt) 次 API 請求")
+                let response = try await model.generateContent(textPart, imagePart)
+                var raw = response.text?
+                    .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+                print("🔍 原始回傳內容：\(raw)")
+
+                raw = raw
+                    .replacingOccurrences(of: "```json", with: "")
+                    .replacingOccurrences(of: "```", with: "")
+                    .replacingOccurrences(of: "`", with: "")
+
+                if let start = raw.firstIndex(where: { $0 == "{" }) {
+                    raw = String(raw[start...])
                 }
+
+                print("🧹 清理後內容：\(raw)")
+
+                guard let data = raw.data(using: .utf8) else {
+                    print("⚠️ 無法將回傳轉為 Data：\(raw)")
+                    continue
+                }
+
+                let decoder = JSONDecoder()
+                let result = try decoder.decode(CombinedResult.self, from: data)
+
+                guard let animationType = AnimationType(rawValue: result.type) else {
+                    print("❌ 無效的 AnimationType：\(result.type)")
+                    continue
+                }
+
+                let container = result.container.flatMap { Container(rawValue: $0) }
+                let params = AnimationParams(
+                    coordinate:  result.coordinate,
+                    container:   container,
+                    ingredient:  result.ingredient,
+                    color:       result.color,
+                    time:        result.time,
+                    temperature: result.temperature,
+                    flameLevel:  result.flameLevel
+                )
+
+                lastStep = step
+                lastResult = (animationType, params)
+
+                do {
+                    let jsonData = try JSONEncoder().encode(params)
+                    if let jsonString = String(data: jsonData, encoding: .utf8) {
+                        print("✅ 選擇類型：\(animationType)，參數 JSON：\(jsonString)")
+                    } else {
+                        print("✅ 選擇類型：\(animationType)，參數無法轉成 JSON")
+                    }
+                } catch {
+                    print("✅ 選擇類型：\(animationType)，參數 JSON 編碼失敗：\(error)")
+                }
+                return (animationType, params)
+
             } catch {
-                print("✅ 選擇類型：\(animationType)，參數 JSON 編碼失敗：\(error)")
+                print("❌ 第 \(attempt) 次嘗試失敗：\(error)")
+
+                // 處理特定的網路錯誤
+                if let urlError = error as? URLError {
+                    switch urlError.code {
+                    case .cancelled:
+                        print("🔄 請求被取消，這通常是正常的行為（可能是用戶快速切換或網路中斷）")
+                    case .timedOut:
+                        print("⏰ 請求超時，請檢查網路連接")
+                    case .networkConnectionLost:
+                        print("🌐 網路連接中斷")
+                    default:
+                        print("🌍 網路錯誤：\(urlError.localizedDescription)")
+                    }
+                }
+
+                // 如果不是最後一次嘗試，等待後重試
+                if attempt < maxRetries {
+                    print("⏳ 等待 1 秒後重試...")
+                    try? await Task.sleep(nanoseconds: 1_000_000_000) // 1秒
+                    continue
+                }
             }
-            return (animationType, params)
-        } catch {
-            print("❌ 解析參數失敗：\(error)")
-            return nil
         }
+
+        // 所有嘗試都失敗，使用快取或回傳 nil
+        if let cached = lastResult {
+            print("🆘 所有嘗試失敗，使用最後一次成功的快取結果")
+            return cached
+        }
+
+        return nil
     }
 }
 

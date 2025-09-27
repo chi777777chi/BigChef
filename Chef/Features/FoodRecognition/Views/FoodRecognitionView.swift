@@ -196,83 +196,39 @@ struct FoodRecognitionView: View {
             onRetry: {
                 viewModel.retryRecognition()
             },
-            onUseIngredients: {
-                handleUseIngredients(from: response)
-            },
-            onUseSelectedIngredients: { selectedIngredients, selectedEquipment in
-                handleUseSelectedIngredients(
-                    ingredientIds: selectedIngredients,
-                    equipmentIds: selectedEquipment,
-                    from: response
-                )
+            onGenerateRecipe: {
+                // 直接導航到食譜推薦頁面，跳過食材器具確認步驟
+                handleDirectRecipeGeneration(from: response)
             }
         )
     }
 
     // MARK: - Helper Methods
 
-    /// 處理使用食材功能
-    private func handleUseIngredients(from response: FoodRecognitionResponse) {
-        print("🧑‍🍳 使用辨識結果生成食譜")
+    /// 處理直接生成食譜功能（跳過食材器具確認步驟）
+    private func handleDirectRecipeGeneration(from response: FoodRecognitionResponse) {
+        print("🚀 直接生成食譜按鈕被點擊，跳過食材器具確認步驟")
+        print("辨識出的食物：\(response.recognizedFoods.map { $0.name }.joined(separator: ", "))")
 
-        // 提取所有食材和器具名稱
-        let ingredients = response.allIngredients.map { $0.name }
-        let equipment = response.allEquipment.map { $0.name }
-        let descriptionHint = response.primaryFood?.description ?? ""
+        // 提取所有辨識出的食材和器具名稱
+        let allIngredients = response.allIngredients.map { $0.name }
+        let allEquipment = response.allEquipment.map { $0.name }
 
-        // 使用 Coordinator 導航到食譜生成
-        coordinator.navigateToRecipeGeneration(
-            ingredients: ingredients,
-            equipment: equipment,
-            descriptionHint: descriptionHint
+        // 獲取主要辨識食物的名稱
+        let recognizedFoodName = response.recognizedFoods.first?.name
+
+        print("📋 準備使用食材：\(allIngredients)")
+        print("🔧 準備使用器具：\(allEquipment)")
+        print("🍽️ 主要食物：\(recognizedFoodName ?? "未知")")
+
+        // 直接導航到食譜推薦頁面，跳過食材確認
+        coordinator.navigateToRecipeGenerationWithFoodName(
+            ingredients: allIngredients,
+            equipment: allEquipment,
+            recognizedFoodName: recognizedFoodName
         )
-
-        // 顯示成功提示
-        coordinator.showSuccess(message: "正在為您生成食譜...")
     }
 
-    /// 處理使用選中的食材功能
-    private func handleUseSelectedIngredients(
-        ingredientIds: Set<UUID>,
-        equipmentIds: Set<UUID>,
-        from response: FoodRecognitionResponse
-    ) {
-        print("🧑‍🍳 使用選中的食材生成食譜")
-
-        // 從 ID 集合中找出對應的食材和器具名稱
-        let selectedIngredients = response.allIngredients
-            .filter { ingredientIds.contains($0.id) }
-            .map { $0.name }
-
-        let selectedEquipment = response.allEquipment
-            .filter { equipmentIds.contains($0.id) }
-            .map { $0.name }
-
-        // 如果沒有選擇任何食材或器具，顯示提示
-        guard !selectedIngredients.isEmpty || !selectedEquipment.isEmpty else {
-            coordinator.showError(NSError(
-                domain: "FoodRecognition",
-                code: 0,
-                userInfo: [NSLocalizedDescriptionKey: "請至少選擇一種食材或器具"]
-            ))
-            return
-        }
-
-        let descriptionHint = response.primaryFood?.description ?? ""
-
-        // 使用 Coordinator 導航到食譜生成
-        coordinator.navigateToRecipeGeneration(
-            ingredients: selectedIngredients,
-            equipment: selectedEquipment,
-            descriptionHint: descriptionHint
-        )
-
-        // 顯示成功提示
-        let ingredientCount = selectedIngredients.count
-        let equipmentCount = selectedEquipment.count
-        let message = "已選擇 \(ingredientCount) 種食材和 \(equipmentCount) 種器具，正在生成食譜..."
-        coordinator.showSuccess(message: message)
-    }
 
     private func errorStateView(_ error: FoodRecognitionError) -> some View {
         FoodRecognitionErrorView(

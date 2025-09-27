@@ -46,6 +46,35 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         navigationController.pushViewController(hostingController, animated: true)
     }
 
+    /// 使用預填資料啟動（來自食物辨識）
+    func startWithPrefillData(ingredients: [String], equipment: [String] = [], recognizedFoodName: String? = nil) {
+        print("🔄 RecipeRecommendationCoordinator: 啟動食譜推薦流程（預填資料）")
+        print("   辨識食物：\(recognizedFoodName ?? "基於食材推薦")")
+
+        // 創建 ViewModel 和 View
+        let viewModel = RecipeRecommendationViewModel()
+        self.viewModel = viewModel
+
+        // 預填資料，包含辨識食物名稱
+        viewModel.prefillFromRecognition(
+            ingredients: ingredients,
+            equipment: equipment,
+            recognizedFoodName: recognizedFoodName
+        )
+
+        let view = RecipeRecommendationView(viewModel: viewModel, coordinator: self)
+
+        let hostingController = UIHostingController(rootView: AnyView(view))
+        self.hostingController = hostingController
+
+        // 根據是否有辨識食物調整標題
+        let title = recognizedFoodName != nil ? "製作 \(recognizedFoodName!)" : "食譜推薦"
+        hostingController.title = title
+        hostingController.navigationItem.largeTitleDisplayMode = .automatic
+
+        navigationController.pushViewController(hostingController, animated: true)
+    }
+
     func stop() {
         print("🛑 RecipeRecommendationCoordinator: 停止食譜推薦流程")
 

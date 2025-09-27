@@ -23,6 +23,9 @@ final class RecipeRecommendationViewModel: ObservableObject {
     @Published var isFormValid: Bool = false
     @Published var validationErrors: [String] = []
 
+    // MARK: - New Properties for Food Recognition
+    @Published var recognizedFoodName: String? = nil  // 辨識出的食物名稱
+
     // MARK: - Private Properties
     private let recommendationService: RecipeRecommendationService
     private var cancellables = Set<AnyCancellable>()
@@ -108,6 +111,95 @@ final class RecipeRecommendationViewModel: ObservableObject {
     deinit {
         currentTask?.cancel()
         cancellables.removeAll()
+    }
+
+    // MARK: - Public Methods - Data Prefilling
+
+    /// 預填食材和器具資料（來自食物辨識）
+    func prefillFromRecognition(ingredients: [String], equipment: [String] = [], recognizedFoodName: String? = nil) {
+        print("🔄 RecipeRecommendationViewModel: 預填辨識結果")
+        print("  辨識食物：\(recognizedFoodName ?? "基於食材推薦")")
+        print("  食材：\(ingredients)")
+        print("  器具：\(equipment)")
+
+        // 設置辨識食物名稱
+        self.recognizedFoodName = recognizedFoodName
+
+        // 轉換食材
+        self.availableIngredients = ingredients.map { name in
+            AvailableIngredient(
+                name: name,
+                type: "食材",
+                amount: "適量",
+                unit: "",
+                preparation: ""
+            )
+        }
+
+        // 轉換器具
+        self.availableEquipment = equipment.map { name in
+            AvailableEquipment(
+                name: name,
+                type: "器具",
+                size: "",
+                material: "",
+                powerSource: ""
+            )
+        }
+
+        // 根據辨識食物調整偏好設定
+        if let foodName = recognizedFoodName {
+            preference = RecommendationPreference(
+                cookingMethod: "製作 \(foodName)",
+                dietaryRestrictions: preference.dietaryRestrictions,
+                servingSize: preference.servingSize
+            )
+        }
+
+        // 更新表單驗證狀態
+        validateForm()
+    }
+
+    // MARK: - Private Methods - New API Integration
+
+    /// 基於辨識食物生成製作食譜
+    private func generateRecipeForRecognizedFood(
+        foodName: String,
+        ingredients: [String],
+        equipment: [String]
+    ) async throws -> RecipeRecommendationResponse {
+
+        let request = RecognizedFoodRecipeRequest(
+            recognizedFoodName: foodName,
+            recognizedIngredients: ingredients,
+            recognizedEquipment: equipment,
+            confidence: nil,
+            servings: extractServingNumber(from: preference.servingSize ?? "2人份")
+        )
+
+        // 調用新的 RecipeService API
+        let recipeResponse = try await RecipeService.generateRecipeForRecognizedFood(using: request)
+
+        // 轉換為 RecipeRecommendationResponse
+        return RecipeRecommendationResponse(
+            dishName: recipeResponse.dish_name,
+            dishDescription: recipeResponse.dish_description,
+            ingredients: recipeResponse.ingredients,
+            equipment: recipeResponse.equipment,
+            recipe: recipeResponse.recipe
+        )
+    }
+
+    /// 從份量字串中提取數字
+    private func extractServingNumber(from servingString: String) -> Int {
+        let numberRegex = try? NSRegularExpression(pattern: "\\d+", options: [])
+        let range = NSRange(location: 0, length: servingString.utf16.count)
+
+        if let match = numberRegex?.firstMatch(in: servingString, options: [], range: range) {
+            let numberString = (servingString as NSString).substring(with: match.range)
+            return Int(numberString) ?? 2
+        }
+        return 2
     }
 
     // MARK: - Public Methods - Task Management
@@ -355,11 +447,24 @@ final class RecipeRecommendationViewModel: ObservableObject {
 
         currentTask = Task {
             do {
-                let response = try await recommendationService.recommendRecipe(
-                    ingredients: availableIngredients,
-                    equipment: availableEquipment,
-                    preference: preference
-                )
+                let response: RecipeRecommendationResponse
+
+                // 如果有辨識出的食物名稱，使用新的專用 API
+                if let foodName = recognizedFoodName, !foodName.isEmpty {
+                    print("🍽️ 使用辨識食物 API 生成 \(foodName) 的製作食譜")
+                    response = try await generateRecipeForRecognizedFood(
+                        foodName: foodName,
+                        ingredients: availableIngredients.map { $0.name },
+                        equipment: availableEquipment.map { $0.name }
+                    )
+                } else {
+                    print("🥬 使用一般推薦 API 基於食材生成食譜")
+                    response = try await recommendationService.recommendRecipe(
+                        ingredients: availableIngredients,
+                        equipment: availableEquipment,
+                        preference: preference
+                    )
+                }
 
                 guard !Task.isCancelled else { return }
 
