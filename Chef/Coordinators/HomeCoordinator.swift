@@ -56,6 +56,21 @@ final class HomeCoordinator: Coordinator {
         navigationController.pushViewController(hostingController, animated: true)
         print("顯示食譜詳情: \(recipe.displayName)")
     }
+
+    func showAllRecipes(section: RecipeSection, initialRecipes: [Recipe] = []) {
+        let viewModel = AllRecipesViewModel(section: section, initialRecipes: initialRecipes)
+        viewModel.onSelectRecipe = { [weak self] recipe in
+            self?.showRecipeDetail(recipe)
+        }
+        viewModel.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+
+        let allRecipesView = AllRecipesView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: allRecipesView)
+        navigationController.pushViewController(hostingController, animated: true)
+        print("顯示全部食譜: \(section.title)")
+    }
     
     func handleLogout() {
         print("HomeCoordinator: 開始處理登出")

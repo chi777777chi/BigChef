@@ -165,8 +165,7 @@ struct HomeView: View {
             SectionTitleView(
                 title: "菜品分類",
                 onSeeAllTapped: {
-                    // TODO: 處理查看全部分類
-                    print("查看全部分類")
+                    viewModel.requestShowAllRecipes(section: .all)
                 }
             )
             ScrollView(.horizontal, showsIndicators: false) {
@@ -191,8 +190,7 @@ struct HomeView: View {
             SectionTitleView(
                 title: "熱門菜品",
                 onSeeAllTapped: {
-                    // TODO: 處理查看全部熱門菜品
-                    print("查看全部熱門菜品")
+                    viewModel.requestShowAllRecipes(section: .popular)
                 }
             )
             ScrollView(.horizontal, showsIndicators: false) {
@@ -224,8 +222,7 @@ struct HomeView: View {
             SectionTitleView(
                 title: "推薦菜品",
                 onSeeAllTapped: {
-                    // TODO: 處理查看全部推薦菜品
-                    print("查看全部推薦菜品")
+                    viewModel.requestShowAllRecipes(section: .recommended)
                 }
             )
             LazyVStack(spacing: 15) {

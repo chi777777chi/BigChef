@@ -61,6 +61,7 @@ final class HomeViewModel: ObservableObject {
     var onSelectDish: ((Dish) -> Void)?
     var onSelectRecipe: ((Recipe) -> Void)?
     var onRequestLogout: (() -> Void)?
+    var onShowAllRecipes: ((RecipeSection, [Recipe]) -> Void)?
     
     // MARK: - Initialization
     init(service: NetworkServiceProtocol = NetworkService(), authViewModel: AuthViewModel) {
@@ -235,6 +236,59 @@ final class HomeViewModel: ObservableObject {
     func requestLogout() {
         print("HomeViewModel: 用戶請求登出")
         onRequestLogout?()
+    }
+
+    func requestShowAllRecipes(section: RecipeSection) {
+        print("HomeViewModel: 用戶請求查看全部: \(section.title)")
+
+        guard let allDishes = allDishes else {
+            print("HomeViewModel: 錯誤 - 沒有可用的菜品資料")
+            return
+        }
+
+        // 根據section類型獲取對應的recipes
+        var recipesToShow: [Recipe] = []
+
+        switch section {
+        case .popular:
+            // 將Dish轉換為Recipe，使用stored recipe如果可用
+            recipesToShow = allDishes.populars.compactMap { dish in
+                if let storedRecipe = recipeMap[dish.id] {
+                    return storedRecipe
+                } else {
+                    return Recipe.createFromDish(dish)
+                }
+            }
+        case .recommended:
+            // 將Dish轉換為Recipe，使用stored recipe如果可用
+            recipesToShow = allDishes.specials.compactMap { dish in
+                if let storedRecipe = recipeMap[dish.id] {
+                    return storedRecipe
+                } else {
+                    return Recipe.createFromDish(dish)
+                }
+            }
+        case .all:
+            // 合併所有recipes
+            let popularRecipes = allDishes.populars.compactMap { dish in
+                if let storedRecipe = recipeMap[dish.id] {
+                    return storedRecipe
+                } else {
+                    return Recipe.createFromDish(dish)
+                }
+            }
+            let recommendedRecipes = allDishes.specials.compactMap { dish in
+                if let storedRecipe = recipeMap[dish.id] {
+                    return storedRecipe
+                } else {
+                    return Recipe.createFromDish(dish)
+                }
+            }
+            recipesToShow = popularRecipes + recommendedRecipes
+        }
+
+        print("HomeViewModel: 準備顯示 \(recipesToShow.count) 個\(section.title)")
+        onShowAllRecipes?(section, recipesToShow)
     }
 }
 
