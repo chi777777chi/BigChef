@@ -60,17 +60,20 @@ struct RecommendationPreference: Codable {
     let cookingMethod: String?
     let dietaryRestrictions: [String]?
     let servingSize: String?
+    let recipeDescription: String?
 
     enum CodingKeys: String, CodingKey {
         case cookingMethod = "cooking_method"
         case dietaryRestrictions = "dietary_restrictions"
         case servingSize = "serving_size"
+        case recipeDescription = "recipe_description"
     }
 
-    init(cookingMethod: String?, dietaryRestrictions: [String]?, servingSize: String?) {
+    init(cookingMethod: String?, dietaryRestrictions: [String]?, servingSize: String?, recipeDescription: String? = nil) {
         self.cookingMethod = cookingMethod
         self.dietaryRestrictions = dietaryRestrictions
         self.servingSize = servingSize
+        self.recipeDescription = recipeDescription
     }
 }
 
@@ -125,7 +128,8 @@ extension RecommendationPreference {
         RecommendationPreference(
             cookingMethod: "煎",
             dietaryRestrictions: ["無麩質"],
-            servingSize: "1人份"
+            servingSize: "1人份",
+            recipeDescription: "希望是簡單易做的家常菜"
         )
     }
 }

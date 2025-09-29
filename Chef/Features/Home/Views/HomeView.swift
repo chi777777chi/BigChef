@@ -21,7 +21,9 @@ struct HomeView: View {
                 loadingView
             case .error(let message):
                 ErrorView(message) {
-                    viewModel.fetchAllDishes()
+                    Task {
+                        await viewModel.fetchAllDishes()
+                    }
                 }
             case .dataLoaded:
                 mainContent
@@ -29,7 +31,9 @@ struct HomeView: View {
         }
         .onAppear {
             if viewModel.allDishes == nil {
-                viewModel.fetchAllDishes()
+                Task {
+                    await viewModel.fetchAllDishes()
+                }
             }
         }
         .navigationBarHidden(true)
@@ -245,15 +249,15 @@ struct HomeView_Previews: PreviewProvider {
         Group {
             // 載入中狀態
             HomeView(viewModel: {
-                let vm = HomeViewModel()
+                let vm = HomeViewModel(authViewModel: AuthViewModel())
                 vm.viewState = .loading
                 return vm
             }())
             .previewDisplayName("載入中")
-            
+
             // 錯誤狀態
             HomeView(viewModel: {
-                let vm = HomeViewModel()
+                let vm = HomeViewModel(authViewModel: AuthViewModel())
                 vm.viewState = .error(message: Strings.somethingWentWrong)
                 return vm
             }())

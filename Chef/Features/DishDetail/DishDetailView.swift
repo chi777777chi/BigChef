@@ -117,14 +117,15 @@ struct DishDetailView: View {
                     )
                 }
 
-                if !recipe.displayPrepTime.isEmpty && recipe.displayPrepTime != "未知" {
-                    InfoTagView(
-                        icon: "timer",
-                        label: "準備",
-                        value: recipe.displayPrepTime,
-                        color: .green
-                    )
-                }
+                // 新API沒有準備時間字段，暫時隱藏
+                // if !recipe.displayPrepTime.isEmpty && recipe.displayPrepTime != "未知" {
+                //     InfoTagView(
+                //         icon: "timer",
+                //         label: "準備",
+                //         value: recipe.displayPrepTime,
+                //         color: .green
+                //     )
+                // }
 
                 if !recipe.displayCookTime.isEmpty && recipe.displayCookTime != "未知" {
                     InfoTagView(
@@ -135,14 +136,15 @@ struct DishDetailView: View {
                     )
                 }
 
-                if !recipe.displayYield.isEmpty && recipe.displayYield != "未知份量" {
-                    InfoTagView(
-                        icon: "person.2",
-                        label: "份量",
-                        value: recipe.displayYield,
-                        color: .purple
-                    )
-                }
+                // 新API沒有份量字段，暫時隱藏
+                // if !recipe.displayYield.isEmpty && recipe.displayYield != "未知份量" {
+                //     InfoTagView(
+                //         icon: "person.2",
+                //         label: "份量",
+                //         value: recipe.displayYield,
+                //         color: .purple
+                //     )
+                // }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -184,12 +186,13 @@ struct DishDetailView: View {
                     .foregroundColor(.secondary)
                     .animation(.easeInOut, value: isDescriptionExpanded)
 
-                if let notes = recipe.notes, !notes.isEmpty {
-                    Text("備註：\(notes)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 4)
-                }
+                // 新API沒有備註字段
+                // if let notes = recipe.notes, !notes.isEmpty {
+                //     Text("備註：\(notes)")
+                //         .font(.caption)
+                //         .foregroundColor(.secondary)
+                //         .padding(.top, 4)
+                // }
 
                 Button {
                     withAnimation {
@@ -231,25 +234,24 @@ struct DishDetailView: View {
                     .padding(.vertical, 4)
                 }
 
-                if let approvalStatus = recipe.approvalStatus {
-                    HStack {
-                        Image(systemName: approvalStatus == "approved" ? "checkmark.seal.fill" : "exclamationmark.triangle")
-                            .foregroundColor(approvalStatus == "approved" ? .green : .orange)
-                            .frame(width: 20)
+                // 新API中所有食譜都是已審核的，顯示默認狀態
+                HStack {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.green)
+                        .frame(width: 20)
 
-                        Text("狀態")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    Text("狀態")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
 
-                        Spacer()
+                    Spacer()
 
-                        Text(approvalStatus == "approved" ? "已審核" : "待審核")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(approvalStatus == "approved" ? .green : .orange)
-                    }
-                    .padding(.vertical, 4)
+                    Text("已審核")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
                 }
+                .padding(.vertical, 4)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

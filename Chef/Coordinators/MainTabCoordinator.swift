@@ -18,10 +18,12 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
 
     var navigationController: UINavigationController
     weak var parentCoordinator: AppCoordinator?
-    
-    init(navigationController: UINavigationController, parentCoordinator: AppCoordinator? = nil) {
+    let authViewModel: AuthViewModel
+
+    init(navigationController: UINavigationController, parentCoordinator: AppCoordinator? = nil, authViewModel: AuthViewModel) {
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
+        self.authViewModel = authViewModel
     }
     
     // MARK: - Public
@@ -63,6 +65,7 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
             // Settings Tab
             NavigationStack {
                 SettingsView()
+                    .environmentObject(authViewModel)
             }
             .tabItem {
                 Label("設定", systemImage: "gear")
@@ -127,13 +130,14 @@ private struct HomeTabView: View {
                         // 先創建 HomeCoordinator
                         let newHomeCoordinator = HomeCoordinator(
                             navigationController: coordinator.navigationController,
-                            parentCoordinator: coordinator
+                            parentCoordinator: coordinator,
+                            authViewModel: coordinator.authViewModel
                         )
                         coordinator.addChildCoordinator(newHomeCoordinator)
                         self.homeCoordinator = newHomeCoordinator
                         
                         // 然後創建 ViewModel 並設置回調
-                        let newViewModel = HomeViewModel()
+                        let newViewModel = HomeViewModel(authViewModel: coordinator.authViewModel)
                         newViewModel.onSelectDish = { [weak newHomeCoordinator] dish in
                             newHomeCoordinator?.showDishDetail(dish)
                         }

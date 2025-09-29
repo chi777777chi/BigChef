@@ -103,7 +103,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
         self.preference = RecommendationPreference(
             cookingMethod: "一般烹調",
             dietaryRestrictions: [],
-            servingSize: "1人份"
+            servingSize: "1人份",
+            recipeDescription: nil
         )
         setupObservations()
     }
@@ -152,7 +153,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
             preference = RecommendationPreference(
                 cookingMethod: "製作 \(foodName)",
                 dietaryRestrictions: preference.dietaryRestrictions,
-                servingSize: preference.servingSize
+                servingSize: preference.servingSize,
+                recipeDescription: preference.recipeDescription
             )
         }
 
@@ -403,7 +405,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
         preference = RecommendationPreference(
             cookingMethod: method,
             dietaryRestrictions: preference.dietaryRestrictions,
-            servingSize: preference.servingSize
+            servingSize: preference.servingSize,
+            recipeDescription: preference.recipeDescription
         )
     }
 
@@ -411,7 +414,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
         preference = RecommendationPreference(
             cookingMethod: preference.cookingMethod,
             dietaryRestrictions: restrictions,
-            servingSize: preference.servingSize
+            servingSize: preference.servingSize,
+            recipeDescription: preference.recipeDescription
         )
     }
 
@@ -419,7 +423,17 @@ final class RecipeRecommendationViewModel: ObservableObject {
         preference = RecommendationPreference(
             cookingMethod: preference.cookingMethod,
             dietaryRestrictions: preference.dietaryRestrictions,
-            servingSize: size
+            servingSize: size,
+            recipeDescription: preference.recipeDescription
+        )
+    }
+
+    func updateRecipeDescription(_ description: String?) {
+        preference = RecommendationPreference(
+            cookingMethod: preference.cookingMethod,
+            dietaryRestrictions: preference.dietaryRestrictions,
+            servingSize: preference.servingSize,
+            recipeDescription: description?.isEmpty == true ? nil : description
         )
     }
 
@@ -505,7 +519,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
         preference = RecommendationPreference(
             cookingMethod: "一般烹調",
             dietaryRestrictions: [],
-            servingSize: "1人份"
+            servingSize: "1人份",
+            recipeDescription: nil
         )
         recommendationResult = nil
         retryCount = 0

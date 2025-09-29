@@ -195,7 +195,8 @@ class RecipeRecommendationService: RecipeRecommendationServiceProtocol {
         return Preference(
             cooking_method: recommendation.cookingMethod ?? "一般烹調",
             dietary_restrictions: recommendation.dietaryRestrictions ?? [],
-            serving_size: recommendation.servingSize ?? "1人份"
+            serving_size: recommendation.servingSize ?? "1人份",
+            recipe_description: recommendation.recipeDescription
         )
     }
 

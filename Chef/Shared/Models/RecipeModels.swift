@@ -35,6 +35,7 @@ struct Preference: Codable {
     var cooking_method: String         // 烹飪方式，例如「煎」
     var dietary_restrictions: [String] // 飲食限制，例如["無"]
     var serving_size: String           // 份量，例如「2人份」
+    var recipe_description: String?    // 食譜敘述，例如「希望是簡單易做的家常菜」
 }
 
 // MARK: - 食譜推薦請求資料結構

@@ -42,9 +42,11 @@ enum Strings {
 }
 
 // MARK: - Home View Model
+@MainActor
 final class HomeViewModel: ObservableObject {
     // MARK: - Properties
     private let service: NetworkServiceProtocol
+    private let authViewModel: AuthViewModel
     private var cancellables = Set<AnyCancellable>()
     
     @Published var viewState: ViewState = .loading
@@ -61,8 +63,9 @@ final class HomeViewModel: ObservableObject {
     var onRequestLogout: (() -> Void)?
     
     // MARK: - Initialization
-    init(service: NetworkServiceProtocol = NetworkService()) {
+    init(service: NetworkServiceProtocol = NetworkService(), authViewModel: AuthViewModel) {
         self.service = service
+        self.authViewModel = authViewModel
     }
     
     // MARK: - Public Methods
@@ -71,11 +74,20 @@ final class HomeViewModel: ObservableObject {
         self.dataSourceMessage = "🔄 正在載入資料..."
 
         print("HomeViewModel: 🚀 開始載入菜品資料...")
-        print("HomeViewModel: 🌐 嘗試連接 API: http://192.168.1.125:8081/api/v1/recipes")
 
-        // First, try to fetch real recipes from API
-        service.fetchRecipes(page: 1, size: 20)
-            .sink { [weak self] completion in
+        // Check if user is logged in with API to determine which endpoint to use
+        let isLoggedIn = authViewModel.isLoggedInWithAPI
+        let apiEndpoint = isLoggedIn ? "/api/v1/favorites" : "/api/v1/recipes"
+
+        print("HomeViewModel: 🔐 登入狀態: \(isLoggedIn ? "已登入" : "未登入")")
+        print("HomeViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081\(apiEndpoint)")
+
+        // Choose API based on authentication status
+        let apiCall = isLoggedIn ?
+            service.fetchFavorites(page: 1, size: 20) :
+            service.fetchRecipes(page: 1, size: 20)
+
+        apiCall.sink { [weak self] completion in
                 guard let self = self else { return }
                 switch completion {
                 case .failure(let error):
@@ -94,36 +106,33 @@ final class HomeViewModel: ObservableObject {
             } receiveValue: { [weak self] recipesResponse in
                 guard let self = self else { return }
 
-                print("HomeViewModel: 🎉 成功獲取 \(recipesResponse.data.records.count) 個菜品")
+                print("HomeViewModel: 🎉 成功獲取 \(recipesResponse.data.list.count) 個菜品")
                 print("HomeViewModel: 📊 API 回應詳情:")
                 print("  - 總數: \(recipesResponse.data.total)")
-                print("  - 當前頁: \(recipesResponse.data.current)")
-                print("  - 每頁數量: \(recipesResponse.data.size)")
+                print("  - 當前頁: \(recipesResponse.data.pageNum)")
+                print("  - 每頁數量: \(recipesResponse.data.pageSize)")
 
                 // 資料驗證和過濾
                 print("HomeViewModel: 🔍 開始驗證食譜資料...")
 
                 // 先列印前幾個食譜的調試資訊
-                for (index, recipe) in recipesResponse.data.records.prefix(3).enumerated() {
+                for (index, recipe) in recipesResponse.data.list.prefix(3).enumerated() {
                     print("HomeViewModel: 📋 食譜 \(index + 1) 調試資訊:")
                     print(recipe.debugInfo)
                 }
 
                 // 過濾有效且已批准的食譜
-                let validRecipes = recipesResponse.data.records.compactMap { recipe -> Recipe? in
+                let validRecipes = recipesResponse.data.list.compactMap { recipe -> Recipe? in
                     if !recipe.isValid {
                         print("HomeViewModel: ❌ 跳過無效食譜 - ID: \(recipe.id), 名稱: \(recipe.name ?? "nil")")
                         return nil
                     }
-                    if !recipe.isApproved {
-                        print("HomeViewModel: ⚠️ 跳過未批准食譜 - ID: \(recipe.id), 狀態: \(recipe.approvalStatus ?? "nil")")
-                        return nil
-                    }
+                    // 新API中所有返回的食譜都是已批准的，不需要再檢查
                     return recipe
                 }
 
                 print("HomeViewModel: 📊 資料過濾結果:")
-                print("  - 原始食譜數: \(recipesResponse.data.records.count)")
+                print("  - 原始食譜數: \(recipesResponse.data.list.count)")
                 print("  - 有效且已批准: \(validRecipes.count)")
 
                 if validRecipes.isEmpty {
@@ -175,8 +184,9 @@ final class HomeViewModel: ObservableObject {
                         specials: specialDishes
                     )
                     self.isUsingRealData = true
-                    self.dataSourceMessage = "✅ 顯示真實 API 資料 (\(validRecipes.count) 個菜品)"
-                    print("HomeViewModel: 🌐 使用真實 API 資料，共 \(validRecipes.count) 個有效已批准菜品")
+                    let dataSource = self.authViewModel.isLoggedInWithAPI ? "收藏" : "一般食譜"
+                    self.dataSourceMessage = "✅ 顯示\(dataSource) API 資料 (\(validRecipes.count) 個菜品)"
+                    print("HomeViewModel: 🌐 使用\(dataSource) API 資料，共 \(validRecipes.count) 個有效已批准菜品")
                     self.viewState = .dataLoaded
                 }
             }
@@ -237,7 +247,7 @@ final class HomeViewModel: ObservableObject {
 // MARK: - Preview Helper
 extension HomeViewModel {
     static var preview: HomeViewModel {
-        let viewModel = HomeViewModel()
+        let viewModel = HomeViewModel(authViewModel: AuthViewModel())
         viewModel.allDishes = AllDishes.preview
         viewModel.viewState = .dataLoaded
         return viewModel

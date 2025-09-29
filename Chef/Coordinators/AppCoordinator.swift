@@ -30,7 +30,7 @@ final class AppCoordinator: Coordinator {
         
         if Auth.auth().currentUser != nil {
             // 用戶已登入，啟動主頁面
-            let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self)
+            let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self, authViewModel: authViewModel)
             addChildCoordinator(mainCoordinator)
             mainCoordinator.start()
         } else {
@@ -38,7 +38,7 @@ final class AppCoordinator: Coordinator {
 //            let authCoordinator = AuthCoordinator(navigationController: navigationController, appCoordinator: self)
 //            addChildCoordinator(authCoordinator)
 //            authCoordinator.start()
-            let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self)
+            let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self, authViewModel: authViewModel)
             addChildCoordinator(mainCoordinator)
             mainCoordinator.start()
         }
@@ -58,9 +58,9 @@ final class AppCoordinator: Coordinator {
     func showMainFlow() {
         // 清除現有的 child coordinators
         childCoordinators.removeAll()
-        
+
         // 啟動主頁面
-        let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self)
+        let mainCoordinator = MainTabCoordinator(navigationController: navigationController, parentCoordinator: self, authViewModel: authViewModel)
         addChildCoordinator(mainCoordinator)
         mainCoordinator.start()
     }

@@ -56,7 +56,7 @@ class ViewController: UIViewController {
     
     func generateRecipe(request: SuggestRecipeRequest) {
 
-        guard let url = URL(string: "http://\(ViewController.baseURL):8080/api/v1/recipe/suggest") else {
+        guard let url = URL(string: "http://\(ViewController.baseURL):8081/api/v1/recipe/suggest") else {
             print("無效的 URL")
 
             return

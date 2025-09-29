@@ -10,10 +10,10 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject var viewModel: AuthViewModel
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isPasswordValid = false
-    @State private var isEmailValid = false
+    @State private var email = "admin@gmail.com" // 預設測試帳號
+    @State private var password = "admin123" // 預設測試密碼
+    @State private var isPasswordValid = true // 預設為有效
+    @State private var isEmailValid = true // 預設為有效
     
     var body: some View {
         NavigationStack {
@@ -71,9 +71,8 @@ struct LoginView: View {
                 
                 // Sign in button
                 Button {
-                    Task {
-                        await viewModel.login(withEmail: email, password: password)
-                    }
+                    // 使用新的API登入方法
+                    viewModel.loginWithAPI(email: email, password: password)
                 } label: {
                     HStack {
                         if viewModel.isLoading {

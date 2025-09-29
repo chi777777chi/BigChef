@@ -90,6 +90,31 @@ struct PreferenceSettingView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
             }
+
+            // Recipe Description
+            VStack(alignment: .leading, spacing: 8) {
+                Text("食譜敘述")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+
+                Text("描述您想要的食譜特色，例如：簡單易做的家常菜、辣味濃郁、清爽健康等")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                TextEditor(text: Binding(
+                    get: { viewModel.preference.recipeDescription ?? "" },
+                    set: { viewModel.updateRecipeDescription($0.isEmpty ? nil : $0) }
+                ))
+                .font(.body)
+                .padding(8)
+                .background(Color(.systemBackground))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                )
+                .frame(minHeight: 80, maxHeight: 120)
+            }
         }
         .onAppear {
             // Initialize selected dietary restrictions

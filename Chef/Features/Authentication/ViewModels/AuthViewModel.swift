@@ -9,6 +9,7 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore // 確保導入 FirebaseFirestore
+import Combine
 
 @MainActor
 final class AuthViewModel: ObservableObject {
@@ -23,7 +24,13 @@ final class AuthViewModel: ObservableObject {
     
     // MARK: - Private Properties
     private let service = UserService()
+    private let networkService = NetworkService()
+    private var cancellables = Set<AnyCancellable>()
     private var isShowingError = false // 防止重複顯示錯誤
+
+    // MARK: - API User Properties
+    @Published var apiUser: APIUser? // API User model
+    @Published var isLoggedInWithAPI = false
 
     // MARK: - Coordinator Callbacks
     // 由 AuthCoordinator 設定這些回調
@@ -45,7 +52,12 @@ final class AuthViewModel: ObservableObject {
                 }
             }
         }
-        print("AuthViewModel: 初始化完成。User session: \(String(describing: userSession?.uid))")
+
+        // 檢查API登入狀態
+        checkAPILoginStatus()
+
+        print("AuthViewModel: 初始化完成。Firebase User session: \(String(describing: userSession?.uid))")
+        print("AuthViewModel: API 登入狀態: \(isLoggedInWithAPI)")
     }
     
     // MARK: - Login
@@ -223,5 +235,108 @@ final class AuthViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - API Authentication Methods
+    func loginWithAPI(email: String, password: String) {
+        print("AuthViewModel: 開始 API 登入 - Email: \(email)")
+        isLoading = true
+        error = nil
+        showError = false
+
+        networkService.login(email: email, password: password)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    DispatchQueue.main.async {
+                        self?.isLoading = false
+
+                        if case let .failure(error) = completion {
+                            print("AuthViewModel: API 登入失敗 - \(error.localizedDescription)")
+                            self?.error = error
+                            self?.showError = true
+                            self?.onAuthFailure?(error)
+                        }
+                    }
+                },
+                receiveValue: { [weak self] response in
+                    DispatchQueue.main.async {
+                        print("AuthViewModel: API 登入成功")
+                        print("AuthViewModel: 用戶名稱: \(response.data.displayName)")
+
+                        // 創建API用戶模型
+                        let user = APIUser(from: response.data)
+                        self?.apiUser = user
+                        self?.isLoggedInWithAPI = true
+
+                        // 儲存用戶資料到 UserDefaults
+                        self?.saveUserToDefaults(user: user)
+
+                        // 觸發登入成功回調
+                        self?.onLoginSuccess?()
+                    }
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    func logoutFromAPI() {
+        print("AuthViewModel: API 登出")
+        apiUser = nil
+        isLoggedInWithAPI = false
+
+        // 清除 UserDefaults
+        UserDefaults.standard.removeObject(forKey: "apiUser")
+        UserDefaults.standard.removeObject(forKey: "accessToken")
+        UserDefaults.standard.synchronize()
+    }
+
+    func checkAPILoginStatus() {
+        // 檢查 UserDefaults 中是否有保存的用戶資料
+        if let userData = UserDefaults.standard.data(forKey: "apiUser"),
+           let user = try? JSONDecoder().decode(APIUser.self, from: userData) {
+            print("AuthViewModel: 找到保存的 API 用戶資料 - \(user.displayName)")
+            apiUser = user
+            isLoggedInWithAPI = true
+        } else {
+            print("AuthViewModel: 沒有找到保存的 API 用戶資料")
+            isLoggedInWithAPI = false
+        }
+    }
+
+    private func saveUserToDefaults(user: APIUser) {
+        do {
+            let userData = try JSONEncoder().encode(user)
+            UserDefaults.standard.set(userData, forKey: "apiUser")
+            UserDefaults.standard.set(user.accessToken, forKey: "accessToken")
+            UserDefaults.standard.synchronize()
+            print("AuthViewModel: 用戶資料已保存到 UserDefaults")
+        } catch {
+            print("AuthViewModel: 保存用戶資料失敗 - \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Computed Properties for UI
+    var displayName: String {
+        if let apiUser = apiUser {
+            return apiUser.displayName
+        } else if let currentUser = currentUser {
+            return currentUser.fullname
+        } else {
+            return "未登入"
+        }
+    }
+
+    var userEmail: String {
+        if let apiUser = apiUser {
+            return apiUser.email
+        } else if let currentUser = currentUser {
+            return currentUser.email
+        } else {
+            return ""
+        }
+    }
+
+    var isAuthenticated: Bool {
+        return isLoggedInWithAPI || (userSession != nil && currentUser != nil)
     }
 }

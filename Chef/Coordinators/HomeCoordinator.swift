@@ -14,16 +14,18 @@ final class HomeCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     weak var parentCoordinator: MainTabCoordinator?
-    
+    private let authViewModel: AuthViewModel?
+
     // MARK: - Initialization
-    init(navigationController: UINavigationController, parentCoordinator: MainTabCoordinator? = nil) {
+    init(navigationController: UINavigationController, parentCoordinator: MainTabCoordinator? = nil, authViewModel: AuthViewModel? = nil) {
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
+        self.authViewModel = authViewModel
     }
     
     // MARK: - Public Methods
     func start() {
-        let viewModel = HomeViewModel()
+        let viewModel = HomeViewModel(authViewModel: authViewModel ?? AuthViewModel())
         viewModel.onSelectDish = { [weak self] dish in
             self?.showDishDetail(dish)
         }
@@ -48,7 +50,8 @@ final class HomeCoordinator: Coordinator {
     }
 
     func showRecipeDetail(_ recipe: Recipe) {
-        let detailView = DishDetailView(recipe: recipe)
+        // 使用新的RecipeDetailView，通過食物名稱來獲取詳細資料
+        let detailView = RecipeDetailViewNew(recipeName: recipe.displayName)
         let hostingController = UIHostingController(rootView: detailView)
         navigationController.pushViewController(hostingController, animated: true)
         print("顯示食譜詳情: \(recipe.displayName)")
