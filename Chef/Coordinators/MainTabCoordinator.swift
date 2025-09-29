@@ -62,6 +62,14 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
                 Label("推薦", systemImage: "lightbulb.fill")
             }
 
+            // Favorites Tab
+            NavigationStack {
+                FavoritesTabView(coordinator: self)
+            }
+            .tabItem {
+                Label("收藏", systemImage: "heart.fill")
+            }
+
             // Settings Tab
             NavigationStack {
                 SettingsView()
@@ -79,6 +87,12 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
     // MARK: - Navigation Methods
     
     func showRecipeDetail(_ recipe: SuggestRecipeResponse) {
+        let coordinator = RecipeCoordinator(navigationController: navigationController)
+        addChildCoordinator(coordinator)
+        coordinator.showRecipeDetail(recipe)
+    }
+
+    func showRecipeDetail(_ recipe: Recipe) {
         let coordinator = RecipeCoordinator(navigationController: navigationController)
         addChildCoordinator(coordinator)
         coordinator.showRecipeDetail(recipe)
@@ -232,6 +246,38 @@ private struct RecipeRecommendationTabView: View {
                         self.recipeRecommendationCoordinator = newRecipeRecommendationCoordinator
 
                         let newViewModel = RecipeRecommendationViewModel()
+                        self.viewModel = newViewModel
+                    }
+            }
+        }
+    }
+}
+
+
+private struct FavoritesTabView: View {
+    @ObservedObject var coordinator: MainTabCoordinator
+    @State private var viewModel: FavoritesViewModel?
+
+    var body: some View {
+        VStack {
+            if let viewModel = viewModel {
+                FavoritesView(viewModel: viewModel)
+            } else {
+                ProgressView()
+                    .onAppear {
+                        let newViewModel = FavoritesViewModel(authViewModel: coordinator.authViewModel)
+                        newViewModel.onSelectDish = { dish in
+                            // Convert Dish to Recipe for navigation
+                            let recipe = Recipe.createFromDish(dish)
+                            coordinator.showRecipeDetail(recipe)
+                        }
+                        newViewModel.onSelectRecipe = { recipe in
+                            coordinator.showRecipeDetail(recipe)
+                        }
+                        newViewModel.onRequestLogin = {
+                            // TODO: Navigate to login screen
+                            print("FavoritesTabView: 請求導航到登入頁面")
+                        }
                         self.viewModel = newViewModel
                     }
             }

@@ -30,7 +30,7 @@ final class AuthViewModel: ObservableObject {
 
     // MARK: - API User Properties
     @Published var apiUser: APIUser? // API User model
-    @Published var isLoggedInWithAPI = false
+    @Published var isLoggedInWithAPI = false // 預設為未登入
 
     // MARK: - Coordinator Callbacks
     // 由 AuthCoordinator 設定這些回調

@@ -71,6 +71,15 @@ final class RecipeCoordinator: Coordinator, ObservableObject {
         }
         pushRecipeView(with: viewModel)
     }
+
+    func showRecipeDetail(_ recipe: Recipe) {
+        // 使用新的RecipeDetailView，通過食物名稱來獲取詳細資料
+        let detailView = RecipeDetailViewNew(recipeName: recipe.displayName)
+        let hostingController = UIHostingController(rootView: detailView)
+        hostingController.hidesBottomBarWhenPushed = false
+        navigationController.pushViewController(hostingController, animated: true)
+        print("顯示食譜詳情: \(recipe.displayName)")
+    }
     
     func showRecipeEdit(_ recipe: SuggestRecipeResponse) {
         let viewModel = RecipeViewModel(response: recipe)

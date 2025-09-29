@@ -75,17 +75,12 @@ final class HomeViewModel: ObservableObject {
 
         print("HomeViewModel: 🚀 開始載入菜品資料...")
 
-        // Check if user is logged in with API to determine which endpoint to use
-        let isLoggedIn = authViewModel.isLoggedInWithAPI
-        let apiEndpoint = isLoggedIn ? "/api/v1/favorites" : "/api/v1/recipes"
+        // 首頁永遠顯示一般食譜，不根據登入狀態選擇
+        print("HomeViewModel: 🚀 首頁顯示一般食譜")
+        print("HomeViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081/api/v1/recipes")
 
-        print("HomeViewModel: 🔐 登入狀態: \(isLoggedIn ? "已登入" : "未登入")")
-        print("HomeViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081\(apiEndpoint)")
-
-        // Choose API based on authentication status
-        let apiCall = isLoggedIn ?
-            service.fetchFavorites(page: 1, size: 20) :
-            service.fetchRecipes(page: 1, size: 20)
+        // 首頁固定使用 recipes API
+        let apiCall = service.fetchRecipes(page: 1, size: 20)
 
         apiCall.sink { [weak self] completion in
                 guard let self = self else { return }
@@ -184,9 +179,8 @@ final class HomeViewModel: ObservableObject {
                         specials: specialDishes
                     )
                     self.isUsingRealData = true
-                    let dataSource = self.authViewModel.isLoggedInWithAPI ? "收藏" : "一般食譜"
-                    self.dataSourceMessage = "✅ 顯示\(dataSource) API 資料 (\(validRecipes.count) 個菜品)"
-                    print("HomeViewModel: 🌐 使用\(dataSource) API 資料，共 \(validRecipes.count) 個有效已批准菜品")
+                    self.dataSourceMessage = "✅ 顯示一般食譜 API 資料 (\(validRecipes.count) 個菜品)"
+                    print("HomeViewModel: 🌐 使用一般食譜 API 資料，共 \(validRecipes.count) 個有效已批准菜品")
                     self.viewState = .dataLoaded
                 }
             }
