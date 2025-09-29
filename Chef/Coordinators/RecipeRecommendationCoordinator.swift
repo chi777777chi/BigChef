@@ -42,6 +42,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         // 設置導航標題
         hostingController.title = "食譜推薦"
         hostingController.navigationItem.largeTitleDisplayMode = .automatic
+        hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
     }
@@ -71,6 +72,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         let title = recognizedFoodName != nil ? "製作 \(recognizedFoodName!)" : "食譜推薦"
         hostingController.title = title
         hostingController.navigationItem.largeTitleDisplayMode = .automatic
+        hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
     }
@@ -116,6 +118,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         let hostingController = UIHostingController(rootView: detailView)
         hostingController.title = recipe.dishName
         hostingController.navigationItem.largeTitleDisplayMode = .never
+        hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
     }

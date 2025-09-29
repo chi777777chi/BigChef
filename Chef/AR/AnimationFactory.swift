@@ -57,44 +57,38 @@ struct AnimationFactory {
                 let coords = params.coordinate ?? [0, 0, 3]
                 let pos = SIMD3<Float>(coords[0], coords[1], coords[2])
                 return CutAnimation(
-                    position: pos,
-                    scale: 0.02,
+                    ingredient: params.ingredient ?? "",
+                    scale: 0.05,
                     isRepeat: true
-                ) /*
+                )
               case .temperature:
               return TemperatureAnimation(
-              temperatureValue: params.temperature ?? 0,
-              container: params.container ?? .pan,
-              scale: params.scale,
-              isRepeat: params.isRepeat
+                  container: params.container ?? .pan,
+                  temperatureValue: Int(params.temperature ?? 0),
+                  scale: 0.05,
+                  isRepeat: true
               )
               case .torch:
               return TorchAnimation(
-              position: params.coordinate ?? [0,0,0],
-              scale: params.scale,
-              isRepeat: params.isRepeat
+                ingredient: params.ingredient ?? "",
+                scale: 1.0,
+                isRepeat: true
               )
             case .peel:
               return PeelAnimation(
-              position: params.coordinate ?? [0,0,0],
-              scale: params.scale,
-              isRepeat: params.isRepeat
+                ingredient: params.ingredient ?? "",
+                scale: 0.5,
+                isRepeat: true
               )
-            case .flip:
-                // 翻面動作，與炒鍋翻鍋共用 FlipAnimation 亦可拆分為專屬類別
-                return FlipAnimation(
-                    container: params.container ?? .pan,
-                    scale: 0.5,
-                    isRepeat: true
-                )
              case .beatEgg:
               return BeatEggAnimation(
-              container: params.container ?? .pan,
-              scale: params.scale,
-              isRepeat: params.isRepeat
-              )*/
+                container: params.container ?? .pan,
+                scale: 0.05,
+                isRepeat: true
+              )
+        /*
         default:
-            fatalError("未支援的 AnimationType：\(type)")
+            fatalError("未支援的 AnimationType：\(type)")*/
         }
     }
 }

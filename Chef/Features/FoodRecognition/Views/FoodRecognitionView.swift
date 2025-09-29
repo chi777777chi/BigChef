@@ -31,38 +31,36 @@ struct FoodRecognitionView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // 根據狀態顯示不同內容
-                    switch currentViewState {
-                    case .initial:
-                        initialStateView
-                    case .imageSelected:
-                        imageSelectedStateView
-                    case .recognizing:
-                        recognizingStateView
-                    case .result(let response):
-                        resultStateView(response)
-                    case .error(let error):
-                        errorStateView(error)
-                    }
+        ScrollView {
+            VStack(spacing: 24) {
+                // 根據狀態顯示不同內容
+                switch currentViewState {
+                case .initial:
+                    initialStateView
+                case .imageSelected:
+                    imageSelectedStateView
+                case .recognizing:
+                    recognizingStateView
+                case .result(let response):
+                    resultStateView(response)
+                case .error(let error):
+                    errorStateView(error)
                 }
-                .padding()
             }
-            .navigationTitle("食物辨識")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.hasSelectedImage || viewModel.hasResult {
-                        Button("重新開始") {
-                            withAnimation {
-                                viewModel.clearSelection()
-                                descriptionHint = ""
-                            }
+            .padding()
+        }
+        .navigationTitle("食物辨識")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if viewModel.hasSelectedImage || viewModel.hasResult {
+                    Button("重新開始") {
+                        withAnimation {
+                            viewModel.clearSelection()
+                            descriptionHint = ""
                         }
-                        .foregroundColor(.brandOrange)
                     }
+                    .foregroundColor(.brandOrange)
                 }
             }
         }

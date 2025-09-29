@@ -43,6 +43,7 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         // 設置導航標題
         hostingController.title = "食物辨識"
         hostingController.navigationItem.largeTitleDisplayMode = .automatic
+        hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
     }
@@ -110,6 +111,7 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         let hostingController = UIHostingController(rootView: confirmationView)
         hostingController.title = "確認食材器具"
         hostingController.navigationItem.largeTitleDisplayMode = .never
+        hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
     }

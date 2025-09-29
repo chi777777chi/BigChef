@@ -39,8 +39,6 @@ struct RecommendationResultView: View {
             }
             .padding()
         }
-        .navigationTitle("推薦結果")
-        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("重新配置") {

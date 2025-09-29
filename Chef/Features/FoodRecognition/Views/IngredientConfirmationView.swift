@@ -17,23 +17,23 @@ struct IngredientConfirmationView: View {
 
     var body: some View {
         ScrollView {
-                VStack(spacing: 20) {
-                    headerSection
-                    ingredientsSection
-                    equipmentSection
-                    actionButtons
-                }
-                .padding()
+            VStack(spacing: 20) {
+                headerSection
+                ingredientsSection
+                equipmentSection
+                actionButtons
             }
-            .navigationTitle("確認食材器具")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") {
-                        onCancel()
-                    }
+            .padding()
+        }
+        .navigationTitle("確認食材器具")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("取消") {
+                    onCancel()
                 }
             }
+        }
         .onAppear {
             viewModel.configure(with: recognitionResult)
         }

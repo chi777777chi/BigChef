@@ -71,7 +71,7 @@ final class HomeViewModel: ObservableObject {
         self.dataSourceMessage = "🔄 正在載入資料..."
 
         print("HomeViewModel: 🚀 開始載入菜品資料...")
-        print("HomeViewModel: 🌐 嘗試連接 API: http://172.20.10.5:8081/api/v1/recipes")
+        print("HomeViewModel: 🌐 嘗試連接 API: http://192.168.1.125:8081/api/v1/recipes")
 
         // First, try to fetch real recipes from API
         service.fetchRecipes(page: 1, size: 20)

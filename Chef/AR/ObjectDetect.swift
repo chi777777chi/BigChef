@@ -56,52 +56,30 @@ class ObjectDetector {
                 else { continue }
 
                 let box = obs.boundingBox
-                let viewW = overlay.bounds.width
-                let viewH = overlay.bounds.height
 
-                let x = box.minX * viewW
-                let w = box.width * viewW
-                // Vision 的 y 原點在底部，UIKit 在頂部，所以用 (1 - maxY)
-                let y = (1 - box.maxY) * viewH
-                let h = box.height * viewH
-
-                let viewRect = CGRect(x: x, y: y, width: w, height: h)
-
-                // 在主線程繪製
                 DispatchQueue.main.async {
-                    
+                    guard let overlay = self.overlayView else { completion(nil); return }
                     self.clear()
-/*
-                    // 1. Bounding box
-                    let boxLayer = CAShapeLayer()
-                    boxLayer.frame = overlay.bounds
-                    boxLayer.path      = UIBezierPath(rect: viewRect).cgPath
-                    boxLayer.strokeColor = UIColor.systemRed.cgColor
-                    boxLayer.fillColor   = UIColor.clear.cgColor   // ← 清除預設黑色填充
-                    boxLayer.lineWidth   = 2
-                    overlay.layer.addSublayer(boxLayer)
-                    self.boxLayers.append(boxLayer)
-
-                    // 2. Label + confidence
-                    let textLayer = CATextLayer()
-                    textLayer.string          = "\(top.identifier) \(Int(top.confidence * 100))%"
-                    textLayer.fontSize        = 14
-                    textLayer.alignmentMode   = .center
-                    textLayer.foregroundColor = UIColor.white.cgColor
-                    textLayer.backgroundColor = UIColor.black.withAlphaComponent(0.6).cgColor
-                    textLayer.frame = CGRect(
-                        x: viewRect.minX,
-                        y: viewRect.minY - 22,
-                        width: viewRect.width,
-                        height: 20
-                    )
-                    textLayer.contentsScale = UIScreen.main.scale
-                    overlay.layer.addSublayer(textLayer)
-                    self.textLayers.append(textLayer)*/
+                    // 以主執行緒安全存取 overlay.bounds 並換算 viewRect
+                    let viewW = overlay.bounds.width
+                    let viewH = overlay.bounds.height
+                    let x = box.minX * viewW
+                    let w = box.width * viewW
+                    let y = (1 - box.maxY) * viewH  // Vision 座標轉 UIKit
+                    let h = box.height * viewH
+                    let viewRect = CGRect(x: x, y: y, width: w, height: h)
+                    
+                    // （保持繪製程式碼為註解，僅計算 rect）
+                    /*
+                    // 1. Bounding box（若未來要顯示可解除註解）
+                    // ...
+                    // 2. Label + confidence（若未來要顯示可解除註解）
+                    // ...
+                    */
+                    
+                    // 回傳畫在 overlay 座標系中的矩形
+                    completion((viewRect, top.identifier, top.confidence))
                 }
-
-                // 回傳畫在 overlay 上的 viewRect
-                completion((viewRect, top.identifier, top.confidence))
                 return
             }
 
@@ -126,4 +104,3 @@ class ObjectDetector {
         }
     }
 }
-

@@ -43,8 +43,10 @@ struct CookingARView: UIViewRepresentable {
             let coor = context.coordinator
             // 直接調用已有的 session(_:didUpdate:) 以復用偵測與定位邏輯
             coor.session(coor.arView!.session, didUpdate: currentFrame)
-            // 強制 Anchor 每幀都跟隨最新的平滑位置
-            if let smoothed = coor.lastSmoothedPosition, let anchor = coor.lastAnimation?.anchorEntity {
+            // 只在需要容器偵測的動畫時，才用偵測結果覆寫 Anchor 位置
+            if let anim = coor.lastAnimation, anim.requiresContainerDetection,
+               let smoothed = coor.lastSmoothedPosition,
+               let anchor = anim.anchorEntity {
                 anchor.position = smoothed
             }
         }
@@ -52,23 +54,22 @@ struct CookingARView: UIViewRepresentable {
         ObjectDetector.shared.configure(overlay: overlay)
         
         // 新增：將重用 boxLayer 加到 overlay
-        //context.coordinator.overlay?.layer.addSublayer(context.coordinator.boxLayer)
+        // context.coordinator.overlay?.layer.addSublayer(context.coordinator.boxLayer)
         
         return arView
     }
     
     @MainActor
     func updateUIView(_ uiView: ARView, context: Context) {
-        // 1. step 为空时不处理
+        // 1. step 為空時不處理
         guard !step.isEmpty else { return }
         
-        // 2. 同一步骤，只需 reset detection state
+        // 2. 同一步驟：避免取消正在進行的參數請求，直接略過重複更新
         if context.coordinator.lastStep == step {
-            context.coordinator.resetDetectionState()
             return
         }
         
-        // 3. 新步骤：清场并重置
+        // 3. 新步驟：清場並重置(僅狀態，不取消每幀訂閱)
         context.coordinator.lastStep      = step
         context.coordinator.lastAnimation = nil
         context.coordinator.resetDetectionState()
@@ -78,15 +79,24 @@ struct CookingARView: UIViewRepresentable {
         // 取消前一個尚未完成的參數請求
         context.coordinator.paramFetchTask?.cancel()
 
+        // 取一份當下步驟快照，避免之後變動造成混淆
+        let requestedStep = step
+
         context.coordinator.paramFetchTask = Task.detached(priority: .background) {
             // 後台執行 Gemini 參數取得
-
             guard let (type, params) = await self.manager.selectTypeAndParameters(
-                for: step,
+                for: requestedStep,
                 from: uiView
             ) else { return }
-                        // 切回主執行緒更新 UI
+            
+            // 任務可能在期間被取消
+            guard !Task.isCancelled else { return }
+
+            // 切回主執行緒更新 UI（再次確認步驟一致）
             await MainActor.run {
+                // 若在等待參數期間 step 已變更，或 lastStep 與我們要處理的步驟不同，直接丟棄本次結果
+                guard context.coordinator.lastStep == requestedStep,
+                      requestedStep == self.step else { return }
                 
                 let animation = AnimationFactory.make(type: type, params: params)
 
@@ -124,7 +134,7 @@ struct CookingARView: UIViewRepresentable {
         
         /// 目标持续在画面里的状态
         var isDetectionActive = false
-        /// 是否正在播放动画
+        /// 是否正在播放動畫
         private var isAnimationPlaying = false
         /// 上一幀平滑後的位置
         var lastSmoothedPosition: SIMD3<Float>?
@@ -142,7 +152,7 @@ struct CookingARView: UIViewRepresentable {
             self.parent = parent
         }
         
-        /// 重置状态：停止循环、取消订阅、清任务
+        /// 重置狀態：停止循環、取消動畫監聽與暫時性工作；保留每幀訂閱與網路任務
         func resetDetectionState() {
             isDetectionActive   = false
             isAnimationPlaying  = false
@@ -150,10 +160,7 @@ struct CookingARView: UIViewRepresentable {
             playbackSubscription    = nil
             staticRemovalWorkItem?.cancel()
             staticRemovalWorkItem   = nil
-            renderSubscription?.cancel()
-            renderSubscription = nil
-            paramFetchTask?.cancel()
-            paramFetchTask = nil
+            // 保持場景更新訂閱常駐；避免在此取消，否則之後無法持續偵測/更新
             lastSmoothedPosition = nil
         }
         
@@ -163,13 +170,13 @@ struct CookingARView: UIViewRepresentable {
                 let animation = lastAnimation,
                 animation.requiresContainerDetection,
                 let container = animation.containerType,
-                let overlay   = overlay,
+                //let overlay   = overlay,
                 let arView    = arView
             else { return }
             
             // 清除舊的 2D 偵測框顯示
             ObjectDetector.shared.clear()
-            boxLayer.isHidden = true
+            // boxLayer.isHidden = true
             
             // 跑 2D 物件偵測
             ObjectDetector.shared.detectContainer(
@@ -179,15 +186,14 @@ struct CookingARView: UIViewRepresentable {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     switch result {
-                    // 只有置信度 > 0.8 才认为检测到
+                    // 只有置信度 > 0.7 才认为检测到
                     case let (rect, _, confidence)? where confidence > 0.7:
                         self.isDetectionActive = true
                         
                         // 更新重用的偵測框
-                        //self.boxLayer.frame = overlay.bounds
-                        //self.boxLayer.path  = UIBezierPath(rect: rect).cgPath
-                        //self.boxLayer.isHidden = false
-                        //self.boxLayer.isHidden = true
+                        // self.boxLayer.frame = overlay.bounds
+                        // self.boxLayer.path  = UIBezierPath(rect: rect).cgPath
+                        // self.boxLayer.isHidden = false
                         // 2. 将 2D 中心点发射 raycast，定位 3D 点
                         let center2D = CGPoint(x: rect.midX, y: rect.midY)
                         if self.useSceneDepth, let sceneDepth = frame.smoothedSceneDepth {
@@ -225,7 +231,7 @@ struct CookingARView: UIViewRepresentable {
                             }
                         // 若要可简化，可使用 RealityKit 1.6+ 的 AnchorEntity(raycast:) API 直接创建锚点
                         } else {
-                            // 使用多点采样＋空间平均＋距离阈值过滤
+                            // 使用多點採樣＋空間平均＋距離閾值過濾
                             let offsets: [CGPoint] = [
                                 .zero,
                                 CGPoint(x: +10, y: 0), CGPoint(x: -10, y: 0),
@@ -277,13 +283,13 @@ struct CookingARView: UIViewRepresentable {
                     default:
                         // 无检测到或置信度低：停止继续检测，但等待当前播放完毕后再移除 Anchor
                         self.isDetectionActive = false
-                        self.boxLayer.isHidden = true
+                        // self.boxLayer.isHidden = true
                     }
                 }
             }
         }
         
-        /// 检测到后，循环播放：播放完 → 移除 → 若检测仍在继续 → 再播
+        /// 檢測到後，循環播放：播放完 → 若偵測仍在 → 再播
         @MainActor
         func playAnimationLoop() {
             guard
@@ -291,7 +297,6 @@ struct CookingARView: UIViewRepresentable {
                 let arView    = arView,
                 let animation = lastAnimation
             else { return }
-
             // 若此動畫不需容器偵測，直接設為已啟用狀態
             if !animation.requiresContainerDetection {
                 isDetectionActive = true
@@ -304,8 +309,9 @@ struct CookingARView: UIViewRepresentable {
             playbackSubscription?.cancel()
             staticRemovalWorkItem?.cancel()
             
-            // 播放／挂载 Anchor
-            animation.play(on: arView, reuseAnchor: true)
+            // 播放／掛載 Anchor
+            let reuse = animation.requiresContainerDetection
+            animation.play(on: arView, reuseAnchor: reuse)
             
             guard let anchor = animation.anchorEntity else { return }
             let modelEntity = anchor.children.first
@@ -321,7 +327,7 @@ struct CookingARView: UIViewRepresentable {
                     }
                     return
                 }
-                // 内建动画：监听 PlaybackCompleted
+                // 內建動畫：監聽 PlaybackCompleted
                 playbackSubscription = arView.scene
                     .subscribe(to: AnimationEvents.PlaybackCompleted.self) { [weak self] event in
                         guard let self = self else { return }
@@ -335,7 +341,7 @@ struct CookingARView: UIViewRepresentable {
                         }
                     }
             } else {
-                // 无内建动画：显示 1 秒后移除
+                // 無內建動畫：顯示 1 秒後進入下一輪
                 let work = DispatchWorkItem { [weak self] in
                     guard let self = self else { return }
                     self.isAnimationPlaying = false
@@ -350,7 +356,7 @@ struct CookingARView: UIViewRepresentable {
     }
 }
 
-// MARK: - 需要检测容器的动画类型
+// MARK: - 需要檢測容器的動畫類型
 extension AnimationType {
     var requiresContainerDetection: Bool {
         switch self {

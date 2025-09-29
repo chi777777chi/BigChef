@@ -20,6 +20,26 @@ struct RecipeRecommendationView: View {
         self.coordinator = coordinator
     }
 
+    // MARK: - Computed Properties
+
+    private var navigationTitle: String {
+        switch viewModel.state {
+        case .success:
+            return "推薦結果"
+        default:
+            return "食譜推薦"
+        }
+    }
+
+    private var navigationTitleDisplayMode: NavigationBarItem.TitleDisplayMode {
+        switch viewModel.state {
+        case .success:
+            return .inline
+        default:
+            return .large
+        }
+    }
+
     var body: some View {
         Group {
                 switch viewModel.state {
@@ -39,8 +59,8 @@ struct RecipeRecommendationView: View {
                     })
                 }
             }
-            .navigationTitle("食譜推薦")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(navigationTitleDisplayMode)
         .sheet(isPresented: $showingIngredientInput) {
             IngredientInputView(
                 editingIngredient: editingIngredientIndex != nil ? viewModel.availableIngredients[editingIngredientIndex!] : nil

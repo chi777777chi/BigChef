@@ -1,40 +1,71 @@
 import Foundation
 import simd
 import RealityKit
-/*
-class TorchAnimation: Animation {
-    private let torch: Entity
-    private var torchPosition: SIMD3<Float>?
+import ARKit
 
-    init(torchPosition: SIMD3<Float>? = nil, scale: Float = 1.0, isRepeat: Bool = false) {
-        self.torchPosition = torchPosition
+/// 炙燒（Torch）動畫：不依賴容器與座標，預設放在鏡頭前方
+class TorchAnimation: Animation {
+    // 不需要容器偵測
+    override var requiresContainerDetection: Bool { false }
+    override var containerType: Container? { nil }
+
+    private let torchModel: Entity
+    private let ingredient: String?
+    private let distance: Float
+
+    init(ingredient: String? = nil,
+         scale: Float,
+         isRepeat: Bool = true,
+         distance: Float = 0.5) {
+        self.ingredient = ingredient
+        self.distance = distance
+
+        // 載入 torch.usdz
         guard let url = Bundle.main.url(forResource: "torch", withExtension: "usdz") else {
             fatalError("❌ 找不到 torch.usdz")
         }
         do {
-            torch = try Entity.load(contentsOf: url)
+            self.torchModel = try Entity.load(contentsOf: url)
         } catch {
             fatalError("❌ 無法載入 torch.usdz：\(error)")
         }
+
         super.init(type: .torch, scale: scale, isRepeat: isRepeat)
     }
 
-    override func play(on arView: ARView) {
-        let entity = torch
-        guard let pos = torchPosition else {
-            print("⚠️ 未設定 torchPosition，無法播放 torch 動畫")
-            return
-        }
-        let anchor = AnchorEntity(world: pos)
-        anchor.addChild(entity)
-        arView.scene.addAnchor(anchor)
-        if let animation = entity.availableAnimations.first {
-            let resource = isRepeat
-                ? animation.repeat(duration: .infinity)
-                : animation
-            _ = entity.playAnimation(resource)
+    /// 加入 Anchor 並播放動畫（固定放在鏡頭前方）
+    override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
+        let model = torchModel.clone(recursive: true)
+        model.scale = SIMD3<Float>(repeating: scale)
+        anchor.position = SIMD3<Float>(0, -0.5, -distance)
+        anchor.addChild(model)
+
+        // 以相機為基準的錨點，確保距離可控；重用同一個 camera anchor，避免多重父層造成位置看似不變
+        let cameraAnchor: AnchorEntity
+        if let existing = arView.scene.findEntity(named: "TorchCameraAnchor") as? AnchorEntity {
+            cameraAnchor = existing
         } else {
-            print("⚠️ USDZ 檔案無可用動畫：torch")
+            let ca = AnchorEntity(.camera)
+            ca.name = "TorchCameraAnchor"
+            arView.scene.addAnchor(ca)
+            cameraAnchor = ca
+        }
+        anchor.setParent(cameraAnchor)
+        anchor.position = SIMD3<Float>(0, 0, -distance)
+
+        // debug: 輸出目前的 scale 與 distance 以便確認是否套用
+        //print("[TorchAnimation] applyAnimation scale=\(scale), distance=\(distance)")
+
+        // 播放動畫
+        if let clip = model.availableAnimations.first {
+            let resource = isRepeat ? clip.repeat(duration: .infinity) : clip
+            model.playAnimation(resource, transitionDuration: 0.1, startsPaused: false)
+        } else {
+            print("⚠️ USDZ 無可用動畫：torch")
         }
     }
-}*/
+
+    override func updateBoundingBox(rect: CGRect) {
+        // no-op
+    }
+}

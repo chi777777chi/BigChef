@@ -58,12 +58,12 @@ enum AnimationType: String, CaseIterable {
     case pourLiquid
     case flipPan
     case countdown
-    //case temperature
+    case temperature
     case flame
     case sprinkle
-    //case torch
+    case torch
     case cut
-    //case peel
+    case peel
     case flip
-    //case beatEgg
+    case beatEgg
 }

@@ -32,10 +32,7 @@ class StirAnimation: Animation {
 
     /// 當父類的 play 被呼叫時，自動注入到 Anchor 上並播放動畫
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
-        // 若已接收到最新的框，Coordinator 可先呼叫 updatePosition
-        if let rect = boundingBoxRect {
-            // Coordinator 可使用此 rect 將 Anchor 置於對應世界座標
-        }
+        
         let instance = model.clone(recursive: true)
         instance.scale = SIMD3<Float>(repeating: scale)
         instance.position.x += 0.5

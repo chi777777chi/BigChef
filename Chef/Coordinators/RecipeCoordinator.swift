@@ -98,6 +98,7 @@ final class RecipeCoordinator: Coordinator, ObservableObject {
         let view = RecipeView(viewModel: viewModel)
             .environmentObject(self)
         let hostingController = UIHostingController(rootView: view)
+        hostingController.hidesBottomBarWhenPushed = false
         navigationController.pushViewController(hostingController, animated: true)
     }
     
