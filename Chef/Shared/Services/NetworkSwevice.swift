@@ -19,7 +19,7 @@ protocol NetworkServiceProtocol {
 final class NetworkService: NetworkServiceProtocol {
 
     private var cancellables = Set<AnyCancellable>()
-    private let baseURL = "http://192.168.1.125:8081"
+    private let baseURL = ConfigManager.shared.apiBaseURL
 
     // MARK: - Helper Methods
     private var authorizationToken: String? {

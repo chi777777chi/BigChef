@@ -73,7 +73,7 @@ final class AllRecipesViewModel: ObservableObject {
         self.dataSourceMessage = "🔄 正在載入食譜資料..."
 
         print("AllRecipesViewModel: 🚀 開始載入食譜資料...")
-        print("AllRecipesViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081/api/v1/recipes")
+        print("AllRecipesViewModel: 🌐 使用 API 端點: \(ConfigManager.shared.fullAPIBaseURL)/recipes")
 
         fetchRecipesPage(page: currentPage, size: 20)
     }

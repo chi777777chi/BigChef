@@ -78,7 +78,7 @@ final class HomeViewModel: ObservableObject {
 
         // 首頁永遠顯示一般食譜，不根據登入狀態選擇
         print("HomeViewModel: 🚀 首頁顯示一般食譜")
-        print("HomeViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081/api/v1/recipes")
+        print("HomeViewModel: 🌐 使用 API 端點: \(ConfigManager.shared.fullAPIBaseURL)/recipes")
 
         // 首頁固定使用 recipes API
         let apiCall = service.fetchRecipes(page: 1, size: 20)

@@ -48,7 +48,7 @@ final class FavoritesViewModel: ObservableObject {
         }
 
         print("FavoritesViewModel: 🔐 用戶已登入，載入收藏資料")
-        print("FavoritesViewModel: 🌐 使用 API 端點: http://192.168.1.125:8081/api/v1/favorites")
+        print("FavoritesViewModel: 🌐 使用 API 端點: \(ConfigManager.shared.fullAPIBaseURL)/favorites")
 
         service.fetchFavorites(page: 1, size: 20)
             .sink { [weak self] completion in
