@@ -4,7 +4,59 @@ enum RecipeService {
     private static var baseURL: String {
         Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String ?? ""
     }
-    // MARK: - 基於辨識食物生成製作食譜 async 函式
+    // MARK: - 依名稱/偏好生成食譜 async 函式
+    static func generateRecipeByName(using request: GenerateRecipeByNameRequest) async throws -> SuggestRecipeResponse {
+        guard let url = URL(string: "\(baseURL)/api/v1/recipe/generate") else {
+            throw NetworkError.invalidURL
+        }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let jsonData = try JSONEncoder().encode(request)
+            urlRequest.httpBody = jsonData
+
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("🟢 發送依名稱生成食譜請求：\n\(jsonString)")
+                print("🍽️ 目標菜名：\(request.dish_name)")
+                print("👥 份量：\(request.preference.serving_size)")
+            }
+        } catch {
+            print("❌ 依名稱生成食譜請求編碼失敗：\(error)")
+            throw error
+        }
+
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("❌ 無效的伺服器回應")
+            throw NetworkError.invalidResponse
+        }
+
+        guard (200...299).contains(httpResponse.statusCode) else {
+            print("❌ HTTP 錯誤：\(httpResponse.statusCode)")
+            throw NetworkError.httpError(httpResponse.statusCode)
+        }
+
+        do {
+            let decoded = try JSONDecoder().decode(SuggestRecipeResponse.self, from: data)
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("✅ AI 回傳依名稱生成的食譜：\n\(jsonString)")
+                print("🍽️ 生成食譜：\(decoded.dish_name)")
+            }
+            return decoded
+        } catch {
+            if let raw = String(data: data, encoding: .utf8) {
+                print("🔴 AI 回傳原始資料：\n\(raw)")
+            }
+            print("❌ 解碼失敗：\(error)")
+            throw error
+        }
+    }
+
+    // MARK: - 基於辨識食物生成製作食譜 async 函式（舊的，保留向後兼容）
     static func generateRecipeForRecognizedFood(using request: RecognizedFoodRecipeRequest) async throws -> SuggestRecipeResponse {
         guard let url = URL(string: "\(baseURL)/api/v1/recipe/recognized-food") else {
             throw NetworkError.invalidURL
@@ -256,7 +308,22 @@ enum RecipeService {
     }
 }
 
-// MARK: - 辨識食物食譜請求資料模型
+// MARK: - 依名稱/偏好生成食譜請求資料模型
+struct GenerateRecipeByNameRequest: Codable {
+    let dish_name: String                      // 菜名（如「番茄炒蛋」）
+    let preferred_ingredients: [String]        // 偏好的食材清單
+    let excluded_ingredients: [String]         // 排除的食材清單
+    let preferred_equipment: [String]          // 偏好的器具清單
+    let preference: GeneratePreference         // 烹飪偏好設定
+
+    struct GeneratePreference: Codable {
+        let cooking_method: String?            // 烹飪方式（如「炒」）
+        let doneness: String?                  // 熟度（如「全熟」）
+        let serving_size: String               // 份量（如「2人份」）
+    }
+}
+
+// MARK: - 辨識食物食譜請求資料模型（舊的，保留向後兼容）
 struct RecognizedFoodRecipeRequest: Codable {
     let recognizedFoodName: String        // 辨識出的食物名稱（如「炒飯」）
     let recognizedIngredients: [String]   // 辨識出的食材清單

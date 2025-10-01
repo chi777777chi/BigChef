@@ -71,24 +71,36 @@ struct PreferenceSettingView: View {
             }
 
             // Serving Size
-            VStack(alignment: .leading, spacing: 8) {
-                Text("份量")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "person.2.fill")
+                        .foregroundColor(.brandOrange)
+                    Text("烹飪份量")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
 
-                Picker("份量", selection: Binding(
-                    get: { viewModel.preference.servingSize ?? "1人份" },
-                    set: { viewModel.updateServingSize($0) }
-                )) {
+                Text("選擇您想要準備的份量，AI 將根據人數調整各食材的用量")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // 使用卡片式選擇器
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: 10) {
                     ForEach(viewModel.servingSizes, id: \.self) { size in
-                        HStack {
-                            Image(systemName: "person.fill")
-                            Text(size)
-                        }
-                        .tag(size)
+                        ServingSizeCard(
+                            size: size,
+                            isSelected: viewModel.preference.servingSize == size,
+                            onTap: {
+                                viewModel.updateServingSize(size)
+                            }
+                        )
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
             }
 
             // Recipe Description
@@ -149,6 +161,69 @@ struct PreferenceSettingView: View {
             return "leaf.fill"
         default:
             return "chef.hat"
+        }
+    }
+}
+
+// MARK: - Serving Size Card
+
+private struct ServingSizeCard: View {
+    let size: String
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    private var personCount: String {
+        // 從 "2人份" 提取數字
+        let digits = size.filter { $0.isNumber }
+        return digits.isEmpty ? size : digits
+    }
+
+    private var displayText: String {
+        if size.contains("以上") {
+            return "6+"
+        }
+        return personCount
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 6) {
+                Image(systemName: personIconForSize(size))
+                    .font(.title2)
+                    .foregroundColor(isSelected ? .white : .brandOrange)
+
+                Text(displayText)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(isSelected ? .white : .primary)
+
+                Text("人份")
+                    .font(.caption2)
+                    .foregroundColor(isSelected ? .white.opacity(0.9) : .secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(isSelected ? Color.brandOrange : Color(.systemGray6))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.brandOrange : Color.clear, lineWidth: 2)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private func personIconForSize(_ size: String) -> String {
+        let count = Int(personCount) ?? 1
+        switch count {
+        case 1:
+            return "person.fill"
+        case 2:
+            return "person.2.fill"
+        case 3:
+            return "person.3.fill"
+        default:
+            return "person.3.sequence.fill"
         }
     }
 }

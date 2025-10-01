@@ -171,16 +171,21 @@ final class RecipeRecommendationViewModel: ObservableObject {
         equipment: [String]
     ) async throws -> RecipeRecommendationResponse {
 
-        let request = RecognizedFoodRecipeRequest(
-            recognizedFoodName: foodName,
-            recognizedIngredients: ingredients,
-            recognizedEquipment: equipment,
-            confidence: nil,
-            servings: extractServingNumber(from: preference.servingSize ?? "2人份")
+        // 使用新的 /api/v1/recipe/generate 端點
+        let request = GenerateRecipeByNameRequest(
+            dish_name: foodName,
+            preferred_ingredients: ingredients,
+            excluded_ingredients: [],  // 目前沒有排除的食材
+            preferred_equipment: equipment,
+            preference: GenerateRecipeByNameRequest.GeneratePreference(
+                cooking_method: preference.cookingMethod == "一般烹調" ? nil : preference.cookingMethod,
+                doneness: nil,  // 目前沒有熟度設定
+                serving_size: preference.servingSize ?? "2人份"
+            )
         )
 
         // 調用新的 RecipeService API
-        let recipeResponse = try await RecipeService.generateRecipeForRecognizedFood(using: request)
+        let recipeResponse = try await RecipeService.generateRecipeByName(using: request)
 
         // 轉換為 RecipeRecommendationResponse
         return RecipeRecommendationResponse(
@@ -490,11 +495,20 @@ final class RecipeRecommendationViewModel: ObservableObject {
     }
 
     func resetToConfiguring() {
-        print("🔄 RecipeRecommendationViewModel: 重置到配置狀態")
+        print("🔄 RecipeRecommendationViewModel: 重新配置（清空所有）")
         availableIngredients.removeAll()
         availableEquipment.removeAll()
+        recognizedFoodName = nil
         recommendationResult = nil
         retryCount = 0
         updateState(.idle)
+    }
+
+    func backToConfiguration() {
+        print("🔄 RecipeRecommendationViewModel: 返回配置（保留食材）")
+        // 只清除結果和錯誤狀態，保留食材和器具
+        recommendationResult = nil
+        retryCount = 0
+        updateState(.configuring)
     }
 }

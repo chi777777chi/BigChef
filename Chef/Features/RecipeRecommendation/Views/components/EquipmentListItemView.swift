@@ -26,27 +26,23 @@ struct EquipmentListItemView: View {
                         .font(.body)
                         .fontWeight(.medium)
 
-                    Text("(\(equipment.type))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
                     Spacer()
                 }
 
                 HStack(spacing: 8) {
-                    if !equipment.size.isEmpty {
+                    if !equipment.size.isEmpty && !isUnknownValue(equipment.size) {
                         Text(equipment.size)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
 
-                    if !equipment.material.isEmpty {
+                    if !equipment.material.isEmpty && !isUnknownValue(equipment.material) {
                         Text("• \(equipment.material)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
 
-                    if !equipment.powerSource.isEmpty && equipment.powerSource != "無" {
+                    if !equipment.powerSource.isEmpty && !isUnknownOrManualPower(equipment.powerSource) {
                         Text("• \(equipment.powerSource)")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -96,6 +92,21 @@ struct EquipmentListItemView: View {
         default:
             return "wrench.and.screwdriver.fill"
         }
+    }
+
+    private func isUnknownValue(_ value: String) -> Bool {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return trimmed == "未知" || trimmed == "無" || trimmed == "unknown" || trimmed.isEmpty
+    }
+
+    private func isUnknownOrManualPower(_ value: String) -> Bool {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return trimmed == "未知" ||
+               trimmed == "無" ||
+               trimmed == "人力" ||
+               trimmed == "manual" ||
+               trimmed == "unknown" ||
+               trimmed.isEmpty
     }
 }
 

@@ -78,9 +78,10 @@ extension RecipeRecommendationResponse {
     }
 
     var totalEstimatedTime: String {
-        let totalMinutes = recipe.compactMap { step in
-            step.actions.reduce(0) { $0 + $1.time_minutes }
-        }.reduce(0, +)
+        // 解析每個步驟的 estimated_total_time 並加總
+        let totalMinutes = recipe.reduce(0) { total, step in
+            total + parseTimeToMinutes(step.estimated_total_time)
+        }
 
         if totalMinutes >= 60 {
             let hours = totalMinutes / 60
@@ -89,6 +90,40 @@ extension RecipeRecommendationResponse {
         } else {
             return "\(totalMinutes)分鐘"
         }
+    }
+
+    /// 解析時間字串（如「3分鐘」、「1小時30分鐘」）為分鐘數
+    private func parseTimeToMinutes(_ timeString: String) -> Int {
+        var totalMinutes = 0
+
+        // 匹配「X小時」或「X 小時」
+        if let hoursMatch = timeString.range(of: #"(\d+)\s*小時"#, options: .regularExpression) {
+            let hoursString = timeString[hoursMatch].replacingOccurrences(of: "小時", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if let hours = Int(hoursString) {
+                totalMinutes += hours * 60
+            }
+        }
+
+        // 匹配「X分鐘」或「X 分鐘」或「X分」
+        if let minutesMatch = timeString.range(of: #"(\d+)\s*分"#, options: .regularExpression) {
+            let minutesString = timeString[minutesMatch].replacingOccurrences(of: "分鐘", with: "")
+                .replacingOccurrences(of: "分", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if let minutes = Int(minutesString) {
+                totalMinutes += minutes
+            }
+        }
+
+        // 如果沒有匹配到任何格式，嘗試直接解析數字（假設是分鐘）
+        if totalMinutes == 0 {
+            let numberString = timeString.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+            if let minutes = Int(numberString), !numberString.isEmpty {
+                totalMinutes = minutes
+            }
+        }
+
+        return totalMinutes
     }
 
     var allIngredientNames: [String] {

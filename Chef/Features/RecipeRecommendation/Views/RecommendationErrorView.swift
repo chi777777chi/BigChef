@@ -11,6 +11,7 @@ struct RecommendationErrorView: View {
     let error: RecipeRecommendationError
     let onRetry: () -> Void
     let onBackToConfiguration: (() -> Void)?
+    let onResetConfiguration: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 32) {
@@ -91,17 +92,17 @@ struct RecommendationErrorView: View {
                     }
                 } else {
                     Button(action: {
-                        onBackToConfiguration?()
+                        onResetConfiguration?()
                     }) {
                         HStack(spacing: 8) {
-                            Image(systemName: "pencil")
+                            Image(systemName: "trash")
                                 .font(.title3)
                             Text("重新配置")
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color.brandOrange)
+                        .background(Color.red)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                     }
@@ -193,13 +194,15 @@ private struct ErrorSuggestionView: View {
         RecommendationErrorView(
             error: .networkError("網路連線失敗"),
             onRetry: {},
-            onBackToConfiguration: {}
+            onBackToConfiguration: {},
+            onResetConfiguration: {}
         )
 
         RecommendationErrorView(
             error: .noIngredientsProvided,
             onRetry: {},
-            onBackToConfiguration: {}
+            onBackToConfiguration: {},
+            onResetConfiguration: {}
         )
     }
 }

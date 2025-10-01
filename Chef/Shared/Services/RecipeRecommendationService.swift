@@ -74,42 +74,12 @@ class RecipeRecommendationService: RecipeRecommendationServiceProtocol {
         ingredients: [AvailableIngredient],
         equipment: [AvailableEquipment]
     ) throws {
-        // 檢查必須有食材
+        // 只檢查必須有食材
         guard !ingredients.isEmpty else {
             throw RecipeRecommendationError.noIngredientsProvided
         }
 
-        // 檢查食材資料完整性
-        for (index, ingredient) in ingredients.enumerated() {
-            let trimmedName = ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            guard !trimmedName.isEmpty else {
-                throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材名稱不能為空")
-            }
-
-            guard !ingredient.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材類型不能為空")
-            }
-
-            // 檢查是否輸入了器具而不是食材
-            if isLikelyEquipmentName(trimmedName) {
-                throw RecipeRecommendationError.invalidIngredientData("第 \(index + 1) 項食材「\(trimmedName)」看起來是廚房器具而不是食材")
-            }
-        }
-
-        // 檢查設備資料完整性（如果有的話）
-        for (index, equipment) in equipment.enumerated() {
-            let trimmedName = equipment.name.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            guard !trimmedName.isEmpty else {
-                throw RecipeRecommendationError.invalidEquipmentData("第 \(index + 1) 項設備名稱不能為空")
-            }
-
-            // 檢查是否輸入了食材而不是器具
-            if isLikelyIngredientName(trimmedName) {
-                throw RecipeRecommendationError.invalidEquipmentData("第 \(index + 1) 項設備「\(trimmedName)」看起來是食材而不是廚房器具")
-            }
-        }
+        // 移除所有防呆檢查，讓使用者自由輸入
     }
 
     // MARK: - Validation Helper Methods
@@ -169,13 +139,35 @@ class RecipeRecommendationService: RecipeRecommendationServiceProtocol {
 
     private func convertToIngredients(from availableIngredients: [AvailableIngredient]) -> [Ingredient] {
         return availableIngredients.map { available in
-            Ingredient(
+            // 如果份量是「未知」或「適量」，傳空字串讓 AI 根據 serving_size 決定
+            let (amount, unit) = normalizeAmountAndUnit(amount: available.amount, unit: available.unit)
+
+            return Ingredient(
                 name: available.name,
                 type: available.type,
-                amount: available.amount,
-                unit: available.unit,
+                amount: amount,
+                unit: unit,
                 preparation: available.preparation
             )
+        }
+    }
+
+    private func normalizeAmountAndUnit(amount: String, unit: String) -> (String, String) {
+        let trimmedAmount = amount.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+        // 檢查是否為「未知」或「適量」
+        let isUnknownAmount = trimmedAmount == "適量" ||
+                              trimmedAmount == "适量" ||
+                              trimmedAmount == "未知" ||
+                              trimmedAmount == "unknown" ||
+                              trimmedAmount.isEmpty
+
+        if isUnknownAmount {
+            // 返回空字串，讓 AI 根據 serving_size 決定份量
+            return ("", "")
+        } else {
+            // 有具體份量，直接使用
+            return (amount, unit)
         }
     }
 

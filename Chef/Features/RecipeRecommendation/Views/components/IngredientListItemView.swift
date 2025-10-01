@@ -26,19 +26,18 @@ struct IngredientListItemView: View {
                         .font(.body)
                         .fontWeight(.medium)
 
-                    Text("(\(ingredient.type))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
                     Spacer()
                 }
 
                 HStack(spacing: 8) {
-                    Text("\(ingredient.amount)\(ingredient.unit)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    // 只在不是「適量」時顯示份量
+                    if !isUnknownAmount(ingredient.amount) {
+                        Text("\(ingredient.amount)\(ingredient.unit)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
 
-                    if !ingredient.preparation.isEmpty && ingredient.preparation != "無特殊處理" {
+                    if !ingredient.preparation.isEmpty && !isUnknownValue(ingredient.preparation) {
                         Text("• \(ingredient.preparation)")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -92,6 +91,23 @@ struct IngredientListItemView: View {
         default:
             return "questionmark.circle.fill"
         }
+    }
+
+    private func isUnknownAmount(_ amount: String) -> Bool {
+        let trimmed = amount.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return trimmed == "適量" ||
+               trimmed == "适量" ||
+               trimmed == "unknown" ||
+               trimmed.isEmpty
+    }
+
+    private func isUnknownValue(_ value: String) -> Bool {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return trimmed == "未知" ||
+               trimmed == "無" ||
+               trimmed == "無特殊處理" ||
+               trimmed == "unknown" ||
+               trimmed.isEmpty
     }
 }
 

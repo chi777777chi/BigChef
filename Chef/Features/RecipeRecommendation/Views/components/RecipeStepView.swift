@@ -119,7 +119,7 @@ private struct ActionDetailView: View {
                         .fontWeight(.medium)
 
                     if action.time_minutes > 0 {
-                        Text("(\(action.time_minutes)分鐘)")
+                        Text("(\(formatActionTime(action.time_minutes)))")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -160,6 +160,19 @@ private struct ActionDetailView: View {
             return "burst.fill"
         default:
             return "circle"
+        }
+    }
+
+    private func formatActionTime(_ minutes: Int) -> String {
+        // 小步驟通常都是短時間動作，應該以秒為單位顯示
+        // 只有超過 3 分鐘的動作才顯示為分鐘
+        if minutes == 0 {
+            return "數秒"
+        } else if minutes <= 3 {
+            let seconds = minutes * 60
+            return "\(seconds)秒"
+        } else {
+            return "\(minutes)分鐘"
         }
     }
 }

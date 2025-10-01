@@ -56,11 +56,18 @@ struct RecipeRecommendationView: View {
                 case .success(let result):
                     RecommendationResultView(result: result, viewModel: viewModel, coordinator: coordinator)
                 case .error(let error):
-                    RecommendationErrorView(error: error, onRetry: {
-                        Task { await viewModel.retryRecommendation() }
-                    }, onBackToConfiguration: {
-                        viewModel.resetToConfiguring()
-                    })
+                    RecommendationErrorView(
+                        error: error,
+                        onRetry: {
+                            Task { await viewModel.retryRecommendation() }
+                        },
+                        onBackToConfiguration: {
+                            viewModel.backToConfiguration()
+                        },
+                        onResetConfiguration: {
+                            viewModel.resetToConfiguring()
+                        }
+                    )
                 }
             }
             .navigationTitle(navigationTitle)
