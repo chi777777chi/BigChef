@@ -81,16 +81,16 @@ class AnimationManager {
           "coordinate": [x, y, z] 或 null,
           "ingredient": "食材或 null",
           "color": "顏色或 null",
-          "time": 時間數值或 null,
+          "time": 時間數值（秒）或 null,
           "temperature": 溫度數值或 null,
           "flameLevel": "small/medium/large 或 null"
         }
         依不同動畫類型，以下欄位為必須提供：
-        - putIntoContainer: ingredient, container        
+        - putIntoContainer: ingredient, container
         - stir: container
         - pourLiquid: container, color
         - flipPan: container
-        - countdown: time, container
+        - countdown: time（以秒為單位）, container
         - temperature: temperature, container
         - flame: container, flameLevel
         - sprinkle: container
@@ -99,18 +99,25 @@ class AnimationManager {
         - peel: ingredient
         - flip: container
         - beatEgg: container
-        請確保所有回傳的文字值ingredient 使用英文開頭小寫。
-        請確保回傳的 JSON 包含上述必需欄位，並移除所有程式碼區塊標記。
-        請確保回傳的 JSON 嚴格符合 iOS Codable 規範，不含 Optional 或其他與 JSON 格式無關的標識。
+
+        重要提示：
+        - time 欄位必須以「秒」為單位的數字
+        - 如果步驟中提到「一分鐘」、「1分鐘」，請轉換為 60 秒
+        - 如果提到「五秒」、「5秒」，請填入 5
+        - 如果提到「三十秒」、「30秒」，請填入 30
+        - 如果提到「兩分鐘」、「2分鐘」，請轉換為 120 秒
+        - 請確保所有回傳的文字值ingredient 使用英文開頭小寫。
+        - 請確保回傳的 JSON 包含上述必需欄位，並移除所有程式碼區塊標記。
+        - 請確保回傳的 JSON 嚴格符合 iOS Codable 規範，不含 Optional 或其他與 JSON 格式無關的標識。
         範例格式：
         ```json
         {
-          "type": "pourLiquid",
+          "type": "countdown",
           "container": "pan",
           "coordinate": null,
           "ingredient": null,
-          "color": "brown",
-          "time": null,
+          "color": null,
+          "time": 60,
           "temperature": null,
           "flameLevel": null
         }

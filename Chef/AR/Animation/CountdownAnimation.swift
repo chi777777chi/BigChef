@@ -10,27 +10,39 @@ class CountdownAnimation: Animation {
     override var requiresContainerDetection: Bool { true }
     override var containerType: Container? { container }
 
-    private let minutes: Int
+    private let timeValue: Float
     private let container: Container
     private let modelEntity: Entity
 
-    init(minutes: Int,
+    init(timeValue: Float,
          container: Container,
          scale: Float = 0.1,
          isRepeat: Bool = false) {
-        self.minutes = minutes
+        self.timeValue = timeValue
         self.container = container
 
-        // 建構倒數文字的 3D 模型
+        // 建構倒數文字的 3D 模型 - 顯示時間和單位
+        let displayText: String
+        if timeValue >= 60 {
+            // 如果時間大於等於 60 秒，顯示為分鐘
+            let minutes = Int(timeValue / 60)
+            displayText = "\(minutes)分鐘"
+        } else {
+            // 小於 60 秒，顯示為秒
+            let seconds = Int(timeValue)
+            displayText = "\(seconds)秒"
+        }
+
         let textMesh = MeshResource.generateText(
-            "\(minutes)",
+            displayText,
             extrusionDepth: 0.01,
-            font: .systemFont(ofSize: 0.5),
+            font: .systemFont(ofSize: 0.3),
             containerFrame: .zero,
-            alignment: .center, 
+            alignment: .center,
             lineBreakMode: .byWordWrapping
         )
-        let material = SimpleMaterial()
+        var material = SimpleMaterial()
+        material.color = .init(tint: .orange)
         self.modelEntity = ModelEntity(mesh: textMesh, materials: [material])
 
         // 預先載入倒數動畫模型

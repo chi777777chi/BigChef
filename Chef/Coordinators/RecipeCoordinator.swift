@@ -64,7 +64,7 @@ final class RecipeCoordinator: Coordinator, ObservableObject {
     func showRecipeDetail(_ recipe: SuggestRecipeResponse) {
         let viewModel = RecipeViewModel(response: recipe)
         viewModel.onCookRequested = { [weak self] in
-            self?.startCooking(with: recipe.recipe)
+            self?.startCooking(with: recipe.recipe, dishName: recipe.dish_name)
         }
         viewModel.onBackRequested = { [weak self] in
             self?.navigationController.popViewController(animated: true)
@@ -111,9 +111,16 @@ final class RecipeCoordinator: Coordinator, ObservableObject {
         navigationController.pushViewController(hostingController, animated: true)
     }
     
-    private func startCooking(with steps: [RecipeStep]) {
-        let coordinator = CookCoordinator(navigationController: navigationController)
+    private func startCooking(with steps: [RecipeStep], dishName: String = "料理") {
+        let coordinator = CookCoordinator(
+            navigationController: navigationController,
+            parentCoordinator: self
+        )
+        coordinator.onComplete = { [weak self] in
+            // 烹飪完成後，返回到首頁（tab bar 的根頁面）
+            self?.navigationController.popToRootViewController(animated: true)
+        }
         addChildCoordinator(coordinator)
-        coordinator.start(with: steps)
+        coordinator.start(with: steps, dishName: dishName)
     }
 }

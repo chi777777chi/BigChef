@@ -12,6 +12,10 @@ struct RecipeRecommendationView: View {
     let coordinator: RecipeRecommendationCoordinator
     @State private var showingIngredientInput = false
     @State private var showingEquipmentInput = false
+    @State private var showingIngredientScan = false
+    @State private var showingEquipmentScan = false
+    @State private var showingAddIngredientOptions = false
+    @State private var showingAddEquipmentOptions = false
     @State private var editingIngredientIndex: Int? = nil
     @State private var editingEquipmentIndex: Int? = nil
 
@@ -83,6 +87,22 @@ struct RecipeRecommendationView: View {
                     viewModel.addEquipment(equipment)
                 }
                 editingEquipmentIndex = nil
+            }
+        }
+        .sheet(isPresented: $showingIngredientScan) {
+            IngredientScanView(scanMode: .ingredientOnly) { ingredients, equipment in
+                // 只加入食材
+                for ingredient in ingredients {
+                    viewModel.addIngredient(ingredient)
+                }
+            }
+        }
+        .sheet(isPresented: $showingEquipmentScan) {
+            IngredientScanView(scanMode: .equipmentOnly) { ingredients, equipment in
+                // 只加入器具
+                for equip in equipment {
+                    viewModel.addEquipment(equip)
+                }
             }
         }
     }
@@ -182,8 +202,7 @@ struct RecipeRecommendationView: View {
                         .multilineTextAlignment(.center)
 
                     Button(action: {
-                        editingIngredientIndex = nil
-                        showingIngredientInput = true
+                        showingAddIngredientOptions = true
                     }) {
                         Text("新增食材")
                             .font(.headline)
@@ -217,8 +236,7 @@ struct RecipeRecommendationView: View {
 
                 // 列表下方的置中新增按鈕
                 Button(action: {
-                    editingIngredientIndex = nil
-                    showingIngredientInput = true
+                    showingAddIngredientOptions = true
                 }) {
                     HStack {
                         Image(systemName: "plus")
@@ -237,6 +255,16 @@ struct RecipeRecommendationView: View {
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
+        .confirmationDialog("選擇新增方式", isPresented: $showingAddIngredientOptions) {
+            Button("手動輸入") {
+                editingIngredientIndex = nil
+                showingIngredientInput = true
+            }
+            Button("掃描辨識") {
+                showingIngredientScan = true
+            }
+            Button("取消", role: .cancel) {}
+        }
     }
 
     private var equipmentSection: some View {
@@ -259,8 +287,7 @@ struct RecipeRecommendationView: View {
                         .multilineTextAlignment(.center)
 
                     Button(action: {
-                        editingEquipmentIndex = nil
-                        showingEquipmentInput = true
+                        showingAddEquipmentOptions = true
                     }) {
                         Text("新增器具")
                             .font(.headline)
@@ -294,8 +321,7 @@ struct RecipeRecommendationView: View {
 
                 // 列表下方的置中新增按鈕
                 Button(action: {
-                    editingEquipmentIndex = nil
-                    showingEquipmentInput = true
+                    showingAddEquipmentOptions = true
                 }) {
                     HStack {
                         Image(systemName: "plus")
@@ -314,6 +340,16 @@ struct RecipeRecommendationView: View {
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
+        .confirmationDialog("選擇新增方式", isPresented: $showingAddEquipmentOptions) {
+            Button("手動輸入") {
+                editingEquipmentIndex = nil
+                showingEquipmentInput = true
+            }
+            Button("掃描辨識") {
+                showingEquipmentScan = true
+            }
+            Button("取消", role: .cancel) {}
+        }
     }
 
     private var preferencesSection: some View {

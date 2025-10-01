@@ -104,7 +104,7 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
             recommendationResult: recipe,
             showNavigationBar: false,  // 使用系統導航欄，保持 tab bar 顯示
             onStartCooking: { [weak self] in
-                self?.startARCooking(with: recipe.recipe)
+                self?.startARCooking(with: recipe.recipe, dishName: recipe.dishName)
             },
             onBack: { [weak self] in
                 self?.goBack()
@@ -130,12 +130,19 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     }
 
     /// 啟動 AR 烹飪模式
-    func startARCooking(with steps: [RecipeStep]) {
-        print("🥽 RecipeRecommendationCoordinator: 啟動 AR 烹飪模式")
+    func startARCooking(with steps: [RecipeStep], dishName: String = "料理") {
+        print("🥽 RecipeRecommendationCoordinator: 啟動 AR 烹飪模式 - \(dishName)")
 
-        let cookCoordinator = CookCoordinator(navigationController: navigationController)
+        let cookCoordinator = CookCoordinator(
+            navigationController: navigationController,
+            parentCoordinator: self
+        )
+        cookCoordinator.onComplete = { [weak self] in
+            // 烹飪完成後，返回到首頁（tab bar 的根頁面）
+            self?.navigationController.popToRootViewController(animated: true)
+        }
         childCoordinators.append(cookCoordinator)
-        cookCoordinator.start(with: steps)
+        cookCoordinator.start(with: steps, dishName: dishName)
     }
 
     /// 顯示錯誤提示

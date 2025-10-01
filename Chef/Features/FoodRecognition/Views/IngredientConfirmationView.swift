@@ -15,6 +15,11 @@ struct IngredientConfirmationView: View {
     let onConfirm: ([String], [String]) -> Void
     let onCancel: () -> Void
 
+    @State private var showingAddIngredientOptions = false
+    @State private var showingAddEquipmentOptions = false
+    @State private var showingIngredientScan = false
+    @State private var showingEquipmentScan = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -36,6 +41,22 @@ struct IngredientConfirmationView: View {
         }
         .onAppear {
             viewModel.configure(with: recognitionResult)
+        }
+        .sheet(isPresented: $showingIngredientScan) {
+            IngredientScanView(scanMode: .ingredientOnly) { ingredients, equipment in
+                // 只加入食材
+                for ingredient in ingredients {
+                    viewModel.addScannedIngredient(ingredient.name)
+                }
+            }
+        }
+        .sheet(isPresented: $showingEquipmentScan) {
+            IngredientScanView(scanMode: .equipmentOnly) { ingredients, equipment in
+                // 只加入器具
+                for equip in equipment {
+                    viewModel.addScannedEquipment(equip.name)
+                }
+            }
         }
     }
 
@@ -144,21 +165,38 @@ struct IngredientConfirmationView: View {
     }
 
     private var addIngredientField: some View {
-        HStack {
-            TextField("新增食材", text: $viewModel.newIngredientName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .onSubmit {
+        VStack(spacing: 12) {
+            HStack {
+                TextField("手動輸入食材", text: $viewModel.newIngredientName)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onSubmit {
+                        viewModel.addCustomIngredient()
+                    }
+
+                Button(action: {
                     viewModel.addCustomIngredient()
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
                 }
+                .disabled(viewModel.newIngredientName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
 
             Button(action: {
-                viewModel.addCustomIngredient()
+                showingIngredientScan = true
             }) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.blue)
+                HStack {
+                    Image(systemName: "camera.viewfinder")
+                    Text("掃描新增食材")
+                        .fontWeight(.medium)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(Color.brandOrange.opacity(0.1))
+                .foregroundColor(.brandOrange)
+                .cornerRadius(8)
             }
-            .disabled(viewModel.newIngredientName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 
@@ -240,21 +278,38 @@ struct IngredientConfirmationView: View {
     }
 
     private var addEquipmentField: some View {
-        HStack {
-            TextField("新增器具", text: $viewModel.newEquipmentName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .onSubmit {
+        VStack(spacing: 12) {
+            HStack {
+                TextField("手動輸入器具", text: $viewModel.newEquipmentName)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onSubmit {
+                        viewModel.addCustomEquipment()
+                    }
+
+                Button(action: {
                     viewModel.addCustomEquipment()
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
                 }
+                .disabled(viewModel.newEquipmentName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
 
             Button(action: {
-                viewModel.addCustomEquipment()
+                showingEquipmentScan = true
             }) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(.blue)
+                HStack {
+                    Image(systemName: "camera.viewfinder")
+                    Text("掃描新增器具")
+                        .fontWeight(.medium)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(Color.brandOrange.opacity(0.1))
+                .foregroundColor(.brandOrange)
+                .cornerRadius(8)
             }
-            .disabled(viewModel.newEquipmentName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 

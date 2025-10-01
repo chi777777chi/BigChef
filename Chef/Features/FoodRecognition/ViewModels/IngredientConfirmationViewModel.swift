@@ -146,6 +146,36 @@ final class IngredientConfirmationViewModel: ObservableObject {
         print("✅ 選擇所有器具")
     }
 
+    func addScannedIngredient(_ name: String) {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+
+        // 檢查是否已存在
+        guard !customIngredients.contains(trimmedName),
+              !recognizedIngredients.contains(where: { $0.name == trimmedName }) else {
+            print("❌ 食材已存在: \(trimmedName)")
+            return
+        }
+
+        customIngredients.append(trimmedName)
+        print("➕ 新增掃描食材: \(trimmedName)")
+    }
+
+    func addScannedEquipment(_ name: String) {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+
+        // 檢查是否已存在
+        guard !customEquipment.contains(trimmedName),
+              !recognizedEquipment.contains(where: { $0.name == trimmedName }) else {
+            print("❌ 器具已存在: \(trimmedName)")
+            return
+        }
+
+        customEquipment.append(trimmedName)
+        print("➕ 新增掃描器具: \(trimmedName)")
+    }
+
     func deselectAllEquipment() {
         selectedEquipment.removeAll()
         print("❌ 取消選擇所有器具")
