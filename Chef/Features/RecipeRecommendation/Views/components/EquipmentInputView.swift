@@ -239,24 +239,7 @@ struct EquipmentInputView: View {
 
     private func validateForm() -> Bool {
         validationErrors.removeAll()
-
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if trimmedName.isEmpty {
-            validationErrors.append("請輸入器具名稱")
-        } else {
-            // 檢查是否誤輸入食材名稱
-            if isLikelyIngredientName(trimmedName) {
-                validationErrors.append("「\(trimmedName)」看起來是食材而不是廚房器具，請輸入正確的器具名稱")
-            }
-
-            // 檢查是否為合理的器具名稱
-            if !isValidEquipmentName(trimmedName) {
-                validationErrors.append("請確認「\(trimmedName)」是有效的廚房器具名稱")
-            }
-        }
-
-        return validationErrors.isEmpty
+        return true
     }
 
     // MARK: - Validation Helper Methods

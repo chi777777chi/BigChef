@@ -251,22 +251,7 @@ struct IngredientInputView: View {
     private func validateForm() -> Bool {
         validationErrors.removeAll()
 
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedAmount = amount.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if trimmedName.isEmpty {
-            validationErrors.append("請輸入食材名稱")
-        } else {
-            // 檢查是否誤輸入器具名稱
-            if isLikelyEquipmentName(trimmedName) {
-                validationErrors.append("「\(trimmedName)」看起來是廚房器具而不是食材，請輸入正確的食材名稱")
-            }
-
-            // 檢查是否為合理的食材名稱
-            if !isValidIngredientName(trimmedName) {
-                validationErrors.append("請確認「\(trimmedName)」是有效的食材名稱")
-            }
-        }
 
         if trimmedAmount.isEmpty {
             validationErrors.append("請輸入數量")

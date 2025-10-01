@@ -64,13 +64,24 @@ struct FoodRecognitionView: View {
                 }
             }
         }
-        .imageSourcePicker(
-            isPresented: $viewModel.showImageSourcePicker,
-            selectedImage: $viewModel.selectedImage,
-            onImageSelected: { image in
-                viewModel.handleImageSelection(image)
-            }
-        )
+        .sheet(isPresented: $viewModel.showCamera) {
+            ImagePicker(
+                sourceType: .camera,
+                selectedImage: $viewModel.selectedImage,
+                onImageSelected: { image in
+                    viewModel.handleImageSelection(image)
+                }
+            )
+        }
+        .sheet(isPresented: $viewModel.showImagePicker) {
+            ImagePicker(
+                sourceType: .photoLibrary,
+                selectedImage: $viewModel.selectedImage,
+                onImageSelected: { image in
+                    viewModel.handleImageSelection(image)
+                }
+            )
+        }
     }
 
     // MARK: - State Views
@@ -258,20 +269,16 @@ struct FoodRecognitionView: View {
                         .foregroundColor(.brandOrange.opacity(0.7))
 
                     VStack(spacing: 8) {
-                        Text("點擊選擇食物圖片")
+                        Text("尚未上傳圖片")
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                        Text("支援拍照或從相簿選擇")
+                        Text("請使用下方按鈕選擇圖片")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
             )
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.selectImageSource()
-            }
     }
 
     private var imageSelectionButtons: some View {

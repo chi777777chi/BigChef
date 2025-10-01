@@ -251,46 +251,8 @@ final class RecipeRecommendationViewModel: ObservableObject {
     private func validateFormData() {
         validationErrors.removeAll()
 
-        // 檢查必須有食材
-        guard !availableIngredients.isEmpty else {
-            validationErrors.append("請至少新增一種食材")
-            isFormValid = false
-            return
-        }
-
-        // 檢查食材資料完整性
-        for (index, ingredient) in availableIngredients.enumerated() {
-            if ingredient.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                validationErrors.append("食材 \(index + 1): 請輸入食材名稱")
-            }
-            if ingredient.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                validationErrors.append("食材 \(index + 1): 請選擇食材類型")
-            }
-            if ingredient.amount.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                validationErrors.append("食材 \(index + 1): 請輸入數量")
-            }
-        }
-
-        // 檢查設備資料完整性（如果有的話）
-        for (index, equipment) in availableEquipment.enumerated() {
-            if equipment.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                validationErrors.append("設備 \(index + 1): 請輸入設備名稱")
-            }
-            if equipment.type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                validationErrors.append("設備 \(index + 1): 請選擇設備類型")
-            }
-        }
-
-        // 檢查偏好設定
-        if let cookingMethod = preference.cookingMethod, cookingMethod.isEmpty {
-            validationErrors.append("請選擇烹飪方式")
-        }
-
-        if let servingSize = preference.servingSize, servingSize.isEmpty {
-            validationErrors.append("請選擇份量")
-        }
-
-        isFormValid = validationErrors.isEmpty
+        // 移除所有驗證檢查，直接設定為有效
+        isFormValid = true
     }
 
     private func validateForm() -> Bool {
@@ -529,13 +491,10 @@ final class RecipeRecommendationViewModel: ObservableObject {
 
     func resetToConfiguring() {
         print("🔄 RecipeRecommendationViewModel: 重置到配置狀態")
+        availableIngredients.removeAll()
+        availableEquipment.removeAll()
         recommendationResult = nil
         retryCount = 0
-
-        if !availableIngredients.isEmpty {
-            updateState(.configuring)
-        } else {
-            updateState(.idle)
-        }
+        updateState(.idle)
     }
 }
