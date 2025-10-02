@@ -34,7 +34,7 @@ struct AnimationFactory {
                 )
             case .countdown:
                 return CountdownAnimation(
-                    timeValue: params.time ?? 0,
+                    minutes: Int(params.time ?? 0),
                     container: params.container ?? .pan,
                     scale: 0.05,
                     isRepeat: true

@@ -1,3 +1,4 @@
+/*
 import SwiftUI
 import UIKit
 import RealityKit
@@ -30,4 +31,4 @@ struct ContentView: View {
             }
         }
     }
-}
+}*/
