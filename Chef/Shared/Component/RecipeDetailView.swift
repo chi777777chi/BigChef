@@ -291,39 +291,11 @@ struct RecipeEquipmentItemView: View {
                 .font(.caption)
                 .foregroundColor(.brandOrange)
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(equipment.name)
-                        .font(.body)
-                        .fontWeight(.medium)
+            Text(equipment.name)
+                .font(.body)
+                .fontWeight(.medium)
 
-                    Text("(\(equipment.type))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    Spacer()
-                }
-
-                HStack(spacing: 8) {
-                    if !equipment.size.isEmpty {
-                        Text(equipment.size)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    if !equipment.material.isEmpty {
-                        Text("• \(equipment.material)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    if !equipment.power_source.isEmpty && equipment.power_source != "無" {
-                        Text("• \(equipment.power_source)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
+            Spacer()
         }
         .padding(.vertical, 4)
     }
@@ -346,20 +318,10 @@ struct RecipeStepCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // Additional step information
-            if !step.estimated_total_time.isEmpty || !step.temperature.isEmpty {
-                HStack(spacing: 16) {
-                    if !step.estimated_total_time.isEmpty {
-                        Label(step.estimated_total_time, systemImage: "clock")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    if !step.temperature.isEmpty && step.temperature != "常溫" {
-                        Label(step.temperature, systemImage: "thermometer")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+            if !step.estimated_total_time.isEmpty {
+                Label(step.estimated_total_time, systemImage: "clock")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
 
             if !step.notes.isEmpty {

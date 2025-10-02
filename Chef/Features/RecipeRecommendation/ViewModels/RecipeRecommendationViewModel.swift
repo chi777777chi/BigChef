@@ -171,10 +171,19 @@ final class RecipeRecommendationViewModel: ObservableObject {
         equipment: [String]
     ) async throws -> RecipeRecommendationResponse {
 
+        // 創建帶有時間戳的食材列表，避免 API 快取
+        // 在食材列表最後添加一個隱藏的時間戳標記
+        let timestamp = Date().timeIntervalSince1970
+        let cacheBuster = String(format: "%.0f", timestamp)
+        var ingredientsWithCacheBuster = ingredients
+        ingredientsWithCacheBuster.append("timestamp_\(cacheBuster)")
+
+        print("🔑 辨識食譜添加快取破壞器: timestamp_\(cacheBuster)")
+
         // 使用新的 /api/v1/recipe/generate 端點
         let request = GenerateRecipeByNameRequest(
             dish_name: foodName,
-            preferred_ingredients: ingredients,
+            preferred_ingredients: ingredientsWithCacheBuster,
             excluded_ingredients: [],  // 目前沒有排除的食材
             preferred_equipment: equipment,
             preference: GenerateRecipeByNameRequest.GeneratePreference(
@@ -440,10 +449,14 @@ final class RecipeRecommendationViewModel: ObservableObject {
                     )
                 } else {
                     print("🥬 使用一般推薦 API 基於食材生成食譜")
+
+                    // 創建帶有時間戳的 preference，避免 API 快取
+                    let preferenceWithTimestamp = createPreferenceWithCacheBuster()
+
                     response = try await recommendationService.recommendRecipe(
                         ingredients: availableIngredients,
                         equipment: availableEquipment,
-                        preference: preference
+                        preference: preferenceWithTimestamp
                     )
                 }
 
@@ -510,5 +523,34 @@ final class RecipeRecommendationViewModel: ObservableObject {
         recommendationResult = nil
         retryCount = 0
         updateState(.configuring)
+    }
+
+    // MARK: - Private Helper Methods
+
+    /// 創建帶有快取破壞器的 preference，避免 API 回傳快取結果
+    private func createPreferenceWithCacheBuster() -> RecommendationPreference {
+        let timestamp = Date().timeIntervalSince1970
+        let cacheBuster = String(format: "%.0f", timestamp)
+
+        // 將時間戳附加到 recipe_description（隱藏在用戶描述後面）
+        let originalDescription = preference.recipeDescription ?? ""
+        let descriptionWithCacheBuster: String?
+
+        if originalDescription.isEmpty {
+            // 如果沒有用戶描述，使用空格 + 時間戳（API 會忽略前後空格，但會影響快取鍵）
+            descriptionWithCacheBuster = " [\(cacheBuster)]"
+        } else {
+            // 如果有用戶描述，在後面添加時間戳
+            descriptionWithCacheBuster = "\(originalDescription) [\(cacheBuster)]"
+        }
+
+        print("🔑 添加快取破壞器: \(cacheBuster)")
+
+        return RecommendationPreference(
+            cookingMethod: preference.cookingMethod,
+            dietaryRestrictions: preference.dietaryRestrictions,
+            servingSize: preference.servingSize,
+            recipeDescription: descriptionWithCacheBuster
+        )
     }
 }

@@ -113,17 +113,9 @@ private struct ActionDetailView: View {
 
             // Action Detail
             VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(action.action)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-
-                    if action.time_minutes > 0 {
-                        Text("(\(formatActionTime(action.time_minutes)))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
+                Text(action.action)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
 
                 if !action.instruction_detail.isEmpty {
                     Text(action.instruction_detail)
