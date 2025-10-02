@@ -71,7 +71,15 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     func start() {
         let cfg = ARWorldTrackingConfiguration()
         cfg.planeDetection = [.horizontal]
+
+        // ✅ 啟用 scene depth 以支持 CookingARView
+        if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+            cfg.frameSemantics.insert(.sceneDepth)
+            print("✅ [ARSessionAdapter] 啟用 Scene Depth")
+        }
+
         sceneView.session.run(cfg, options: [.resetTracking, .removeExistingAnchors])
+        print("✅ [ARSessionAdapter] ARSession 已啟動")
     }
 
     func stop() {
@@ -84,12 +92,14 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     func setGestureEnabled(_ enabled: Bool) {
         isGestureEnabled = enabled
         handDetectionManager.setGestureEnabled(enabled)
-        
+
         if enabled {
             print("🎯 [ARSessionAdapter] 啟用手勢辨識")
             print("🔍 [ARSessionAdapter] ARSession delegate 是否設定: \(sceneView.session.delegate != nil)")
-            print("🔍 [ARSessionAdapter] Delegate 是自己嗎: \(sceneView.session.delegate === self)")
-            
+            print("🔍 [ARSessionAdapter] Delegate 是 multicastDelegate: \(sceneView.session.delegate === multicastDelegate)")
+            print("🔍 [ARSessionAdapter] HandDetectionManager 已啟用")
+            print("🔍 [ARSessionAdapter] isGestureEnabled = \(isGestureEnabled)")
+
             // 重置計數器
             frameCount = 0
             processedFrameCount = 0
@@ -139,9 +149,20 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         // 計數所有接收到的幀
         frameCount += 1
-        
+
+        // 第一幀時打印診斷資訊
+        if frameCount == 1 {
+            print("✅ [ARSessionAdapter] 開始接收 ARFrame！")
+            print("🔍 [ARSessionAdapter] isGestureEnabled = \(isGestureEnabled)")
+        }
+
         // 只有在啟用手勢檢測時才處理畫面
-        guard isGestureEnabled else { return }
+        guard isGestureEnabled else {
+            if frameCount == 1 {
+                print("⚠️ [ARSessionAdapter] 手勢辨識未啟用，跳過處理")
+            }
+            return
+        }
         
         // ✅ 節流機制：避免 Vision 處理過於頻繁，與 ARKit 爭搶資源
         let now = Date()

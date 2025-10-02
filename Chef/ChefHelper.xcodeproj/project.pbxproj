@@ -16,130 +16,130 @@
 		68CE26CA2DD88BFF00365F01 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26C92DD88BFF00365F01 /* FirebaseFirestore */; };
 		68CE26CC2DD88C6200365F01 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CB2DD88C6200365F01 /* FirebaseCore */; };
 		68CE26CE2DD88C6200365F01 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CD2DD88C6200365F01 /* FirebaseStorage */; };
-		9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */; };
-		A1B0548F2DDF1FE100C5B28D /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */; };
-		A1B054902DDF1FE100C5B28D /* AnimationManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054742DDF1FE100C5B28D /* AnimationManger.swift */; };
-		A1B054912DDF1FE100C5B28D /* TorchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */; };
-		A1B054922DDF1FE100C5B28D /* SprinkleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */; };
-		A1B054932DDF1FE100C5B28D /* CountdownAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */; };
-		A1B054942DDF1FE100C5B28D /* FlameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */; };
-		A1B054952DDF1FE100C5B28D /* ObjectDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */; };
-		A1B054962DDF1FE100C5B28D /* PeelAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */; };
-		A1B054972DDF1FE100C5B28D /* PutIntoContainerAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */; };
-		A1B054982DDF1FE100C5B28D /* TemperatureAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */; };
-		A1B054992DDF1FE100C5B28D /* BeatEggAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */; };
-		A1B0549A2DDF1FE100C5B28D /* CookDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */; };
-		A1B0549B2DDF1FE100C5B28D /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054552DDF1FE100C5B28D /* Animation.swift */; };
-		A1B0549C2DDF1FE100C5B28D /* AnimationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */; };
-		A1B0549E2DDF1FE100C5B28D /* StirAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */; };
-		A1B0549F2DDF1FE100C5B28D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054772DDF1FE100C5B28D /* ContentView.swift */; };
-		A1B054A02DDF1FE100C5B28D /* CookingARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054792DDF1FE100C5B28D /* CookingARView.swift */; };
-		A1B054A12DDF1FE100C5B28D /* CutAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054582DDF1FE100C5B28D /* CutAnimation.swift */; };
-		A1B054A22DDF1FE100C5B28D /* PourLiquidAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */; };
-		A1B054A32DDF1FE100C5B28D /* FlipAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */; };
-		A1B054A42DDF1FE100C5B28D /* DetectionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */; };
-		A1B054A62DDF4CE000C5B28D /* HandGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */; };
-		C4D4F4882E8A5CBE005CDAB9 /* brazil.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */; };
-		C4D4F4892E8A5CBE005CDAB9 /* flame_medium.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */; };
-		C4D4F48A2E8A5CBE005CDAB9 /* torch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */; };
-		C4D4F48B2E8A5CBE005CDAB9 /* corn.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */; };
-		C4D4F48C2E8A5CBE005CDAB9 /* cheese.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */; };
-		C4D4F48D2E8A5CBE005CDAB9 /* flip.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */; };
-		C4D4F48E2E8A5CBE005CDAB9 /* ingredient.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */; };
-		C4D4F48F2E8A5CBE005CDAB9 /* onion.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */; };
-		C4D4F4902E8A5CBE005CDAB9 /* sprinkle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */; };
-		C4D4F4912E8A5CBE005CDAB9 /* flame_small.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */; };
-		C4D4F4922E8A5CBE005CDAB9 /* butter.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */; };
-		C4D4F4932E8A5CBE005CDAB9 /* meat.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */; };
-		C4D4F4942E8A5CBE005CDAB9 /* potato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */; };
-		C4D4F4952E8A5CBE005CDAB9 /* carrot.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */; };
-		C4D4F4962E8A5CBE005CDAB9 /* flame_large.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */; };
-		C4D4F4972E8A5CBE005CDAB9 /* squid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */; };
-		C4D4F4982E8A5CBE005CDAB9 /* pourLiquid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */; };
-		C4D4F4992E8A5CBE005CDAB9 /* beatEgg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */; };
-		C4D4F49A2E8A5CBE005CDAB9 /* green_pepper.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */; };
-		C4D4F49B2E8A5CBE005CDAB9 /* cut.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */; };
-		C4D4F49C2E8A5CBE005CDAB9 /* peel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */; };
-		C4D4F49D2E8A5CBE005CDAB9 /* shrimp.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */; };
-		C4D4F49E2E8A5CBE005CDAB9 /* stir.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */; };
-		C4D4F49F2E8A5CBE005CDAB9 /* tomato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */; };
-		C4D4F4A02E8A5CBE005CDAB9 /* bacon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */; };
-		C4D4F4A12E8A5CBE005CDAB9 /* countdown.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */; };
-		C4D4F4A22E8A5CBE005CDAB9 /* salmon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */; };
-		C4D4F4A32E8A5CBE005CDAB9 /* noodle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */; };
-		C4D4F4A42E8A5CBE005CDAB9 /* brocoli.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */; };
-		C4D4F4A52E8A5CBE005CDAB9 /* tofu.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */; };
-		C4D4F4A62E8A5CBE005CDAB9 /* chickenThigh.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */; };
-		C4D4F4A72E8A5CBE005CDAB9 /* chili.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */; };
-		C4D4F4A82E8A5CBE005CDAB9 /* garlic.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */; };
-		C4D4F4A92E8A5CBE005CDAB9 /* egg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */; };
-		C4D4F4AA2E8A5CBE005CDAB9 /* mushroom.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */; };
-		C4D4F4AB2E8A5CBE005CDAB9 /* temperature.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */; };
+		C4492F332E8E7A3800D04D8A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C4492F322E8E7A3800D04D8A /* GoogleService-Info.plist */; };
+		C44930C22E8E7B2E00D04D8A /* CutAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930882E8E7B2E00D04D8A /* CutAnimation.swift */; };
+		C44930C32E8E7B2E00D04D8A /* SprinkleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308E2E8E7B2E00D04D8A /* SprinkleAnimation.swift */; };
+		C44930C42E8E7B2E00D04D8A /* TemperatureAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930902E8E7B2E00D04D8A /* TemperatureAnimation.swift */; };
+		C44930C52E8E7B2E00D04D8A /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930852E8E7B2E00D04D8A /* Animation.swift */; };
+		C44930C62E8E7B2E00D04D8A /* CountdownAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930872E8E7B2E00D04D8A /* CountdownAnimation.swift */; };
+		C44930C72E8E7B2E00D04D8A /* HandGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930BE2E8E7B2E00D04D8A /* HandGestureController.swift */; };
+		C44930C82E8E7B2E00D04D8A /* CookingARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930BC2E8E7B2E00D04D8A /* CookingARView.swift */; };
+		C44930C92E8E7B2E00D04D8A /* FlipAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308A2E8E7B2E00D04D8A /* FlipAnimation.swift */; };
+		C44930CA2E8E7B2E00D04D8A /* PutIntoContainerAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308D2E8E7B2E00D04D8A /* PutIntoContainerAnimation.swift */; };
+		C44930CB2E8E7B2E00D04D8A /* AnimationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930B82E8E7B2E00D04D8A /* AnimationFactory.swift */; };
+		C44930CC2E8E7B2E00D04D8A /* StirAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308F2E8E7B2E00D04D8A /* StirAnimation.swift */; };
+		C44930CD2E8E7B2E00D04D8A /* TorchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930912E8E7B2E00D04D8A /* TorchAnimation.swift */; };
+		C44930CE2E8E7B2E00D04D8A /* AnimationManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930B92E8E7B2E00D04D8A /* AnimationManger.swift */; };
+		C44930CF2E8E7B2E00D04D8A /* FlameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930892E8E7B2E00D04D8A /* FlameAnimation.swift */; };
+		C44930D02E8E7B2E00D04D8A /* PourLiquidAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308C2E8E7B2E00D04D8A /* PourLiquidAnimation.swift */; };
+		C44930D12E8E7B2E00D04D8A /* CookDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = C44930BB2E8E7B2E00D04D8A /* CookDetect.mlmodel */; };
+		C44930D22E8E7B2E00D04D8A /* BeatEggAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930862E8E7B2E00D04D8A /* BeatEggAnimation.swift */; };
+		C44930D32E8E7B2E00D04D8A /* ObjectDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930C02E8E7B2E00D04D8A /* ObjectDetect.swift */; };
+		C44930D42E8E7B2E00D04D8A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930BA2E8E7B2E00D04D8A /* ContentView.swift */; };
+		C44930D52E8E7B2E00D04D8A /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930BF2E8E7B2E00D04D8A /* LRUCache.swift */; };
+		C44930D62E8E7B2E00D04D8A /* DetectionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44930BD2E8E7B2E00D04D8A /* DetectionTestView.swift */; };
+		C44930D72E8E7B2E00D04D8A /* PeelAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C449308B2E8E7B2E00D04D8A /* PeelAnimation.swift */; };
+		C44930D82E8E7B2E00D04D8A /* flip.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A32E8E7B2E00D04D8A /* flip.usdz */; };
+		C44930D92E8E7B2E00D04D8A /* pourLiquid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AD2E8E7B2E00D04D8A /* pourLiquid.usdz */; };
+		C44930DA2E8E7B2E00D04D8A /* green_pepper.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A52E8E7B2E00D04D8A /* green_pepper.usdz */; };
+		C44930DB2E8E7B2E00D04D8A /* sprinkle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B02E8E7B2E00D04D8A /* sprinkle.usdz */; };
+		C44930DC2E8E7B2E00D04D8A /* carrot.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930982E8E7B2E00D04D8A /* carrot.usdz */; };
+		C44930DD2E8E7B2E00D04D8A /* mushroom.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A82E8E7B2E00D04D8A /* mushroom.usdz */; };
+		C44930DE2E8E7B2E00D04D8A /* countdown.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309D2E8E7B2E00D04D8A /* countdown.usdz */; };
+		C44930DF2E8E7B2E00D04D8A /* cheese.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930992E8E7B2E00D04D8A /* cheese.usdz */; };
+		C44930E02E8E7B2E00D04D8A /* torch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B62E8E7B2E00D04D8A /* torch.usdz */; };
+		C44930E12E8E7B2E00D04D8A /* bacon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930932E8E7B2E00D04D8A /* bacon.usdz */; };
+		C44930E22E8E7B2E00D04D8A /* noodle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A92E8E7B2E00D04D8A /* noodle.usdz */; };
+		C44930E32E8E7B2E00D04D8A /* tofu.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B42E8E7B2E00D04D8A /* tofu.usdz */; };
+		C44930E42E8E7B2E00D04D8A /* butter.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930972E8E7B2E00D04D8A /* butter.usdz */; };
+		C44930E52E8E7B2E00D04D8A /* onion.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AA2E8E7B2E00D04D8A /* onion.usdz */; };
+		C44930E62E8E7B2E00D04D8A /* stir.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B22E8E7B2E00D04D8A /* stir.usdz */; };
+		C44930E72E8E7B2E00D04D8A /* peel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AB2E8E7B2E00D04D8A /* peel.usdz */; };
+		C44930E82E8E7B2E00D04D8A /* chili.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309B2E8E7B2E00D04D8A /* chili.usdz */; };
+		C44930E92E8E7B2E00D04D8A /* cut.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309E2E8E7B2E00D04D8A /* cut.usdz */; };
+		C44930EA2E8E7B2E00D04D8A /* chickenThigh.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309A2E8E7B2E00D04D8A /* chickenThigh.usdz */; };
+		C44930EB2E8E7B2E00D04D8A /* meat.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A72E8E7B2E00D04D8A /* meat.usdz */; };
+		C44930EC2E8E7B2E00D04D8A /* potato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AC2E8E7B2E00D04D8A /* potato.usdz */; };
+		C44930ED2E8E7B2E00D04D8A /* brocoli.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930962E8E7B2E00D04D8A /* brocoli.usdz */; };
+		C44930EE2E8E7B2E00D04D8A /* corn.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309C2E8E7B2E00D04D8A /* corn.usdz */; };
+		C44930EF2E8E7B2E00D04D8A /* temperature.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B32E8E7B2E00D04D8A /* temperature.usdz */; };
+		C44930F02E8E7B2E00D04D8A /* egg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C449309F2E8E7B2E00D04D8A /* egg.usdz */; };
+		C44930F12E8E7B2E00D04D8A /* flame_medium.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A12E8E7B2E00D04D8A /* flame_medium.usdz */; };
+		C44930F22E8E7B2E00D04D8A /* flame_large.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A02E8E7B2E00D04D8A /* flame_large.usdz */; };
+		C44930F32E8E7B2E00D04D8A /* shrimp.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AF2E8E7B2E00D04D8A /* shrimp.usdz */; };
+		C44930F42E8E7B2E00D04D8A /* ingredient.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A62E8E7B2E00D04D8A /* ingredient.usdz */; };
+		C44930F52E8E7B2E00D04D8A /* garlic.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A42E8E7B2E00D04D8A /* garlic.usdz */; };
+		C44930F62E8E7B2E00D04D8A /* squid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B12E8E7B2E00D04D8A /* squid.usdz */; };
+		C44930F72E8E7B2E00D04D8A /* beatEgg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930942E8E7B2E00D04D8A /* beatEgg.usdz */; };
+		C44930F82E8E7B2E00D04D8A /* flame_small.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930A22E8E7B2E00D04D8A /* flame_small.usdz */; };
+		C44930F92E8E7B2E00D04D8A /* tomato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930B52E8E7B2E00D04D8A /* tomato.usdz */; };
+		C44930FA2E8E7B2E00D04D8A /* salmon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930AE2E8E7B2E00D04D8A /* salmon.usdz */; };
+		C44930FB2E8E7B2E00D04D8A /* brazil.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C44930952E8E7B2E00D04D8A /* brazil.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		30AB0E1D2DD64F2700101557 /* ChefHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChefHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30DC27062DD591D00081F80C /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
 		30DC27082DD591E20081F80C /* RealityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealityKit.framework; path = System/Library/Frameworks/RealityKit.framework; sourceTree = SDKROOT; };
-		9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		A1B054552DDF1FE100C5B28D /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
-		A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatEggAnimation.swift; sourceTree = "<group>"; };
-		A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownAnimation.swift; sourceTree = "<group>"; };
-		A1B054582DDF1FE100C5B28D /* CutAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutAnimation.swift; sourceTree = "<group>"; };
-		A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlameAnimation.swift; sourceTree = "<group>"; };
-		A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipAnimation.swift; sourceTree = "<group>"; };
-		A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelAnimation.swift; sourceTree = "<group>"; };
-		A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PourLiquidAnimation.swift; sourceTree = "<group>"; };
-		A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PutIntoContainerAnimation.swift; sourceTree = "<group>"; };
-		A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SprinkleAnimation.swift; sourceTree = "<group>"; };
-		A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StirAnimation.swift; sourceTree = "<group>"; };
-		A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureAnimation.swift; sourceTree = "<group>"; };
-		A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchAnimation.swift; sourceTree = "<group>"; };
-		A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFactory.swift; sourceTree = "<group>"; };
-		A1B054742DDF1FE100C5B28D /* AnimationManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationManger.swift; sourceTree = "<group>"; };
-		A1B054772DDF1FE100C5B28D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CookDetect.mlmodel; sourceTree = "<group>"; };
-		A1B054792DDF1FE100C5B28D /* CookingARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingARView.swift; sourceTree = "<group>"; };
-		A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionTestView.swift; sourceTree = "<group>"; };
-		A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
-		A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetect.swift; sourceTree = "<group>"; };
-		A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandGestureController.swift; sourceTree = "<group>"; };
-		C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = bacon.usdz; sourceTree = "<group>"; };
-		C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = beatEgg.usdz; sourceTree = "<group>"; };
-		C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brazil.usdz; sourceTree = "<group>"; };
-		C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brocoli.usdz; sourceTree = "<group>"; };
-		C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = butter.usdz; sourceTree = "<group>"; };
-		C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = carrot.usdz; sourceTree = "<group>"; };
-		C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheese.usdz; sourceTree = "<group>"; };
-		C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chickenThigh.usdz; sourceTree = "<group>"; };
-		C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chili.usdz; sourceTree = "<group>"; };
-		C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = corn.usdz; sourceTree = "<group>"; };
-		C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = countdown.usdz; sourceTree = "<group>"; };
-		C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cut.usdz; sourceTree = "<group>"; };
-		C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = egg.usdz; sourceTree = "<group>"; };
-		C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_large.usdz; sourceTree = "<group>"; };
-		C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_medium.usdz; sourceTree = "<group>"; };
-		C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_small.usdz; sourceTree = "<group>"; };
-		C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flip.usdz; sourceTree = "<group>"; };
-		C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = garlic.usdz; sourceTree = "<group>"; };
-		C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = green_pepper.usdz; sourceTree = "<group>"; };
-		C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = ingredient.usdz; sourceTree = "<group>"; };
-		C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = meat.usdz; sourceTree = "<group>"; };
-		C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = mushroom.usdz; sourceTree = "<group>"; };
-		C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = noodle.usdz; sourceTree = "<group>"; };
-		C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = onion.usdz; sourceTree = "<group>"; };
-		C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = peel.usdz; sourceTree = "<group>"; };
-		C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = potato.usdz; sourceTree = "<group>"; };
-		C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = pourLiquid.usdz; sourceTree = "<group>"; };
-		C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = salmon.usdz; sourceTree = "<group>"; };
-		C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = shrimp.usdz; sourceTree = "<group>"; };
-		C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = sprinkle.usdz; sourceTree = "<group>"; };
-		C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = squid.usdz; sourceTree = "<group>"; };
-		C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = stir.usdz; sourceTree = "<group>"; };
-		C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = temperature.usdz; sourceTree = "<group>"; };
-		C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tofu.usdz; sourceTree = "<group>"; };
-		C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tomato.usdz; sourceTree = "<group>"; };
-		C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = torch.usdz; sourceTree = "<group>"; };
+		C4492F322E8E7A3800D04D8A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C44930852E8E7B2E00D04D8A /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
+		C44930862E8E7B2E00D04D8A /* BeatEggAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatEggAnimation.swift; sourceTree = "<group>"; };
+		C44930872E8E7B2E00D04D8A /* CountdownAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownAnimation.swift; sourceTree = "<group>"; };
+		C44930882E8E7B2E00D04D8A /* CutAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutAnimation.swift; sourceTree = "<group>"; };
+		C44930892E8E7B2E00D04D8A /* FlameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlameAnimation.swift; sourceTree = "<group>"; };
+		C449308A2E8E7B2E00D04D8A /* FlipAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipAnimation.swift; sourceTree = "<group>"; };
+		C449308B2E8E7B2E00D04D8A /* PeelAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelAnimation.swift; sourceTree = "<group>"; };
+		C449308C2E8E7B2E00D04D8A /* PourLiquidAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PourLiquidAnimation.swift; sourceTree = "<group>"; };
+		C449308D2E8E7B2E00D04D8A /* PutIntoContainerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PutIntoContainerAnimation.swift; sourceTree = "<group>"; };
+		C449308E2E8E7B2E00D04D8A /* SprinkleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SprinkleAnimation.swift; sourceTree = "<group>"; };
+		C449308F2E8E7B2E00D04D8A /* StirAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StirAnimation.swift; sourceTree = "<group>"; };
+		C44930902E8E7B2E00D04D8A /* TemperatureAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureAnimation.swift; sourceTree = "<group>"; };
+		C44930912E8E7B2E00D04D8A /* TorchAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchAnimation.swift; sourceTree = "<group>"; };
+		C44930932E8E7B2E00D04D8A /* bacon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = bacon.usdz; sourceTree = "<group>"; };
+		C44930942E8E7B2E00D04D8A /* beatEgg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = beatEgg.usdz; sourceTree = "<group>"; };
+		C44930952E8E7B2E00D04D8A /* brazil.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brazil.usdz; sourceTree = "<group>"; };
+		C44930962E8E7B2E00D04D8A /* brocoli.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brocoli.usdz; sourceTree = "<group>"; };
+		C44930972E8E7B2E00D04D8A /* butter.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = butter.usdz; sourceTree = "<group>"; };
+		C44930982E8E7B2E00D04D8A /* carrot.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = carrot.usdz; sourceTree = "<group>"; };
+		C44930992E8E7B2E00D04D8A /* cheese.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheese.usdz; sourceTree = "<group>"; };
+		C449309A2E8E7B2E00D04D8A /* chickenThigh.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chickenThigh.usdz; sourceTree = "<group>"; };
+		C449309B2E8E7B2E00D04D8A /* chili.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chili.usdz; sourceTree = "<group>"; };
+		C449309C2E8E7B2E00D04D8A /* corn.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = corn.usdz; sourceTree = "<group>"; };
+		C449309D2E8E7B2E00D04D8A /* countdown.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = countdown.usdz; sourceTree = "<group>"; };
+		C449309E2E8E7B2E00D04D8A /* cut.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cut.usdz; sourceTree = "<group>"; };
+		C449309F2E8E7B2E00D04D8A /* egg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = egg.usdz; sourceTree = "<group>"; };
+		C44930A02E8E7B2E00D04D8A /* flame_large.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_large.usdz; sourceTree = "<group>"; };
+		C44930A12E8E7B2E00D04D8A /* flame_medium.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_medium.usdz; sourceTree = "<group>"; };
+		C44930A22E8E7B2E00D04D8A /* flame_small.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_small.usdz; sourceTree = "<group>"; };
+		C44930A32E8E7B2E00D04D8A /* flip.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flip.usdz; sourceTree = "<group>"; };
+		C44930A42E8E7B2E00D04D8A /* garlic.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = garlic.usdz; sourceTree = "<group>"; };
+		C44930A52E8E7B2E00D04D8A /* green_pepper.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = green_pepper.usdz; sourceTree = "<group>"; };
+		C44930A62E8E7B2E00D04D8A /* ingredient.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = ingredient.usdz; sourceTree = "<group>"; };
+		C44930A72E8E7B2E00D04D8A /* meat.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = meat.usdz; sourceTree = "<group>"; };
+		C44930A82E8E7B2E00D04D8A /* mushroom.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = mushroom.usdz; sourceTree = "<group>"; };
+		C44930A92E8E7B2E00D04D8A /* noodle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = noodle.usdz; sourceTree = "<group>"; };
+		C44930AA2E8E7B2E00D04D8A /* onion.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = onion.usdz; sourceTree = "<group>"; };
+		C44930AB2E8E7B2E00D04D8A /* peel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = peel.usdz; sourceTree = "<group>"; };
+		C44930AC2E8E7B2E00D04D8A /* potato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = potato.usdz; sourceTree = "<group>"; };
+		C44930AD2E8E7B2E00D04D8A /* pourLiquid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = pourLiquid.usdz; sourceTree = "<group>"; };
+		C44930AE2E8E7B2E00D04D8A /* salmon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = salmon.usdz; sourceTree = "<group>"; };
+		C44930AF2E8E7B2E00D04D8A /* shrimp.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = shrimp.usdz; sourceTree = "<group>"; };
+		C44930B02E8E7B2E00D04D8A /* sprinkle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = sprinkle.usdz; sourceTree = "<group>"; };
+		C44930B12E8E7B2E00D04D8A /* squid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = squid.usdz; sourceTree = "<group>"; };
+		C44930B22E8E7B2E00D04D8A /* stir.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = stir.usdz; sourceTree = "<group>"; };
+		C44930B32E8E7B2E00D04D8A /* temperature.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = temperature.usdz; sourceTree = "<group>"; };
+		C44930B42E8E7B2E00D04D8A /* tofu.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tofu.usdz; sourceTree = "<group>"; };
+		C44930B52E8E7B2E00D04D8A /* tomato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tomato.usdz; sourceTree = "<group>"; };
+		C44930B62E8E7B2E00D04D8A /* torch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = torch.usdz; sourceTree = "<group>"; };
+		C44930B82E8E7B2E00D04D8A /* AnimationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFactory.swift; sourceTree = "<group>"; };
+		C44930B92E8E7B2E00D04D8A /* AnimationManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationManger.swift; sourceTree = "<group>"; };
+		C44930BA2E8E7B2E00D04D8A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C44930BB2E8E7B2E00D04D8A /* CookDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CookDetect.mlmodel; sourceTree = "<group>"; };
+		C44930BC2E8E7B2E00D04D8A /* CookingARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingARView.swift; sourceTree = "<group>"; };
+		C44930BD2E8E7B2E00D04D8A /* DetectionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionTestView.swift; sourceTree = "<group>"; };
+		C44930BE2E8E7B2E00D04D8A /* HandGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandGestureController.swift; sourceTree = "<group>"; };
+		C44930BF2E8E7B2E00D04D8A /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
+		C44930C02E8E7B2E00D04D8A /* ObjectDetect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetect.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -206,7 +206,8 @@
 		30D9E04A2DA60DC0001CDE03 = {
 			isa = PBXGroup;
 			children = (
-				A1B0547E2DDF1FE100C5B28D /* AR */,
+				C44930C12E8E7B2E00D04D8A /* AR */,
+				C4492F322E8E7A3800D04D8A /* GoogleService-Info.plist */,
 				FCCA81082DD7BC8E003346E7 /* Routing */,
 				30501B4C2DC332B100CB2198 /* Shared */,
 				30D9E0552DA60DC0001CDE03 /* ChefHelper */,
@@ -214,7 +215,6 @@
 				30A657B12DC61CB90032C368 /* Coordinators */,
 				30DC27052DD591D00081F80C /* Frameworks */,
 				30AB0E1D2DD64F2700101557 /* ChefHelper.app */,
-				9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -227,83 +227,83 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A1B054622DDF1FE100C5B28D /* Animation */ = {
+		C44930922E8E7B2E00D04D8A /* Animation */ = {
 			isa = PBXGroup;
 			children = (
-				A1B054552DDF1FE100C5B28D /* Animation.swift */,
-				A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */,
-				A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */,
-				A1B054582DDF1FE100C5B28D /* CutAnimation.swift */,
-				A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */,
-				A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */,
-				A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */,
-				A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */,
-				A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */,
-				A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */,
-				A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */,
-				A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */,
-				A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */,
+				C44930852E8E7B2E00D04D8A /* Animation.swift */,
+				C44930862E8E7B2E00D04D8A /* BeatEggAnimation.swift */,
+				C44930872E8E7B2E00D04D8A /* CountdownAnimation.swift */,
+				C44930882E8E7B2E00D04D8A /* CutAnimation.swift */,
+				C44930892E8E7B2E00D04D8A /* FlameAnimation.swift */,
+				C449308A2E8E7B2E00D04D8A /* FlipAnimation.swift */,
+				C449308B2E8E7B2E00D04D8A /* PeelAnimation.swift */,
+				C449308C2E8E7B2E00D04D8A /* PourLiquidAnimation.swift */,
+				C449308D2E8E7B2E00D04D8A /* PutIntoContainerAnimation.swift */,
+				C449308E2E8E7B2E00D04D8A /* SprinkleAnimation.swift */,
+				C449308F2E8E7B2E00D04D8A /* StirAnimation.swift */,
+				C44930902E8E7B2E00D04D8A /* TemperatureAnimation.swift */,
+				C44930912E8E7B2E00D04D8A /* TorchAnimation.swift */,
 			);
 			path = Animation;
 			sourceTree = "<group>";
 		};
-		A1B054702DDF1FE100C5B28D /* model */ = {
+		C44930B72E8E7B2E00D04D8A /* model */ = {
 			isa = PBXGroup;
 			children = (
-				C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */,
-				C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */,
-				C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */,
-				C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */,
-				C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */,
-				C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */,
-				C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */,
-				C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */,
-				C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */,
-				C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */,
-				C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */,
-				C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */,
-				C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */,
-				C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */,
-				C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */,
-				C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */,
-				C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */,
-				C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */,
-				C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */,
-				C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */,
-				C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */,
-				C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */,
-				C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */,
-				C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */,
-				C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */,
-				C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */,
-				C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */,
-				C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */,
-				C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */,
-				C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */,
-				C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */,
-				C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */,
-				C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */,
-				C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */,
-				C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */,
-				C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */,
+				C44930932E8E7B2E00D04D8A /* bacon.usdz */,
+				C44930942E8E7B2E00D04D8A /* beatEgg.usdz */,
+				C44930952E8E7B2E00D04D8A /* brazil.usdz */,
+				C44930962E8E7B2E00D04D8A /* brocoli.usdz */,
+				C44930972E8E7B2E00D04D8A /* butter.usdz */,
+				C44930982E8E7B2E00D04D8A /* carrot.usdz */,
+				C44930992E8E7B2E00D04D8A /* cheese.usdz */,
+				C449309A2E8E7B2E00D04D8A /* chickenThigh.usdz */,
+				C449309B2E8E7B2E00D04D8A /* chili.usdz */,
+				C449309C2E8E7B2E00D04D8A /* corn.usdz */,
+				C449309D2E8E7B2E00D04D8A /* countdown.usdz */,
+				C449309E2E8E7B2E00D04D8A /* cut.usdz */,
+				C449309F2E8E7B2E00D04D8A /* egg.usdz */,
+				C44930A02E8E7B2E00D04D8A /* flame_large.usdz */,
+				C44930A12E8E7B2E00D04D8A /* flame_medium.usdz */,
+				C44930A22E8E7B2E00D04D8A /* flame_small.usdz */,
+				C44930A32E8E7B2E00D04D8A /* flip.usdz */,
+				C44930A42E8E7B2E00D04D8A /* garlic.usdz */,
+				C44930A52E8E7B2E00D04D8A /* green_pepper.usdz */,
+				C44930A62E8E7B2E00D04D8A /* ingredient.usdz */,
+				C44930A72E8E7B2E00D04D8A /* meat.usdz */,
+				C44930A82E8E7B2E00D04D8A /* mushroom.usdz */,
+				C44930A92E8E7B2E00D04D8A /* noodle.usdz */,
+				C44930AA2E8E7B2E00D04D8A /* onion.usdz */,
+				C44930AB2E8E7B2E00D04D8A /* peel.usdz */,
+				C44930AC2E8E7B2E00D04D8A /* potato.usdz */,
+				C44930AD2E8E7B2E00D04D8A /* pourLiquid.usdz */,
+				C44930AE2E8E7B2E00D04D8A /* salmon.usdz */,
+				C44930AF2E8E7B2E00D04D8A /* shrimp.usdz */,
+				C44930B02E8E7B2E00D04D8A /* sprinkle.usdz */,
+				C44930B12E8E7B2E00D04D8A /* squid.usdz */,
+				C44930B22E8E7B2E00D04D8A /* stir.usdz */,
+				C44930B32E8E7B2E00D04D8A /* temperature.usdz */,
+				C44930B42E8E7B2E00D04D8A /* tofu.usdz */,
+				C44930B52E8E7B2E00D04D8A /* tomato.usdz */,
+				C44930B62E8E7B2E00D04D8A /* torch.usdz */,
 			);
 			path = model;
 			sourceTree = "<group>";
 		};
-		A1B0547E2DDF1FE100C5B28D /* AR */ = {
+		C44930C12E8E7B2E00D04D8A /* AR */ = {
 			isa = PBXGroup;
 			children = (
-				A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */,
-				A1B054622DDF1FE100C5B28D /* Animation */,
-				A1B054702DDF1FE100C5B28D /* model */,
-				A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */,
-				A1B054742DDF1FE100C5B28D /* AnimationManger.swift */,
-				A1B054772DDF1FE100C5B28D /* ContentView.swift */,
-				A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */,
-				A1B054792DDF1FE100C5B28D /* CookingARView.swift */,
-				A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */,
-				A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */,
-				A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */,
+				C44930922E8E7B2E00D04D8A /* Animation */,
+				C44930B72E8E7B2E00D04D8A /* model */,
+				C44930B82E8E7B2E00D04D8A /* AnimationFactory.swift */,
+				C44930B92E8E7B2E00D04D8A /* AnimationManger.swift */,
+				C44930BA2E8E7B2E00D04D8A /* ContentView.swift */,
+				C44930BB2E8E7B2E00D04D8A /* CookDetect.mlmodel */,
+				C44930BC2E8E7B2E00D04D8A /* CookingARView.swift */,
+				C44930BD2E8E7B2E00D04D8A /* DetectionTestView.swift */,
+				C44930BE2E8E7B2E00D04D8A /* HandGestureController.swift */,
+				C44930BF2E8E7B2E00D04D8A /* LRUCache.swift */,
+				C44930C02E8E7B2E00D04D8A /* ObjectDetect.swift */,
 			);
 			path = AR;
 			sourceTree = "<group>";
@@ -388,43 +388,43 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */,
-				C4D4F4882E8A5CBE005CDAB9 /* brazil.usdz in Resources */,
-				C4D4F4892E8A5CBE005CDAB9 /* flame_medium.usdz in Resources */,
-				C4D4F48A2E8A5CBE005CDAB9 /* torch.usdz in Resources */,
-				C4D4F48B2E8A5CBE005CDAB9 /* corn.usdz in Resources */,
-				C4D4F48C2E8A5CBE005CDAB9 /* cheese.usdz in Resources */,
-				C4D4F48D2E8A5CBE005CDAB9 /* flip.usdz in Resources */,
-				C4D4F48E2E8A5CBE005CDAB9 /* ingredient.usdz in Resources */,
-				C4D4F48F2E8A5CBE005CDAB9 /* onion.usdz in Resources */,
-				C4D4F4902E8A5CBE005CDAB9 /* sprinkle.usdz in Resources */,
-				C4D4F4912E8A5CBE005CDAB9 /* flame_small.usdz in Resources */,
-				C4D4F4922E8A5CBE005CDAB9 /* butter.usdz in Resources */,
-				C4D4F4932E8A5CBE005CDAB9 /* meat.usdz in Resources */,
-				C4D4F4942E8A5CBE005CDAB9 /* potato.usdz in Resources */,
-				C4D4F4952E8A5CBE005CDAB9 /* carrot.usdz in Resources */,
-				C4D4F4962E8A5CBE005CDAB9 /* flame_large.usdz in Resources */,
-				C4D4F4972E8A5CBE005CDAB9 /* squid.usdz in Resources */,
-				C4D4F4982E8A5CBE005CDAB9 /* pourLiquid.usdz in Resources */,
-				C4D4F4992E8A5CBE005CDAB9 /* beatEgg.usdz in Resources */,
-				C4D4F49A2E8A5CBE005CDAB9 /* green_pepper.usdz in Resources */,
-				C4D4F49B2E8A5CBE005CDAB9 /* cut.usdz in Resources */,
-				C4D4F49C2E8A5CBE005CDAB9 /* peel.usdz in Resources */,
-				C4D4F49D2E8A5CBE005CDAB9 /* shrimp.usdz in Resources */,
-				C4D4F49E2E8A5CBE005CDAB9 /* stir.usdz in Resources */,
-				C4D4F49F2E8A5CBE005CDAB9 /* tomato.usdz in Resources */,
-				C4D4F4A02E8A5CBE005CDAB9 /* bacon.usdz in Resources */,
-				C4D4F4A12E8A5CBE005CDAB9 /* countdown.usdz in Resources */,
-				C4D4F4A22E8A5CBE005CDAB9 /* salmon.usdz in Resources */,
-				C4D4F4A32E8A5CBE005CDAB9 /* noodle.usdz in Resources */,
-				C4D4F4A42E8A5CBE005CDAB9 /* brocoli.usdz in Resources */,
-				C4D4F4A52E8A5CBE005CDAB9 /* tofu.usdz in Resources */,
-				C4D4F4A62E8A5CBE005CDAB9 /* chickenThigh.usdz in Resources */,
-				C4D4F4A72E8A5CBE005CDAB9 /* chili.usdz in Resources */,
-				C4D4F4A82E8A5CBE005CDAB9 /* garlic.usdz in Resources */,
-				C4D4F4A92E8A5CBE005CDAB9 /* egg.usdz in Resources */,
-				C4D4F4AA2E8A5CBE005CDAB9 /* mushroom.usdz in Resources */,
-				C4D4F4AB2E8A5CBE005CDAB9 /* temperature.usdz in Resources */,
+				C44930D82E8E7B2E00D04D8A /* flip.usdz in Resources */,
+				C44930D92E8E7B2E00D04D8A /* pourLiquid.usdz in Resources */,
+				C44930DA2E8E7B2E00D04D8A /* green_pepper.usdz in Resources */,
+				C44930DB2E8E7B2E00D04D8A /* sprinkle.usdz in Resources */,
+				C44930DC2E8E7B2E00D04D8A /* carrot.usdz in Resources */,
+				C44930DD2E8E7B2E00D04D8A /* mushroom.usdz in Resources */,
+				C44930DE2E8E7B2E00D04D8A /* countdown.usdz in Resources */,
+				C44930DF2E8E7B2E00D04D8A /* cheese.usdz in Resources */,
+				C44930E02E8E7B2E00D04D8A /* torch.usdz in Resources */,
+				C44930E12E8E7B2E00D04D8A /* bacon.usdz in Resources */,
+				C44930E22E8E7B2E00D04D8A /* noodle.usdz in Resources */,
+				C44930E32E8E7B2E00D04D8A /* tofu.usdz in Resources */,
+				C44930E42E8E7B2E00D04D8A /* butter.usdz in Resources */,
+				C44930E52E8E7B2E00D04D8A /* onion.usdz in Resources */,
+				C44930E62E8E7B2E00D04D8A /* stir.usdz in Resources */,
+				C44930E72E8E7B2E00D04D8A /* peel.usdz in Resources */,
+				C44930E82E8E7B2E00D04D8A /* chili.usdz in Resources */,
+				C44930E92E8E7B2E00D04D8A /* cut.usdz in Resources */,
+				C44930EA2E8E7B2E00D04D8A /* chickenThigh.usdz in Resources */,
+				C44930EB2E8E7B2E00D04D8A /* meat.usdz in Resources */,
+				C44930EC2E8E7B2E00D04D8A /* potato.usdz in Resources */,
+				C44930ED2E8E7B2E00D04D8A /* brocoli.usdz in Resources */,
+				C44930EE2E8E7B2E00D04D8A /* corn.usdz in Resources */,
+				C44930EF2E8E7B2E00D04D8A /* temperature.usdz in Resources */,
+				C44930F02E8E7B2E00D04D8A /* egg.usdz in Resources */,
+				C44930F12E8E7B2E00D04D8A /* flame_medium.usdz in Resources */,
+				C44930F22E8E7B2E00D04D8A /* flame_large.usdz in Resources */,
+				C44930F32E8E7B2E00D04D8A /* shrimp.usdz in Resources */,
+				C44930F42E8E7B2E00D04D8A /* ingredient.usdz in Resources */,
+				C44930F52E8E7B2E00D04D8A /* garlic.usdz in Resources */,
+				C44930F62E8E7B2E00D04D8A /* squid.usdz in Resources */,
+				C44930F72E8E7B2E00D04D8A /* beatEgg.usdz in Resources */,
+				C44930F82E8E7B2E00D04D8A /* flame_small.usdz in Resources */,
+				C44930F92E8E7B2E00D04D8A /* tomato.usdz in Resources */,
+				C44930FA2E8E7B2E00D04D8A /* salmon.usdz in Resources */,
+				C44930FB2E8E7B2E00D04D8A /* brazil.usdz in Resources */,
+				C4492F332E8E7A3800D04D8A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,28 +435,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B0548F2DDF1FE100C5B28D /* LRUCache.swift in Sources */,
-				A1B054902DDF1FE100C5B28D /* AnimationManger.swift in Sources */,
-				A1B054912DDF1FE100C5B28D /* TorchAnimation.swift in Sources */,
-				A1B054922DDF1FE100C5B28D /* SprinkleAnimation.swift in Sources */,
-				A1B054932DDF1FE100C5B28D /* CountdownAnimation.swift in Sources */,
-				A1B054942DDF1FE100C5B28D /* FlameAnimation.swift in Sources */,
-				A1B054952DDF1FE100C5B28D /* ObjectDetect.swift in Sources */,
-				A1B054962DDF1FE100C5B28D /* PeelAnimation.swift in Sources */,
-				A1B054972DDF1FE100C5B28D /* PutIntoContainerAnimation.swift in Sources */,
-				A1B054982DDF1FE100C5B28D /* TemperatureAnimation.swift in Sources */,
-				A1B054992DDF1FE100C5B28D /* BeatEggAnimation.swift in Sources */,
-				A1B0549A2DDF1FE100C5B28D /* CookDetect.mlmodel in Sources */,
-				A1B0549B2DDF1FE100C5B28D /* Animation.swift in Sources */,
-				A1B0549C2DDF1FE100C5B28D /* AnimationFactory.swift in Sources */,
-				A1B0549E2DDF1FE100C5B28D /* StirAnimation.swift in Sources */,
-				A1B0549F2DDF1FE100C5B28D /* ContentView.swift in Sources */,
-				A1B054A02DDF1FE100C5B28D /* CookingARView.swift in Sources */,
-				A1B054A12DDF1FE100C5B28D /* CutAnimation.swift in Sources */,
-				A1B054A22DDF1FE100C5B28D /* PourLiquidAnimation.swift in Sources */,
-				A1B054A32DDF1FE100C5B28D /* FlipAnimation.swift in Sources */,
-				A1B054A42DDF1FE100C5B28D /* DetectionTestView.swift in Sources */,
-				A1B054A62DDF4CE000C5B28D /* HandGestureController.swift in Sources */,
+				C44930C22E8E7B2E00D04D8A /* CutAnimation.swift in Sources */,
+				C44930C32E8E7B2E00D04D8A /* SprinkleAnimation.swift in Sources */,
+				C44930C42E8E7B2E00D04D8A /* TemperatureAnimation.swift in Sources */,
+				C44930C52E8E7B2E00D04D8A /* Animation.swift in Sources */,
+				C44930C62E8E7B2E00D04D8A /* CountdownAnimation.swift in Sources */,
+				C44930C72E8E7B2E00D04D8A /* HandGestureController.swift in Sources */,
+				C44930C82E8E7B2E00D04D8A /* CookingARView.swift in Sources */,
+				C44930C92E8E7B2E00D04D8A /* FlipAnimation.swift in Sources */,
+				C44930CA2E8E7B2E00D04D8A /* PutIntoContainerAnimation.swift in Sources */,
+				C44930CB2E8E7B2E00D04D8A /* AnimationFactory.swift in Sources */,
+				C44930CC2E8E7B2E00D04D8A /* StirAnimation.swift in Sources */,
+				C44930CD2E8E7B2E00D04D8A /* TorchAnimation.swift in Sources */,
+				C44930CE2E8E7B2E00D04D8A /* AnimationManger.swift in Sources */,
+				C44930CF2E8E7B2E00D04D8A /* FlameAnimation.swift in Sources */,
+				C44930D02E8E7B2E00D04D8A /* PourLiquidAnimation.swift in Sources */,
+				C44930D12E8E7B2E00D04D8A /* CookDetect.mlmodel in Sources */,
+				C44930D22E8E7B2E00D04D8A /* BeatEggAnimation.swift in Sources */,
+				C44930D32E8E7B2E00D04D8A /* ObjectDetect.swift in Sources */,
+				C44930D42E8E7B2E00D04D8A /* ContentView.swift in Sources */,
+				C44930D52E8E7B2E00D04D8A /* LRUCache.swift in Sources */,
+				C44930D62E8E7B2E00D04D8A /* DetectionTestView.swift in Sources */,
+				C44930D72E8E7B2E00D04D8A /* PeelAnimation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

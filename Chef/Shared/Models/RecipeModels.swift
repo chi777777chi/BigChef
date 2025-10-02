@@ -54,6 +54,34 @@ struct SuggestRecipeResponse: Codable {
     var recipe: [RecipeStep]          // 食譜步驟清單
 }
 
+// MARK: - AR 動畫類型（與後端 API 對應）
+enum ARAnimationType: String, Codable {
+    case putIntoContainer
+    case stir
+    case pourLiquid
+    case flipPan
+    case countdown
+    case temperature
+    case flame
+    case sprinkle
+    case torch
+    case cut
+    case peel
+    case flip
+    case beatEgg
+}
+
+// MARK: - AR 動畫參數（與後端 API 對應）
+struct ARAnimationParams: Codable {
+    var coordinate: [Double]?
+    var container: String?
+    var ingredient: String?
+    var color: String?
+    var time: Double?
+    var temperature: Double?
+    var flameLevel: String?
+}
+
 // MARK: - 食譜步驟，每一個步驟都包含標題與操作清單
 struct RecipeStep: Codable, Identifiable {
     var id: Int { step_number }       // SwiftUI 識別用，使用步驟編號
@@ -65,6 +93,8 @@ struct RecipeStep: Codable, Identifiable {
     var temperature: String           // 火侯說明
     var warnings: String?             // 警告（可為 null）
     var notes: String                 // 備註
+    var arType: ARAnimationType?      // AR 動畫類型（可選）
+    var arParameters: ARAnimationParams?  // AR 動畫參數（可選）
 }
 
 // MARK: - 單一操作細節（屬於 RecipeStep 內的一部分）

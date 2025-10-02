@@ -79,9 +79,15 @@ class HandDetectionManager: ObservableObject {
     func processFrame(_ pixelBuffer: CVPixelBuffer) {
         // ✅ 移除 isDetecting 檢查，讓 Vision 可以持續處理 frame
         // ARKit 會以 60fps 傳入 frame，Vision 處理較慢沒關係，會自動跳過
-        
+
         // 計數接收到的幀
         visionFrameCount += 1
+
+        // 第一幀時打印診斷資訊
+        if visionFrameCount == 1 {
+            print("✅ [HandDetectionManager] 開始處理 frame！")
+            print("🔍 [HandDetectionManager] isGestureEnabled = \(isGestureEnabled)")
+        }
         
         // ✅ 在背景線程執行 Vision，不阻塞 ARKit 渲染
         visionQueue.async { [weak self] in
@@ -276,6 +282,8 @@ class HandDetectionManager: ObservableObject {
     func setGestureEnabled(_ enabled: Bool) {
         isGestureEnabled = enabled
         gestureRecognizer.setEnabled(enabled)
+        print("🎯 [HandDetectionManager] 手勢辨識\(enabled ? "已啟用" : "已停用")")
+        print("🔍 [HandDetectionManager] isGestureEnabled = \(isGestureEnabled)")
     }
     
     /// 重置手勢辨識狀態

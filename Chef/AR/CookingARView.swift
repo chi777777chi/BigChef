@@ -9,6 +9,8 @@ import CoreVideo
 struct CookingARView: UIViewRepresentable {
     /// 直接吃當前步驟（含 arType / arParameters）
     let stepModel: RecipeStep
+    /// 共享的 ARSessionAdapter（用於手勢辨識）
+    let sessionAdapter: ARSessionAdapter?
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
@@ -16,15 +18,27 @@ struct CookingARView: UIViewRepresentable {
         let arView = ARView(frame: .zero)
         arView.automaticallyConfigureSession = false
 
-        let config = ARWorldTrackingConfiguration()
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
-            config.frameSemantics.insert(.sceneDepth)
-            context.coordinator.useSceneDepth = true
+        if let adapter = sessionAdapter {
+            // ✅ 使用共享的 ARSession
+            arView.session = adapter.arSession
+            context.coordinator.useSceneDepth = ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth)
+
+            // ✅ 註冊 Coordinator 到 MulticastDelegate
+            adapter.addSessionDelegate(context.coordinator)
+            print("✅ [CookingARView] 使用共享 ARSession 並註冊到 MulticastDelegate")
         } else {
-            context.coordinator.useSceneDepth = false
+            // ⚠️ 備用方案：創建獨立 ARSession
+            let config = ARWorldTrackingConfiguration()
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+                config.frameSemantics.insert(.sceneDepth)
+                context.coordinator.useSceneDepth = true
+            } else {
+                context.coordinator.useSceneDepth = false
+            }
+            arView.session.run(config)
+            arView.session.delegate = context.coordinator
+            print("⚠️ [CookingARView] 使用獨立 ARSession")
         }
-        arView.session.run(config)
-        arView.session.delegate = context.coordinator
 
         let overlay = UIView(frame: arView.bounds)
         overlay.backgroundColor = .clear
@@ -136,9 +150,16 @@ struct CookingARView: UIViewRepresentable {
 
             ObjectDetector.shared.clear()
 
+            // ✅ 提取需要的數據，避免在閉包中保留 frame
+            let capturedImage = frame.capturedImage
+            let cameraTransform = frame.camera.transform
+            let cameraIntrinsics = frame.camera.intrinsics
+            let smoothedSceneDepth = frame.smoothedSceneDepth
+            let useDepth = self.useSceneDepth
+
             ObjectDetector.shared.detectContainer(
                 target: container,
-                in: frame.capturedImage
+                in: capturedImage
             ) { [weak self] result in
                 guard let self = self else { return }
                 DispatchQueue.main.async {
@@ -148,7 +169,7 @@ struct CookingARView: UIViewRepresentable {
 
                         let center2D = CGPoint(x: rect.midX, y: rect.midY)
 
-                        if self.useSceneDepth, let sceneDepth = frame.smoothedSceneDepth {
+                        if useDepth, let sceneDepth = smoothedSceneDepth {
                             let depthMap = sceneDepth.depthMap
                             CVPixelBufferLockBaseAddress(depthMap, .readOnly)
                             let width = CVPixelBufferGetWidth(depthMap)
@@ -161,13 +182,12 @@ struct CookingARView: UIViewRepresentable {
                             let depth = ptr[x]
                             CVPixelBufferUnlockBaseAddress(depthMap, .readOnly)
 
-                            let intr = frame.camera.intrinsics
-                            let fx = intr[0,0], fy = intr[1,1]
-                            let cx = intr[2,0], cy = intr[2,1]
+                            let fx = cameraIntrinsics[0,0], fy = cameraIntrinsics[1,1]
+                            let cx = cameraIntrinsics[2,0], cy = cameraIntrinsics[2,1]
                             let xCam = (Float(center2D.x) - cx) * depth / fx
                             let yCam = (Float(center2D.y) - cy) * depth / fy
                             let camPos = SIMD4<Float>(xCam, yCam, depth, 1)
-                            let world4 = frame.camera.transform * camPos
+                            let world4 = cameraTransform * camPos
                             let rawPos = SIMD3<Float>(world4.x, world4.y, world4.z)
                             let smoothedPos: SIMD3<Float> = {
                                 if let last = self.lastSmoothedPosition {

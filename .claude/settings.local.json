@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(sort:*)",
+      "Bash(git merge:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(find:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(xcrun simctl list:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
