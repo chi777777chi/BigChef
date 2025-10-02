@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(grep:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift:*)",
+      "Bash(rm:*)",
+      "Bash(xcrun simctl boot:*)",
+      "Bash(timeout 30s xcodebuild:*)",
+      "Bash(find:*)",
+      "Bash(swiftc:*)",
+      "Bash(curl:*)",
+      "Bash(timeout 90 xcodebuild:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git rm:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
