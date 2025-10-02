@@ -1,0 +1,758 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		30DC27072DD591D00081F80C /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30DC27062DD591D00081F80C /* ARKit.framework */; };
+		30DC27092DD591E20081F80C /* RealityKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30DC27082DD591E20081F80C /* RealityKit.framework */; };
+		30DC270C2DD592D10081F80C /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 30DC270B2DD592D10081F80C /* GoogleGenerativeAI */; };
+		688718182DDBB15F002A81AF /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 688718172DDBB15F002A81AF /* Kingfisher */; };
+		68CE26C62DD88BFF00365F01 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26C52DD88BFF00365F01 /* FirebaseAuth */; };
+		68CE26C82DD88BFF00365F01 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26C72DD88BFF00365F01 /* FirebaseDatabase */; };
+		68CE26CA2DD88BFF00365F01 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26C92DD88BFF00365F01 /* FirebaseFirestore */; };
+		68CE26CC2DD88C6200365F01 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CB2DD88C6200365F01 /* FirebaseCore */; };
+		68CE26CE2DD88C6200365F01 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 68CE26CD2DD88C6200365F01 /* FirebaseStorage */; };
+		9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */; };
+		A1B0548F2DDF1FE100C5B28D /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */; };
+		A1B054902DDF1FE100C5B28D /* AnimationManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054742DDF1FE100C5B28D /* AnimationManger.swift */; };
+		A1B054912DDF1FE100C5B28D /* TorchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */; };
+		A1B054922DDF1FE100C5B28D /* SprinkleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */; };
+		A1B054932DDF1FE100C5B28D /* CountdownAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */; };
+		A1B054942DDF1FE100C5B28D /* FlameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */; };
+		A1B054952DDF1FE100C5B28D /* ObjectDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */; };
+		A1B054962DDF1FE100C5B28D /* PeelAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */; };
+		A1B054972DDF1FE100C5B28D /* PutIntoContainerAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */; };
+		A1B054982DDF1FE100C5B28D /* TemperatureAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */; };
+		A1B054992DDF1FE100C5B28D /* BeatEggAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */; };
+		A1B0549A2DDF1FE100C5B28D /* CookDetect.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */; };
+		A1B0549B2DDF1FE100C5B28D /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054552DDF1FE100C5B28D /* Animation.swift */; };
+		A1B0549C2DDF1FE100C5B28D /* AnimationFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */; };
+		A1B0549E2DDF1FE100C5B28D /* StirAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */; };
+		A1B0549F2DDF1FE100C5B28D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054772DDF1FE100C5B28D /* ContentView.swift */; };
+		A1B054A02DDF1FE100C5B28D /* CookingARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054792DDF1FE100C5B28D /* CookingARView.swift */; };
+		A1B054A12DDF1FE100C5B28D /* CutAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054582DDF1FE100C5B28D /* CutAnimation.swift */; };
+		A1B054A22DDF1FE100C5B28D /* PourLiquidAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */; };
+		A1B054A32DDF1FE100C5B28D /* FlipAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */; };
+		A1B054A42DDF1FE100C5B28D /* DetectionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */; };
+		A1B054A62DDF4CE000C5B28D /* HandGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */; };
+		C4D4F4882E8A5CBE005CDAB9 /* brazil.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */; };
+		C4D4F4892E8A5CBE005CDAB9 /* flame_medium.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */; };
+		C4D4F48A2E8A5CBE005CDAB9 /* torch.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */; };
+		C4D4F48B2E8A5CBE005CDAB9 /* corn.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */; };
+		C4D4F48C2E8A5CBE005CDAB9 /* cheese.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */; };
+		C4D4F48D2E8A5CBE005CDAB9 /* flip.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */; };
+		C4D4F48E2E8A5CBE005CDAB9 /* ingredient.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */; };
+		C4D4F48F2E8A5CBE005CDAB9 /* onion.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */; };
+		C4D4F4902E8A5CBE005CDAB9 /* sprinkle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */; };
+		C4D4F4912E8A5CBE005CDAB9 /* flame_small.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */; };
+		C4D4F4922E8A5CBE005CDAB9 /* butter.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */; };
+		C4D4F4932E8A5CBE005CDAB9 /* meat.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */; };
+		C4D4F4942E8A5CBE005CDAB9 /* potato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */; };
+		C4D4F4952E8A5CBE005CDAB9 /* carrot.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */; };
+		C4D4F4962E8A5CBE005CDAB9 /* flame_large.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */; };
+		C4D4F4972E8A5CBE005CDAB9 /* squid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */; };
+		C4D4F4982E8A5CBE005CDAB9 /* pourLiquid.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */; };
+		C4D4F4992E8A5CBE005CDAB9 /* beatEgg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */; };
+		C4D4F49A2E8A5CBE005CDAB9 /* green_pepper.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */; };
+		C4D4F49B2E8A5CBE005CDAB9 /* cut.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */; };
+		C4D4F49C2E8A5CBE005CDAB9 /* peel.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */; };
+		C4D4F49D2E8A5CBE005CDAB9 /* shrimp.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */; };
+		C4D4F49E2E8A5CBE005CDAB9 /* stir.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */; };
+		C4D4F49F2E8A5CBE005CDAB9 /* tomato.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */; };
+		C4D4F4A02E8A5CBE005CDAB9 /* bacon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */; };
+		C4D4F4A12E8A5CBE005CDAB9 /* countdown.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */; };
+		C4D4F4A22E8A5CBE005CDAB9 /* salmon.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */; };
+		C4D4F4A32E8A5CBE005CDAB9 /* noodle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */; };
+		C4D4F4A42E8A5CBE005CDAB9 /* brocoli.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */; };
+		C4D4F4A52E8A5CBE005CDAB9 /* tofu.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */; };
+		C4D4F4A62E8A5CBE005CDAB9 /* chickenThigh.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */; };
+		C4D4F4A72E8A5CBE005CDAB9 /* chili.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */; };
+		C4D4F4A82E8A5CBE005CDAB9 /* garlic.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */; };
+		C4D4F4A92E8A5CBE005CDAB9 /* egg.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */; };
+		C4D4F4AA2E8A5CBE005CDAB9 /* mushroom.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */; };
+		C4D4F4AB2E8A5CBE005CDAB9 /* temperature.usdz in Resources */ = {isa = PBXBuildFile; fileRef = C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		30AB0E1D2DD64F2700101557 /* ChefHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChefHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		30DC27062DD591D00081F80C /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
+		30DC27082DD591E20081F80C /* RealityKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealityKit.framework; path = System/Library/Frameworks/RealityKit.framework; sourceTree = SDKROOT; };
+		9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A1B054552DDF1FE100C5B28D /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
+		A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeatEggAnimation.swift; sourceTree = "<group>"; };
+		A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownAnimation.swift; sourceTree = "<group>"; };
+		A1B054582DDF1FE100C5B28D /* CutAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutAnimation.swift; sourceTree = "<group>"; };
+		A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlameAnimation.swift; sourceTree = "<group>"; };
+		A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipAnimation.swift; sourceTree = "<group>"; };
+		A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelAnimation.swift; sourceTree = "<group>"; };
+		A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PourLiquidAnimation.swift; sourceTree = "<group>"; };
+		A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PutIntoContainerAnimation.swift; sourceTree = "<group>"; };
+		A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SprinkleAnimation.swift; sourceTree = "<group>"; };
+		A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StirAnimation.swift; sourceTree = "<group>"; };
+		A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureAnimation.swift; sourceTree = "<group>"; };
+		A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorchAnimation.swift; sourceTree = "<group>"; };
+		A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFactory.swift; sourceTree = "<group>"; };
+		A1B054742DDF1FE100C5B28D /* AnimationManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationManger.swift; sourceTree = "<group>"; };
+		A1B054772DDF1FE100C5B28D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = CookDetect.mlmodel; sourceTree = "<group>"; };
+		A1B054792DDF1FE100C5B28D /* CookingARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingARView.swift; sourceTree = "<group>"; };
+		A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionTestView.swift; sourceTree = "<group>"; };
+		A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRUCache.swift; sourceTree = "<group>"; };
+		A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetect.swift; sourceTree = "<group>"; };
+		A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandGestureController.swift; sourceTree = "<group>"; };
+		C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = bacon.usdz; sourceTree = "<group>"; };
+		C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = beatEgg.usdz; sourceTree = "<group>"; };
+		C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brazil.usdz; sourceTree = "<group>"; };
+		C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = brocoli.usdz; sourceTree = "<group>"; };
+		C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = butter.usdz; sourceTree = "<group>"; };
+		C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = carrot.usdz; sourceTree = "<group>"; };
+		C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheese.usdz; sourceTree = "<group>"; };
+		C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chickenThigh.usdz; sourceTree = "<group>"; };
+		C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = chili.usdz; sourceTree = "<group>"; };
+		C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = corn.usdz; sourceTree = "<group>"; };
+		C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = countdown.usdz; sourceTree = "<group>"; };
+		C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = cut.usdz; sourceTree = "<group>"; };
+		C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = egg.usdz; sourceTree = "<group>"; };
+		C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_large.usdz; sourceTree = "<group>"; };
+		C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_medium.usdz; sourceTree = "<group>"; };
+		C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flame_small.usdz; sourceTree = "<group>"; };
+		C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = flip.usdz; sourceTree = "<group>"; };
+		C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = garlic.usdz; sourceTree = "<group>"; };
+		C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = green_pepper.usdz; sourceTree = "<group>"; };
+		C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = ingredient.usdz; sourceTree = "<group>"; };
+		C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = meat.usdz; sourceTree = "<group>"; };
+		C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = mushroom.usdz; sourceTree = "<group>"; };
+		C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = noodle.usdz; sourceTree = "<group>"; };
+		C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = onion.usdz; sourceTree = "<group>"; };
+		C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = peel.usdz; sourceTree = "<group>"; };
+		C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = potato.usdz; sourceTree = "<group>"; };
+		C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = pourLiquid.usdz; sourceTree = "<group>"; };
+		C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = salmon.usdz; sourceTree = "<group>"; };
+		C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = shrimp.usdz; sourceTree = "<group>"; };
+		C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = sprinkle.usdz; sourceTree = "<group>"; };
+		C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = squid.usdz; sourceTree = "<group>"; };
+		C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = stir.usdz; sourceTree = "<group>"; };
+		C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = temperature.usdz; sourceTree = "<group>"; };
+		C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tofu.usdz; sourceTree = "<group>"; };
+		C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = tomato.usdz; sourceTree = "<group>"; };
+		C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */ = {isa = PBXFileReference; lastKnownFileType = file; path = torch.usdz; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3056BC572DCC572F00141C0C /* Exceptions for "ChefHelper" folder in "ChefHelper" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 30D9E0522DA60DC0001CDE03 /* ChefHelper */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		30501B422DC331C700CB2198 /* Features */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Features;
+			sourceTree = "<group>";
+		};
+		30501B4C2DC332B100CB2198 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		30A657B12DC61CB90032C368 /* Coordinators */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		30D9E0552DA60DC0001CDE03 /* ChefHelper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3056BC572DCC572F00141C0C /* Exceptions for "ChefHelper" folder in "ChefHelper" target */,
+			);
+			path = ChefHelper;
+			sourceTree = "<group>";
+		};
+		FCCA81082DD7BC8E003346E7 /* Routing */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Routing;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		30D9E0502DA60DC0001CDE03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68CE26C82DD88BFF00365F01 /* FirebaseDatabase in Frameworks */,
+				30DC270C2DD592D10081F80C /* GoogleGenerativeAI in Frameworks */,
+				30DC27092DD591E20081F80C /* RealityKit.framework in Frameworks */,
+				688718182DDBB15F002A81AF /* Kingfisher in Frameworks */,
+				30DC27072DD591D00081F80C /* ARKit.framework in Frameworks */,
+				68CE26CC2DD88C6200365F01 /* FirebaseCore in Frameworks */,
+				68CE26CE2DD88C6200365F01 /* FirebaseStorage in Frameworks */,
+				68CE26C62DD88BFF00365F01 /* FirebaseAuth in Frameworks */,
+				68CE26CA2DD88BFF00365F01 /* FirebaseFirestore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		30D9E04A2DA60DC0001CDE03 = {
+			isa = PBXGroup;
+			children = (
+				A1B0547E2DDF1FE100C5B28D /* AR */,
+				FCCA81082DD7BC8E003346E7 /* Routing */,
+				30501B4C2DC332B100CB2198 /* Shared */,
+				30D9E0552DA60DC0001CDE03 /* ChefHelper */,
+				30501B422DC331C700CB2198 /* Features */,
+				30A657B12DC61CB90032C368 /* Coordinators */,
+				30DC27052DD591D00081F80C /* Frameworks */,
+				30AB0E1D2DD64F2700101557 /* ChefHelper.app */,
+				9AC266622DE324E300B6AEB7 /* GoogleService-Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		30DC27052DD591D00081F80C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				30DC27082DD591E20081F80C /* RealityKit.framework */,
+				30DC27062DD591D00081F80C /* ARKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A1B054622DDF1FE100C5B28D /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				A1B054552DDF1FE100C5B28D /* Animation.swift */,
+				A1B054562DDF1FE100C5B28D /* BeatEggAnimation.swift */,
+				A1B054572DDF1FE100C5B28D /* CountdownAnimation.swift */,
+				A1B054582DDF1FE100C5B28D /* CutAnimation.swift */,
+				A1B054592DDF1FE100C5B28D /* FlameAnimation.swift */,
+				A1B0545A2DDF1FE100C5B28D /* FlipAnimation.swift */,
+				A1B0545B2DDF1FE100C5B28D /* PeelAnimation.swift */,
+				A1B0545C2DDF1FE100C5B28D /* PourLiquidAnimation.swift */,
+				A1B0545D2DDF1FE100C5B28D /* PutIntoContainerAnimation.swift */,
+				A1B0545E2DDF1FE100C5B28D /* SprinkleAnimation.swift */,
+				A1B0545F2DDF1FE100C5B28D /* StirAnimation.swift */,
+				A1B054602DDF1FE100C5B28D /* TemperatureAnimation.swift */,
+				A1B054612DDF1FE100C5B28D /* TorchAnimation.swift */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		A1B054702DDF1FE100C5B28D /* model */ = {
+			isa = PBXGroup;
+			children = (
+				C4D4F4642E8A5CBE005CDAB9 /* bacon.usdz */,
+				C4D4F4652E8A5CBE005CDAB9 /* beatEgg.usdz */,
+				C4D4F4662E8A5CBE005CDAB9 /* brazil.usdz */,
+				C4D4F4672E8A5CBE005CDAB9 /* brocoli.usdz */,
+				C4D4F4682E8A5CBE005CDAB9 /* butter.usdz */,
+				C4D4F4692E8A5CBE005CDAB9 /* carrot.usdz */,
+				C4D4F46A2E8A5CBE005CDAB9 /* cheese.usdz */,
+				C4D4F46B2E8A5CBE005CDAB9 /* chickenThigh.usdz */,
+				C4D4F46C2E8A5CBE005CDAB9 /* chili.usdz */,
+				C4D4F46D2E8A5CBE005CDAB9 /* corn.usdz */,
+				C4D4F46E2E8A5CBE005CDAB9 /* countdown.usdz */,
+				C4D4F46F2E8A5CBE005CDAB9 /* cut.usdz */,
+				C4D4F4702E8A5CBE005CDAB9 /* egg.usdz */,
+				C4D4F4712E8A5CBE005CDAB9 /* flame_large.usdz */,
+				C4D4F4722E8A5CBE005CDAB9 /* flame_medium.usdz */,
+				C4D4F4732E8A5CBE005CDAB9 /* flame_small.usdz */,
+				C4D4F4742E8A5CBE005CDAB9 /* flip.usdz */,
+				C4D4F4752E8A5CBE005CDAB9 /* garlic.usdz */,
+				C4D4F4762E8A5CBE005CDAB9 /* green_pepper.usdz */,
+				C4D4F4772E8A5CBE005CDAB9 /* ingredient.usdz */,
+				C4D4F4782E8A5CBE005CDAB9 /* meat.usdz */,
+				C4D4F4792E8A5CBE005CDAB9 /* mushroom.usdz */,
+				C4D4F47A2E8A5CBE005CDAB9 /* noodle.usdz */,
+				C4D4F47B2E8A5CBE005CDAB9 /* onion.usdz */,
+				C4D4F47C2E8A5CBE005CDAB9 /* peel.usdz */,
+				C4D4F47D2E8A5CBE005CDAB9 /* potato.usdz */,
+				C4D4F47E2E8A5CBE005CDAB9 /* pourLiquid.usdz */,
+				C4D4F47F2E8A5CBE005CDAB9 /* salmon.usdz */,
+				C4D4F4802E8A5CBE005CDAB9 /* shrimp.usdz */,
+				C4D4F4812E8A5CBE005CDAB9 /* sprinkle.usdz */,
+				C4D4F4822E8A5CBE005CDAB9 /* squid.usdz */,
+				C4D4F4832E8A5CBE005CDAB9 /* stir.usdz */,
+				C4D4F4842E8A5CBE005CDAB9 /* temperature.usdz */,
+				C4D4F4852E8A5CBE005CDAB9 /* tofu.usdz */,
+				C4D4F4862E8A5CBE005CDAB9 /* tomato.usdz */,
+				C4D4F4872E8A5CBE005CDAB9 /* torch.usdz */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		A1B0547E2DDF1FE100C5B28D /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				A1B054A52DDF4CDE00C5B28D /* HandGestureController.swift */,
+				A1B054622DDF1FE100C5B28D /* Animation */,
+				A1B054702DDF1FE100C5B28D /* model */,
+				A1B054732DDF1FE100C5B28D /* AnimationFactory.swift */,
+				A1B054742DDF1FE100C5B28D /* AnimationManger.swift */,
+				A1B054772DDF1FE100C5B28D /* ContentView.swift */,
+				A1B054782DDF1FE100C5B28D /* CookDetect.mlmodel */,
+				A1B054792DDF1FE100C5B28D /* CookingARView.swift */,
+				A1B0547A2DDF1FE100C5B28D /* DetectionTestView.swift */,
+				A1B0547C2DDF1FE100C5B28D /* LRUCache.swift */,
+				A1B0547D2DDF1FE100C5B28D /* ObjectDetect.swift */,
+			);
+			path = AR;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		30D9E0522DA60DC0001CDE03 /* ChefHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30D9E0612DA60DC1001CDE03 /* Build configuration list for PBXNativeTarget "ChefHelper" */;
+			buildPhases = (
+				30D9E04F2DA60DC0001CDE03 /* Sources */,
+				30D9E0502DA60DC0001CDE03 /* Frameworks */,
+				30D9E0512DA60DC0001CDE03 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				30501B422DC331C700CB2198 /* Features */,
+				30501B4C2DC332B100CB2198 /* Shared */,
+				30A657B12DC61CB90032C368 /* Coordinators */,
+				30D9E0552DA60DC0001CDE03 /* ChefHelper */,
+				FCCA81082DD7BC8E003346E7 /* Routing */,
+			);
+			name = ChefHelper;
+			packageProductDependencies = (
+				30DC270B2DD592D10081F80C /* GoogleGenerativeAI */,
+				68CE26C52DD88BFF00365F01 /* FirebaseAuth */,
+				68CE26C72DD88BFF00365F01 /* FirebaseDatabase */,
+				68CE26C92DD88BFF00365F01 /* FirebaseFirestore */,
+				68CE26CB2DD88C6200365F01 /* FirebaseCore */,
+				68CE26CD2DD88C6200365F01 /* FirebaseStorage */,
+				688718172DDBB15F002A81AF /* Kingfisher */,
+			);
+			productName = ChefHelper;
+			productReference = 30AB0E1D2DD64F2700101557 /* ChefHelper.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		30D9E04B2DA60DC0001CDE03 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					30D9E0522DA60DC0001CDE03 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = 30D9E04E2DA60DC0001CDE03 /* Build configuration list for PBXProject "ChefHelper" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 30D9E04A2DA60DC0001CDE03;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				30DC270A2DD592D10081F80C /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
+				68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				688718162DDBB15F002A81AF /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 30D9E04A2DA60DC0001CDE03;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				30D9E0522DA60DC0001CDE03 /* ChefHelper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		30D9E0512DA60DC0001CDE03 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9AC266632DE324E300B6AEB7 /* GoogleService-Info.plist in Resources */,
+				C4D4F4882E8A5CBE005CDAB9 /* brazil.usdz in Resources */,
+				C4D4F4892E8A5CBE005CDAB9 /* flame_medium.usdz in Resources */,
+				C4D4F48A2E8A5CBE005CDAB9 /* torch.usdz in Resources */,
+				C4D4F48B2E8A5CBE005CDAB9 /* corn.usdz in Resources */,
+				C4D4F48C2E8A5CBE005CDAB9 /* cheese.usdz in Resources */,
+				C4D4F48D2E8A5CBE005CDAB9 /* flip.usdz in Resources */,
+				C4D4F48E2E8A5CBE005CDAB9 /* ingredient.usdz in Resources */,
+				C4D4F48F2E8A5CBE005CDAB9 /* onion.usdz in Resources */,
+				C4D4F4902E8A5CBE005CDAB9 /* sprinkle.usdz in Resources */,
+				C4D4F4912E8A5CBE005CDAB9 /* flame_small.usdz in Resources */,
+				C4D4F4922E8A5CBE005CDAB9 /* butter.usdz in Resources */,
+				C4D4F4932E8A5CBE005CDAB9 /* meat.usdz in Resources */,
+				C4D4F4942E8A5CBE005CDAB9 /* potato.usdz in Resources */,
+				C4D4F4952E8A5CBE005CDAB9 /* carrot.usdz in Resources */,
+				C4D4F4962E8A5CBE005CDAB9 /* flame_large.usdz in Resources */,
+				C4D4F4972E8A5CBE005CDAB9 /* squid.usdz in Resources */,
+				C4D4F4982E8A5CBE005CDAB9 /* pourLiquid.usdz in Resources */,
+				C4D4F4992E8A5CBE005CDAB9 /* beatEgg.usdz in Resources */,
+				C4D4F49A2E8A5CBE005CDAB9 /* green_pepper.usdz in Resources */,
+				C4D4F49B2E8A5CBE005CDAB9 /* cut.usdz in Resources */,
+				C4D4F49C2E8A5CBE005CDAB9 /* peel.usdz in Resources */,
+				C4D4F49D2E8A5CBE005CDAB9 /* shrimp.usdz in Resources */,
+				C4D4F49E2E8A5CBE005CDAB9 /* stir.usdz in Resources */,
+				C4D4F49F2E8A5CBE005CDAB9 /* tomato.usdz in Resources */,
+				C4D4F4A02E8A5CBE005CDAB9 /* bacon.usdz in Resources */,
+				C4D4F4A12E8A5CBE005CDAB9 /* countdown.usdz in Resources */,
+				C4D4F4A22E8A5CBE005CDAB9 /* salmon.usdz in Resources */,
+				C4D4F4A32E8A5CBE005CDAB9 /* noodle.usdz in Resources */,
+				C4D4F4A42E8A5CBE005CDAB9 /* brocoli.usdz in Resources */,
+				C4D4F4A52E8A5CBE005CDAB9 /* tofu.usdz in Resources */,
+				C4D4F4A62E8A5CBE005CDAB9 /* chickenThigh.usdz in Resources */,
+				C4D4F4A72E8A5CBE005CDAB9 /* chili.usdz in Resources */,
+				C4D4F4A82E8A5CBE005CDAB9 /* garlic.usdz in Resources */,
+				C4D4F4A92E8A5CBE005CDAB9 /* egg.usdz in Resources */,
+				C4D4F4AA2E8A5CBE005CDAB9 /* mushroom.usdz in Resources */,
+				C4D4F4AB2E8A5CBE005CDAB9 /* temperature.usdz in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		30D9E04F2DA60DC0001CDE03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B0548F2DDF1FE100C5B28D /* LRUCache.swift in Sources */,
+				A1B054902DDF1FE100C5B28D /* AnimationManger.swift in Sources */,
+				A1B054912DDF1FE100C5B28D /* TorchAnimation.swift in Sources */,
+				A1B054922DDF1FE100C5B28D /* SprinkleAnimation.swift in Sources */,
+				A1B054932DDF1FE100C5B28D /* CountdownAnimation.swift in Sources */,
+				A1B054942DDF1FE100C5B28D /* FlameAnimation.swift in Sources */,
+				A1B054952DDF1FE100C5B28D /* ObjectDetect.swift in Sources */,
+				A1B054962DDF1FE100C5B28D /* PeelAnimation.swift in Sources */,
+				A1B054972DDF1FE100C5B28D /* PutIntoContainerAnimation.swift in Sources */,
+				A1B054982DDF1FE100C5B28D /* TemperatureAnimation.swift in Sources */,
+				A1B054992DDF1FE100C5B28D /* BeatEggAnimation.swift in Sources */,
+				A1B0549A2DDF1FE100C5B28D /* CookDetect.mlmodel in Sources */,
+				A1B0549B2DDF1FE100C5B28D /* Animation.swift in Sources */,
+				A1B0549C2DDF1FE100C5B28D /* AnimationFactory.swift in Sources */,
+				A1B0549E2DDF1FE100C5B28D /* StirAnimation.swift in Sources */,
+				A1B0549F2DDF1FE100C5B28D /* ContentView.swift in Sources */,
+				A1B054A02DDF1FE100C5B28D /* CookingARView.swift in Sources */,
+				A1B054A12DDF1FE100C5B28D /* CutAnimation.swift in Sources */,
+				A1B054A22DDF1FE100C5B28D /* PourLiquidAnimation.swift in Sources */,
+				A1B054A32DDF1FE100C5B28D /* FlipAnimation.swift in Sources */,
+				A1B054A42DDF1FE100C5B28D /* DetectionTestView.swift in Sources */,
+				A1B054A62DDF4CE000C5B28D /* HandGestureController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		30D9E05F2DA60DC1001CDE03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YB987PVDMC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_PREPROCESS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		30D9E0602DA60DC1001CDE03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YB987PVDMC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_PREPROCESS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		30D9E0622DA60DC1001CDE03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ChefHelper/Preview Content\"";
+				DEVELOPMENT_TEAM = 3QR9BMG5N4;
+				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ChefHelper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要開啟權限";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要相簿權限";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rong.ChefHelper12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		30D9E0632DA60DC1001CDE03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ChefHelper/Preview Content\"";
+				DEVELOPMENT_TEAM = NS9C26NG58;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ChefHelper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要開啟權限";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要相簿權限";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rong.ChefHelper12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		30D9E04E2DA60DC0001CDE03 /* Build configuration list for PBXProject "ChefHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30D9E05F2DA60DC1001CDE03 /* Debug */,
+				30D9E0602DA60DC1001CDE03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		30D9E0612DA60DC1001CDE03 /* Build configuration list for PBXNativeTarget "ChefHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30D9E0622DA60DC1001CDE03 /* Debug */,
+				30D9E0632DA60DC1001CDE03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		30DC270A2DD592D10081F80C /* XCRemoteSwiftPackageReference "generative-ai-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/generative-ai-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.6;
+			};
+		};
+		688718162DDBB15F002A81AF /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+		68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		30DC270B2DD592D10081F80C /* GoogleGenerativeAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30DC270A2DD592D10081F80C /* XCRemoteSwiftPackageReference "generative-ai-swift" */;
+			productName = GoogleGenerativeAI;
+		};
+		688718172DDBB15F002A81AF /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 688718162DDBB15F002A81AF /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		68CE26C52DD88BFF00365F01 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		68CE26C72DD88BFF00365F01 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		68CE26C92DD88BFF00365F01 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		68CE26CB2DD88C6200365F01 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		68CE26CD2DD88C6200365F01 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68CE26C42DD88BFF00365F01 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 30D9E04B2DA60DC0001CDE03 /* Project object */;
+}
