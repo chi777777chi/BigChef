@@ -106,21 +106,51 @@ class PutIntoContainerAnimation: Animation {
     }
     /// 把模型加到 Anchor 並觸發掉落
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
+        print("🍽️ [PutIntoContainer] applyAnimation 開始")
         arViewRef = arView
+
+        // ✅ 創建相機錨點，讓模型跟隨相機移動
+        let cameraAnchor: AnchorEntity
+        if let existing = arView.scene.findEntity(named: "PutIntoContainerCameraAnchor") as? AnchorEntity {
+            print("♻️ [PutIntoContainer] 重用現有的 PutIntoContainerCameraAnchor")
+            cameraAnchor = existing
+        } else {
+            print("🆕 [PutIntoContainer] 創建新的 PutIntoContainerCameraAnchor")
+            let ca = AnchorEntity(.camera)
+            ca.name = "PutIntoContainerCameraAnchor"
+            arView.scene.addAnchor(ca)
+            cameraAnchor = ca
+        }
+
+        // 將原本的 anchor 設為相機錨點的子物件
+        anchor.setParent(cameraAnchor)
+
         let entity = model.clone(recursive: true)
         entity.scale = SIMD3<Float>(repeating: scale)
+
+        // ✅ 添加 Billboard 組件讓模型始終面對相機
+        entity.components.set(BillboardComponent())
+
+        // 如果有文字子實體，也讓它面對相機
+        for child in entity.children {
+            child.components.set(BillboardComponent())
+        }
+
         anchor.addChild(entity)
-        var start = anchor.transform.translation
-        start.y += 0.2
+
+        // 設置初始位置（相機前方偏上）
+        var start = SIMD3<Float>(0, 0.2, -0.5) // 相機前方 0.5 公尺，向上 0.2 公尺
         entity.position = start
+
+        print("✅ [PutIntoContainer] 模型已添加到相機錨點，初始位置: \(start)")
+
         if let rawEnd = containerPosition {
-                var endPos = rawEnd
+            var endPos = rawEnd
+            // 手動微調 endPos
+            endPos.y -= 50
+            drop(to: endPos)
+        }
 
-                // 手動微調 endPos
-                endPos.y -= 50
-
-                drop(to: endPos)
-            }
         // 完成後再度呼叫 drop(to:) 重播掉落
         NotificationCenter.default.addObserver(
             forName: Notification.Name("PutIntoContainerAnimationCompleted"),
