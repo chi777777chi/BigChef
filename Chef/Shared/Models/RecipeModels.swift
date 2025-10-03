@@ -80,6 +80,18 @@ struct ARAnimationParams: Codable {
     var time: Double?
     var temperature: Double?
     var flameLevel: String?
+
+    // ✅ 忽略後端的 "type" 欄位（已經在 arType 中）
+    private enum CodingKeys: String, CodingKey {
+        case coordinate
+        case container
+        case ingredient
+        case color
+        case time
+        case temperature
+        case flameLevel
+        // 不包含 "type" 以忽略它
+    }
 }
 
 // MARK: - 食譜步驟，每一個步驟都包含標題與操作清單
@@ -95,6 +107,20 @@ struct RecipeStep: Codable, Identifiable {
     var notes: String                 // 備註
     var arType: ARAnimationType?      // AR 動畫類型（可選）
     var arParameters: ARAnimationParams?  // AR 動畫參數（可選）
+
+    // ✅ 映射後端的命名到 Swift 駝峰命名
+    private enum CodingKeys: String, CodingKey {
+        case step_number
+        case title
+        case description
+        case actions
+        case estimated_total_time
+        case temperature
+        case warnings
+        case notes
+        case arType = "ARtype"              // 後端是 "ARtype"
+        case arParameters = "ar_parameters" // 後端是 "ar_parameters"
+    }
 }
 
 // MARK: - 單一操作細節（屬於 RecipeStep 內的一部分）

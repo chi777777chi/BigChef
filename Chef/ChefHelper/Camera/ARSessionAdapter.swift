@@ -24,7 +24,8 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     
     // MARK: - 手勢檢測相關
     private let handDetectionManager = HandDetectionManager()
-    weak var gestureDelegate: ARGestureDelegate?
+    /// ✅ 多重手勢 delegate 廣播器
+    private let multicastGestureDelegate = MulticastGestureDelegate()
     private var isGestureEnabled = false
     
     // ✅ 節流機制：避免 Vision 每幀都處理（性能優化）
@@ -53,13 +54,22 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         handDetectionManager.gestureRecognizer.delegate = self
     }
     
-    /// ✅ 讓其他模組（如 CookingARView）註冊為 delegate
+    /// ✅ 讓其他模組（如 CookingARView）註冊為 ARSession delegate
     func addSessionDelegate(_ delegate: ARSessionDelegate) {
         multicastDelegate.addDelegate(delegate)
     }
-    
+
     func removeSessionDelegate(_ delegate: ARSessionDelegate) {
         multicastDelegate.removeDelegate(delegate)
+    }
+
+    /// ✅ 讓其他模組（如 CookingARView, CookViewController）註冊為手勢 delegate
+    func addGestureDelegate(_ delegate: ARGestureDelegate) {
+        multicastGestureDelegate.addDelegate(delegate)
+    }
+
+    func removeGestureDelegate(_ delegate: ARGestureDelegate) {
+        multicastGestureDelegate.removeDelegate(delegate)
     }
     
     deinit {
@@ -138,10 +148,10 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         }
         
         print("🎯 [ARSessionAdapter] 接收到手勢: \(gestureType.description)")
-        
-        // 轉發給委託
+
+        // 轉發給所有註冊的委託
         DispatchQueue.main.async { [weak self] in
-            self?.gestureDelegate?.didRecognizeGesture(gestureType)
+            self?.multicastGestureDelegate.didRecognizeGesture(gestureType)
         }
     }
     
@@ -191,9 +201,9 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     // MARK: - ARSession 錯誤處理
     func session(_ session: ARSession, didFailWithError error: Error) {
         print("❌ [ARSessionAdapter] ARSession 錯誤: \(error.localizedDescription)")
-        // 可以轉發錯誤給委託
+        // 可以轉發錯誤給所有註冊的委託
         DispatchQueue.main.async { [weak self] in
-            self?.gestureDelegate?.gestureRecognitionDidFail(with: .systemError(error.localizedDescription))
+            self?.multicastGestureDelegate.gestureRecognitionDidFail(with: .systemError(error.localizedDescription))
         }
     }
     
@@ -226,27 +236,27 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
 // MARK: - HandGestureDelegate
 extension ARSessionAdapter: HandGestureDelegate {
     func gestureStateDidChange(_ state: GestureState) {
-        // 轉發給 ARGestureDelegate
-        gestureDelegate?.gestureStateDidChange(state)
+        // 轉發給所有註冊的 ARGestureDelegate
+        multicastGestureDelegate.gestureStateDidChange(state)
     }
-    
+
     func palmStateDidChange(_ palmState: PalmState) {
-        // 轉發給 ARGestureDelegate
-        gestureDelegate?.palmStateDidChange(palmState)
+        // 轉發給所有註冊的 ARGestureDelegate
+        multicastGestureDelegate.palmStateDidChange(palmState)
     }
-    
+
     func hoverProgressDidUpdate(_ progress: Float) {
-        // 轉發給 ARGestureDelegate
-        gestureDelegate?.hoverProgressDidUpdate(progress)
+        // 轉發給所有註冊的 ARGestureDelegate
+        multicastGestureDelegate.hoverProgressDidUpdate(progress)
     }
-    
+
     func didRecognizeGesture(_ result: GestureResult) {
         // 這個已經通過 NotificationCenter 處理，不需要再轉發
         // 避免重複觸發
     }
-    
+
     func gestureRecognitionDidFail(with error: GestureRecognitionError) {
-        // 轉發給 ARGestureDelegate
-        gestureDelegate?.gestureRecognitionDidFail(with: error)
+        // 轉發給所有註冊的 ARGestureDelegate
+        multicastGestureDelegate.gestureRecognitionDidFail(with: error)
     }
 }

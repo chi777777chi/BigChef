@@ -157,8 +157,8 @@ final class CookViewController: UIViewController, ARGestureDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // ✅ 先設定 delegate 和啟用，再啟動 session
-        gestureSession.gestureDelegate = self
+        // ✅ 先註冊 delegate 和啟用，再啟動 session
+        gestureSession.addGestureDelegate(self)
         gestureSession.setGestureEnabled(true)
         gestureSession.start()
     }
@@ -171,7 +171,8 @@ final class CookViewController: UIViewController, ARGestureDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        // 停用手勢辨識
+        // 移除 delegate 並停用手勢辨識
+        gestureSession.removeGestureDelegate(self)
         gestureSession.setGestureEnabled(false)
         gestureSession.stop()
     }

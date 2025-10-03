@@ -25,7 +25,9 @@ struct CookingARView: UIViewRepresentable {
 
             // ✅ 註冊 Coordinator 到 MulticastDelegate
             adapter.addSessionDelegate(context.coordinator)
-            print("✅ [CookingARView] 使用共享 ARSession 並註冊到 MulticastDelegate")
+            // ✅ 註冊為手勢 delegate 以接收手勢狀態更新
+            adapter.addGestureDelegate(context.coordinator)
+            print("✅ [CookingARView] 使用共享 ARSession 並註冊到 MulticastDelegate 和 GestureDelegate")
         } else {
             // ⚠️ 備用方案：創建獨立 ARSession
             let config = ARWorldTrackingConfiguration()
@@ -67,17 +69,29 @@ struct CookingARView: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: ARView, context: Context) {
+        print("🎬 [CookingARView] updateUIView called for step \(stepModel.step_number)")
+        print("📝 [CookingARView] Step title: \(stepModel.title)")
+        print("📝 [CookingARView] Step description: \(stepModel.description)")
+
         // 1) arType / arParameters 必須存在才啟動動畫
         guard let apiType   = stepModel.arType,
               let apiParams = stepModel.arParameters
-        else { return }
+        else {
+            print("⚠️ [CookingARView] 無 AR 動畫：arType=\(stepModel.arType?.rawValue ?? "nil"), arParameters=\(stepModel.arParameters != nil ? "存在" : "nil")")
+            return
+        }
+
+        print("✅ [CookingARView] 檢測到 AR 動畫：\(apiType.rawValue)")
+        print("📦 [CookingARView] AR 參數：container=\(apiParams.container ?? "nil"), ingredient=\(apiParams.ingredient ?? "nil")")
 
         // 2) 同一步驟避免重建（用 step_number: Int）
         if context.coordinator.lastStepNumber == stepModel.step_number {
+            print("⏭️ [CookingARView] 跳過重複步驟 \(stepModel.step_number)")
             return
         }
 
         // 3) 清場
+        print("🧹 [CookingARView] 清理舊動畫，準備播放步驟 \(stepModel.step_number)")
         context.coordinator.lastStepNumber = stepModel.step_number
         context.coordinator.lastAnimation  = nil
         context.coordinator.resetDetectionState()
@@ -85,7 +99,12 @@ struct CookingARView: UIViewRepresentable {
         uiView.scene.anchors.removeAll()
 
         // 4) 後端枚舉字串 → 前端 AnimationType（rawValue 必須一致）
-        guard let animType = AnimationType(rawValue: apiType.rawValue) else { return }
+        guard let animType = AnimationType(rawValue: apiType.rawValue) else {
+            print("❌ [CookingARView] 無法轉換 AnimationType：\(apiType.rawValue)")
+            return
+        }
+
+        print("✅ [CookingARView] AnimationType 轉換成功：\(animType)")
 
         // 5) container 映射（若命名不同可在此做 mapping）
         let containerEnum: Container? = apiParams.container.flatMap { Container(rawValue: $0) }
@@ -101,16 +120,25 @@ struct CookingARView: UIViewRepresentable {
             flameLevel:  apiParams.flameLevel
         )
 
+        print("🎨 [CookingARView] 動畫參數準備完成")
+
         // 7) 建立與播放動畫（不再呼叫 AnimationManager）
+        print("🏭 [CookingARView] 呼叫 AnimationFactory.make(type: \(animType), params: ...)")
         let animation = AnimationFactory.make(type: animType, params: params)
         context.coordinator.lastAnimation = animation
 
+        print("🎭 [CookingARView] 動畫創建完成：\(type(of: animation))")
+        print("🔍 [CookingARView] 需要容器偵測：\(animation.requiresContainerDetection)")
+
         context.coordinator.isDetectionActive = !animation.requiresContainerDetection ? true : context.coordinator.isDetectionActive
+
+        print("▶️ [CookingARView] 開始播放動畫...")
         context.coordinator.playAnimationLoop()
+        print("✅ [CookingARView] playAnimationLoop() 已呼叫")
     }
 
     // MARK: - Coordinator
-    class Coordinator: NSObject, ARSessionDelegate {
+    class Coordinator: NSObject, ARSessionDelegate, ARGestureDelegate {
         var useSceneDepth: Bool = false
 
         private var parent: CookingARView?
@@ -128,7 +156,10 @@ struct CookingARView: UIViewRepresentable {
         private var staticRemovalWorkItem: DispatchWorkItem?
         var renderSubscription: Cancellable?
 
-        init(_ parent: CookingARView) { self.parent = parent }
+        init(_ parent: CookingARView) {
+            self.parent = parent
+            super.init()
+        }
 
         func resetDetectionState() {
             isDetectionActive   = false
@@ -245,23 +276,40 @@ struct CookingARView: UIViewRepresentable {
 
         @MainActor
         func playAnimationLoop() {
+            print("🎬 [Coordinator] playAnimationLoop 被呼叫")
+            print("🎬 [Coordinator] isAnimationPlaying=\(isAnimationPlaying), arView=\(arView != nil), lastAnimation=\(lastAnimation != nil)")
+
             guard
                 !isAnimationPlaying,
                 let arView    = arView,
                 let animation = lastAnimation
-            else { return }
+            else {
+                print("⚠️ [Coordinator] playAnimationLoop 條件不符，返回")
+                return
+            }
+
+            print("🎬 [Coordinator] 動畫類型：\(animation.type)")
+            print("🎬 [Coordinator] 需要容器偵測：\(animation.requiresContainerDetection)")
 
             if !animation.requiresContainerDetection {
                 isDetectionActive = true
+                print("✅ [Coordinator] 不需要容器偵測，直接設置 isDetectionActive=true")
             }
-            guard isDetectionActive else { return }
 
+            guard isDetectionActive else {
+                print("⚠️ [Coordinator] isDetectionActive=false，等待容器偵測")
+                return
+            }
+
+            print("▶️ [Coordinator] 開始播放動畫...")
             isAnimationPlaying = true
             playbackSubscription?.cancel()
             staticRemovalWorkItem?.cancel()
 
             let reuse = animation.requiresContainerDetection
+            print("🎬 [Coordinator] 呼叫 animation.play(on: arView, reuseAnchor: \(reuse))")
             animation.play(on: arView, reuseAnchor: reuse)
+            print("✅ [Coordinator] animation.play() 已呼叫")
 
             guard let anchor = animation.anchorEntity else { return }
             let modelEntity = anchor.children.first
@@ -298,6 +346,27 @@ struct CookingARView: UIViewRepresentable {
                 staticRemovalWorkItem = work
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: work)
             }
+        }
+
+        // MARK: - ARGestureDelegate Implementation
+        func didRecognizeGesture(_ gestureType: GestureType) {
+            print("🎯 [CookingARView.Coordinator] 接收到手勢: \(gestureType.description)")
+        }
+
+        func gestureStateDidChange(_ state: GestureState) {
+            print("🎯 [CookingARView.Coordinator] 手勢狀態變更: \(state.description)")
+        }
+
+        func hoverProgressDidUpdate(_ progress: Float) {
+            // 進度更新由 CookViewController 的 UI 處理
+        }
+
+        func palmStateDidChange(_ palmState: PalmState) {
+            // 手掌狀態變化的處理
+        }
+
+        func gestureRecognitionDidFail(with error: GestureRecognitionError) {
+            print("❌ [CookingARView.Coordinator] 手勢辨識錯誤: \(error.localizedDescription)")
         }
     }
 }
