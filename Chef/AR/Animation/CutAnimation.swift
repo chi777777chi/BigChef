@@ -38,7 +38,7 @@ class CutAnimation: Animation {
 
         // 從資源載入 USDZ
         let url = Bundle.main.url(forResource: "cut", withExtension: "usdz")!
-        self.model = try! Entity.load(contentsOf: url)
+        self.model = (try? AnimationModelCache.entity(for: url)) ?? ModelEntity()
 
         // 構建 3D 文字
         let textMesh = MeshResource.generateText(

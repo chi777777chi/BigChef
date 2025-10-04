@@ -24,9 +24,7 @@ class FlipAnimation: Animation {
             fatalError("❌ 找不到 flip.usdz")
         }
         do {
-            model = try Entity.load(contentsOf: url)
-            model.setScale(SIMD3<Float>(repeating: scale), relativeTo: nil)
-
+            model = try AnimationModelCache.entity(for: url)
         } catch {
             fatalError("❌ 無法載入 flip.usdz：\(error)")
         }
@@ -35,19 +33,18 @@ class FlipAnimation: Animation {
 
     /// 將模型加入 Anchor 並播放內建動畫
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
-        // 將整個模型（group）加入 anchor
-        anchor.addChild(model)
-        
+        let entity = model.clone(recursive: true)
+        entity.scale = SIMD3<Float>(repeating: scale)
+        anchor.addChild(entity)
+
         // 將 anchor 移動到相機前方 0.3 米處
         anchor.setPosition(SIMD3<Float>(0, 0, -5), relativeTo: nil)
-        
-        // 直接播放 model 上所有動畫，根據 isRepeat 決定是否無限重播
-        if let anim = model.availableAnimations.first {
+
+        if let anim = entity.availableAnimations.first {
             // 根據 isRepeat 決定是否無限重播
             let resource = isRepeat ? anim.repeat(duration: .infinity) : anim
-            model.playAnimation(resource, transitionDuration: 0.0, startsPaused: false)
+            entity.playAnimation(resource, transitionDuration: 0.0, startsPaused: false)
         }
-        
     }
 
     /// 每次 2D 偵測框更新時，儲存以做對齊

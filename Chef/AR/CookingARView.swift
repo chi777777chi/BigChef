@@ -30,7 +30,6 @@ struct CookingARView: UIViewRepresentable {
             adapter.addSessionDelegate(context.coordinator)
             // ✅ 註冊為手勢 delegate 以接收手勢狀態更新
             adapter.addGestureDelegate(context.coordinator)
-            print("✅ [CookingARView] 使用共享 ARSession 並註冊到 MulticastDelegate 和 GestureDelegate")
         } else {
             // ⚠️ 備用方案：創建獨立 ARSession
             let config = ARWorldTrackingConfiguration()
@@ -44,7 +43,6 @@ struct CookingARView: UIViewRepresentable {
             arView.session.delegate = context.coordinator
             context.coordinator.sessionAdapter = nil
             context.coordinator.ownsARSession = true
-            print("⚠️ [CookingARView] 使用獨立 ARSession")
         }
 
         let overlay = UIView(frame: arView.bounds)
@@ -74,29 +72,25 @@ struct CookingARView: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: ARView, context: Context) {
-        print("🎬 [CookingARView] updateUIView called for step \(stepModel.step_number)")
-        print("📝 [CookingARView] Step title: \(stepModel.title)")
-        print("📝 [CookingARView] Step description: \(stepModel.description)")
-
         // 1) arType / arParameters 必須存在才啟動動畫
         guard let apiType   = stepModel.arType,
               let apiParams = stepModel.arParameters
         else {
-            print("⚠️ [CookingARView] 無 AR 動畫：arType=\(stepModel.arType?.rawValue ?? "nil"), arParameters=\(stepModel.arParameters != nil ? "存在" : "nil")")
+            print("⚠️ [CookingARView] 步驟 \(stepModel.step_number) 無 AR 動畫資料")
             return
         }
-
-        print("✅ [CookingARView] 檢測到 AR 動畫：\(apiType.rawValue)")
-        print("📦 [CookingARView] AR 參數：container=\(apiParams.container ?? "nil"), ingredient=\(apiParams.ingredient ?? "nil")")
 
         // 2) 同一步驟避免重建（用 step_number: Int）
         if context.coordinator.lastStepNumber == stepModel.step_number {
-            print("⏭️ [CookingARView] 跳過重複步驟 \(stepModel.step_number)")
             return
         }
 
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let paramsJSON = (try? encoder.encode(apiParams)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        print("🔁 [CookingARView] Step \(stepModel.step_number) arType=\(apiType.rawValue), arParameters=\(paramsJSON)")
+
         // 3) 清場
-        print("🧹 [CookingARView] 清理舊動畫，準備播放步驟 \(stepModel.step_number)")
         context.coordinator.lastStepNumber = stepModel.step_number
         context.coordinator.lastAnimation  = nil
         context.coordinator.resetDetectionState()
@@ -105,11 +99,9 @@ struct CookingARView: UIViewRepresentable {
 
         // 4) 後端枚舉字串 → 前端 AnimationType（rawValue 必須一致）
         guard let animType = AnimationType(rawValue: apiType.rawValue) else {
-            print("❌ [CookingARView] 無法轉換 AnimationType：\(apiType.rawValue)")
+            print("❌ [CookingARView] 不支援的動畫類型：\(apiType.rawValue)")
             return
         }
-
-        print("✅ [CookingARView] AnimationType 轉換成功：\(animType)")
 
         // 5) container 映射（若命名不同可在此做 mapping）
         let containerEnum: Container? = apiParams.container.flatMap { Container(rawValue: $0) }
@@ -125,21 +117,29 @@ struct CookingARView: UIViewRepresentable {
             flameLevel:  apiParams.flameLevel
         )
 
-        print("🎨 [CookingARView] 動畫參數準備完成")
+        var details: [String] = []
+        let containerDesc = apiParams.container ?? "nil"
+        let ingredientDesc = apiParams.ingredient ?? "nil"
+        details.append("container=\(containerDesc)")
+        details.append("ingredient=\(ingredientDesc)")
+        if let coordinate = apiParams.coordinate {
+            let coords = coordinate.map { String(format: "%.2f", $0) }.joined(separator: ",")
+            details.append("coordinate=[\(coords)]")
+        }
+        if let color = apiParams.color { details.append("color=\(color)") }
+        if let time = apiParams.time { details.append("time=\(String(format: "%.1f", time))") }
+        if let temperature = apiParams.temperature { details.append("temperature=\(String(format: "%.1f", temperature))") }
+        if let flame = apiParams.flameLevel { details.append("flame=\(flame)") }
+        let summary = details.joined(separator: ", ")
+        print("▶️ [CookingARView] 步驟 \(stepModel.step_number) → \(animType.rawValue) (\(summary))")
 
         // 7) 建立與播放動畫（不再呼叫 AnimationManager）
-        print("🏭 [CookingARView] 呼叫 AnimationFactory.make(type: \(animType), params: ...)")
         let animation = AnimationFactory.make(type: animType, params: params)
         context.coordinator.lastAnimation = animation
 
-        print("🎭 [CookingARView] 動畫創建完成：\(type(of: animation))")
-        print("🔍 [CookingARView] 需要容器偵測：\(animation.requiresContainerDetection)")
-
         context.coordinator.isDetectionActive = !animation.requiresContainerDetection ? true : context.coordinator.isDetectionActive
 
-        print("▶️ [CookingARView] 開始播放動畫...")
         context.coordinator.playAnimationLoop()
-        print("✅ [CookingARView] playAnimationLoop() 已呼叫")
     }
 
     static func dismantleUIView(_ uiView: ARView, coordinator: Coordinator) {
@@ -312,40 +312,29 @@ struct CookingARView: UIViewRepresentable {
 
         @MainActor
         func playAnimationLoop() {
-            print("🎬 [Coordinator] playAnimationLoop 被呼叫")
-            print("🎬 [Coordinator] isAnimationPlaying=\(isAnimationPlaying), arView=\(arView != nil), lastAnimation=\(lastAnimation != nil)")
 
             guard
                 !isAnimationPlaying,
                 let arView    = arView,
                 let animation = lastAnimation
             else {
-                print("⚠️ [Coordinator] playAnimationLoop 條件不符，返回")
                 return
             }
-
-            print("🎬 [Coordinator] 動畫類型：\(animation.type)")
-            print("🎬 [Coordinator] 需要容器偵測：\(animation.requiresContainerDetection)")
 
             if !animation.requiresContainerDetection {
                 isDetectionActive = true
-                print("✅ [Coordinator] 不需要容器偵測，直接設置 isDetectionActive=true")
             }
 
             guard isDetectionActive else {
-                print("⚠️ [Coordinator] isDetectionActive=false，等待容器偵測")
                 return
             }
 
-            print("▶️ [Coordinator] 開始播放動畫...")
             isAnimationPlaying = true
             playbackSubscription?.cancel()
             staticRemovalWorkItem?.cancel()
 
             let reuse = animation.requiresContainerDetection
-            print("🎬 [Coordinator] 呼叫 animation.play(on: arView, reuseAnchor: \(reuse))")
             animation.play(on: arView, reuseAnchor: reuse)
-            print("✅ [Coordinator] animation.play() 已呼叫")
 
             guard let anchor = animation.anchorEntity else { return }
             let modelEntity = anchor.children.first
@@ -394,11 +383,9 @@ struct CookingARView: UIViewRepresentable {
 
         // MARK: - ARGestureDelegate Implementation
         func didRecognizeGesture(_ gestureType: GestureType) {
-            print("🎯 [CookingARView.Coordinator] 接收到手勢: \(gestureType.description)")
         }
 
         func gestureStateDidChange(_ state: GestureState) {
-            print("🎯 [CookingARView.Coordinator] 手勢狀態變更: \(state.description)")
         }
 
         func hoverProgressDidUpdate(_ progress: Float) {

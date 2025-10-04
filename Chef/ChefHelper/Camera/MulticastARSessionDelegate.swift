@@ -18,13 +18,11 @@ final class MulticastARSessionDelegate: NSObject, ARSessionDelegate {
         if !delegates.contains(where: { $0.value === delegate }) {
             delegates.append(Weak(value: delegate))
         }
-        print("🔗 [MulticastDelegate] 添加 delegate: \(type(of: delegate)), 總數: \(delegates.count)")
     }
     
     /// 移除 delegate
     func removeDelegate(_ delegate: ARSessionDelegate) {
         delegates.removeAll { $0.value === delegate || $0.value == nil }
-        print("🔗 [MulticastDelegate] 移除 delegate: \(type(of: delegate)), 剩餘: \(delegates.count)")
     }
     
     /// 清理已釋放的 delegate
@@ -82,4 +80,3 @@ private class Weak<T: AnyObject> {
         self.value = value
     }
 }
-

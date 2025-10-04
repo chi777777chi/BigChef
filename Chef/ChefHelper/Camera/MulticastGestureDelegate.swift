@@ -16,7 +16,6 @@ final class MulticastGestureDelegate: ARGestureDelegate {
         // 避免重複添加
         removeDelegate(delegate)
         delegates.append(Weak(value: delegate as AnyObject))
-        print("🔗 [MulticastGestureDelegate] 添加 delegate: \(type(of: delegate)), 總數: \(delegates.count)")
     }
 
     func removeDelegate(_ delegate: ARGestureDelegate) {

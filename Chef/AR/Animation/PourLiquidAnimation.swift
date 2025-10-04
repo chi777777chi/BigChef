@@ -20,9 +20,12 @@ class PourLiquidAnimation: Animation {
          isRepeat: Bool = false) {
         self.container = container
         self.color = color
-        // 載入液體 USDZ
-        let url = Bundle.main.url(forResource: "pourLiquid", withExtension: "usdz")!
-        self.model = try! Entity.load(contentsOf: url)
+        if let url = Bundle.main.url(forResource: "pourLiquid", withExtension: "usdz"),
+           let template = try? AnimationModelCache.entity(for: url) {
+            self.model = template
+        } else {
+            self.model = ModelEntity()
+        }
         super.init(type: .pourLiquid, scale: scale, isRepeat: isRepeat)
     }
 

@@ -85,11 +85,9 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         // ✅ 啟用 scene depth 以支持 CookingARView
         if ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
             cfg.frameSemantics.insert(.sceneDepth)
-            print("✅ [ARSessionAdapter] 啟用 Scene Depth")
         }
 
         sceneView.session.run(cfg, options: [.resetTracking, .removeExistingAnchors])
-        print("✅ [ARSessionAdapter] ARSession 已啟動")
     }
 
     func stop() {
@@ -104,17 +102,8 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         handDetectionManager.setGestureEnabled(enabled)
 
         if enabled {
-            print("🎯 [ARSessionAdapter] 啟用手勢辨識")
-            print("🔍 [ARSessionAdapter] ARSession delegate 是否設定: \(sceneView.session.delegate != nil)")
-            print("🔍 [ARSessionAdapter] Delegate 是 multicastDelegate: \(sceneView.session.delegate === multicastDelegate)")
-            print("🔍 [ARSessionAdapter] HandDetectionManager 已啟用")
-            print("🔍 [ARSessionAdapter] isGestureEnabled = \(isGestureEnabled)")
-
-            // 重置計數器
             frameCount = 0
             processedFrameCount = 0
-        } else {
-            print("🎯 [ARSessionAdapter] 停用手勢辨識")
         }
     }
     
@@ -128,7 +117,6 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
             object: nil
         )
         
-        print("🎯 [ARSessionAdapter] 手勢檢測系統初始化完成")
     }
     
     @objc private func handleGestureNotification(_ notification: Notification) {
@@ -147,8 +135,6 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
             return
         }
         
-        print("🎯 [ARSessionAdapter] 接收到手勢: \(gestureType.description)")
-
         // 轉發給所有註冊的委託
         DispatchQueue.main.async { [weak self] in
             self?.multicastGestureDelegate.didRecognizeGesture(gestureType)
@@ -161,18 +147,10 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         frameCount += 1
 
         // 第一幀時打印診斷資訊
-        if frameCount == 1 {
-            print("✅ [ARSessionAdapter] 開始接收 ARFrame！")
-            print("🔍 [ARSessionAdapter] isGestureEnabled = \(isGestureEnabled)")
-        }
+        // 第一幀時可在需要時加入診斷
 
         // 只有在啟用手勢檢測時才處理畫面
-        guard isGestureEnabled else {
-            if frameCount == 1 {
-                print("⚠️ [ARSessionAdapter] 手勢辨識未啟用，跳過處理")
-            }
-            return
-        }
+        guard isGestureEnabled else { return }
         
         // ✅ 節流機制：避免 Vision 處理過於頻繁，與 ARKit 爭搶資源
         let now = Date()
@@ -188,10 +166,7 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
         processedFrameCount += 1
         
         // 每 60 幀打印一次診斷資訊
-        if frameCount % 60 == 0 {
-            let processRate = Float(processedFrameCount) / Float(frameCount) * 100
-            print("📊 [ARSessionAdapter] ARFrame 統計 - 總幀數: \(frameCount), 處理幀數: \(processedFrameCount) (\(String(format: "%.1f", processRate))%)")
-        }
+        // 可視情況加入統計輸出
         
         // ✅ 用 ARFrame 的畫面，避免爭搶相機資源
         // processFrame 內部已經用背景線程處理

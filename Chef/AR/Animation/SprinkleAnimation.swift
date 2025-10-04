@@ -16,9 +16,12 @@ class SprinkleAnimation: Animation {
          scale: Float = 1.0,
          isRepeat: Bool = false) {
         self.container = container
-        // 載入 sprinkle USDZ
-        let url = Bundle.main.url(forResource: "sprinkle", withExtension: "usdz")!
-        self.model = try! Entity.load(contentsOf: url)
+        if let url = Bundle.main.url(forResource: "sprinkle", withExtension: "usdz"),
+           let template = try? AnimationModelCache.entity(for: url) {
+            self.model = template
+        } else {
+            self.model = ModelEntity()
+        }
         super.init(type: .sprinkle, scale: scale, isRepeat: isRepeat)
     }
 

@@ -24,10 +24,13 @@ class FlameAnimation: Animation {
          isRepeat: Bool = false) {
         self.container = container
         self.level = level
-        // 载入对应等级的火焰 USDZ
         let resourceName = "flame_\(level.rawValue)"
-        let url = Bundle.main.url(forResource: resourceName, withExtension: "usdz")!
-        self.model = try! Entity.load(contentsOf: url)
+        if let url = Bundle.main.url(forResource: resourceName, withExtension: "usdz"),
+           let template = try? AnimationModelCache.entity(for: url) {
+            self.model = template
+        } else {
+            self.model = ModelEntity()
+        }
         super.init(type: .flame, scale: scale, isRepeat: isRepeat)
     }
 

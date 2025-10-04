@@ -50,7 +50,8 @@ class PutIntoContainerAnimation: Animation {
 
     private static func makeFallbackModel(ingredientName: String, scale: Float) -> Entity {
         if let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz"),
-           let base = try? AnimationModelCache.entity(for: fallbackURL).clone(recursive: true) {
+           let template = try? AnimationModelCache.entity(for: fallbackURL) {
+            let base = template.clone(recursive: true)
             let bounds = base.visualBounds(relativeTo: base)
             let bottomY = bounds.min.y
 
@@ -99,16 +100,13 @@ class PutIntoContainerAnimation: Animation {
     }
     /// 把模型加到 Anchor 並觸發掉落
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
-        print("🍽️ [PutIntoContainer] applyAnimation 開始")
         arViewRef = arView
 
         // ✅ 創建相機錨點，讓模型跟隨相機移動
         let cameraAnchor: AnchorEntity
         if let existing = arView.scene.findEntity(named: "PutIntoContainerCameraAnchor") as? AnchorEntity {
-            print("♻️ [PutIntoContainer] 重用現有的 PutIntoContainerCameraAnchor")
             cameraAnchor = existing
         } else {
-            print("🆕 [PutIntoContainer] 創建新的 PutIntoContainerCameraAnchor")
             let ca = AnchorEntity(.camera)
             ca.name = "PutIntoContainerCameraAnchor"
             arView.scene.addAnchor(ca)
@@ -134,8 +132,6 @@ class PutIntoContainerAnimation: Animation {
         // 設置初始位置（相機前方偏上）
         var start = SIMD3<Float>(0, 0.2, -0.5) // 相機前方 0.5 公尺，向上 0.2 公尺
         entity.position = start
-
-        print("✅ [PutIntoContainer] 模型已添加到相機錨點，初始位置: \(start)")
 
         if let rawEnd = containerPosition {
             var endPos = rawEnd

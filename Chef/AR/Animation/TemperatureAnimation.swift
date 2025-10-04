@@ -35,12 +35,7 @@ class TemperatureAnimation: Animation {
 
         // 嘗試載入溫度動畫模型（若無此檔案，使用純文字即可）
         if let url = Bundle.main.url(forResource: "temperature", withExtension: "usdz") {
-            do {
-                temperatureUsdzEntity = try Entity.load(contentsOf: url)
-            } catch {
-                print("⚠️ 無法載入 temperature.usdz：\(error)")
-                temperatureUsdzEntity = nil
-            }
+            temperatureUsdzEntity = try? AnimationModelCache.entity(for: url)
         } else {
             temperatureUsdzEntity = nil
         }

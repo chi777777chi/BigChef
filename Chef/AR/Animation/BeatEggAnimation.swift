@@ -6,7 +6,7 @@ import simd
 import RealityKit
 
 class BeatEggAnimation: Animation {
-    private let beatEgg: Entity
+    private let beatEggTemplate: Entity
     private let container: Container
     private var containerBBox: CGRect?
     private var beatEggPosition: SIMD3<Float>?
@@ -18,7 +18,7 @@ class BeatEggAnimation: Animation {
             fatalError("❌ 找不到 beatEgg.usdz")
         }
         do {
-            beatEgg = try Entity.load(contentsOf: url)
+            beatEggTemplate = try AnimationModelCache.entity(for: url)
         } catch {
             fatalError("❌ 無法載入 beatEgg.usdz：\(error)")
         }
@@ -81,8 +81,9 @@ class BeatEggAnimation: Animation {
     private func runBeatEgg(on arView: ARView, at position: SIMD3<Float>) {
         let anchor = AnchorEntity(world: position)
         let dropHeight: Float = 0.3
+        let beatEgg = beatEggTemplate.clone(recursive: true)
         anchor.addChild(beatEgg)
-        self.beatEgg.position = SIMD3<Float>(0, dropHeight - 0.2, 0)
+        beatEgg.position = SIMD3<Float>(0, dropHeight - 0.2, 0)
         // Scale to fit bounding box
         let bbox = self.containerBBox ?? CGRect(x: 0, y: 0, width: 0.2, height: 0.2)
         let normalizedMaxSide = max(Float(bbox.width), Float(bbox.height))

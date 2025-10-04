@@ -4,7 +4,7 @@ import RealityKit
 
 class CountdownAnimation: Animation {
     /// 預先載入的倒數 USDZ 實體
-    private let countdownUsdzEntity: Entity
+    private let countdownUsdzEntity: Entity?
 
     // 需要容器偵測
     override var requiresContainerDetection: Bool { true }
@@ -34,13 +34,10 @@ class CountdownAnimation: Animation {
         self.modelEntity = ModelEntity(mesh: textMesh, materials: [material])
 
         // 預先載入倒數動畫模型
-        guard let url = Bundle.main.url(forResource: "countdown", withExtension: "usdz") else {
-            fatalError("❌ 找不到 countdown.usdz")
-        }
-        do {
-            countdownUsdzEntity = try Entity.load(contentsOf: url)
-        } catch {
-            fatalError("❌ 無法載入 countdown.usdz：\(error)")
+        if let url = Bundle.main.url(forResource: "countdown", withExtension: "usdz") {
+            countdownUsdzEntity = try? AnimationModelCache.entity(for: url)
+        } else {
+            countdownUsdzEntity = nil
         }
 
         // 傳遞 type, scale, isRepeat 給父類
@@ -54,11 +51,13 @@ class CountdownAnimation: Animation {
         entity.position.y += 0.05
         anchor.addChild(entity)
 
-        let usdzEntityClone = countdownUsdzEntity.clone(recursive: true)
-        usdzEntityClone.scale = SIMD3(repeating: scale)
-        anchor.addChild(usdzEntityClone)
-        if let animationResource = usdzEntityClone.availableAnimations.first {
-            usdzEntityClone.playAnimation(animationResource, transitionDuration: 0.0, startsPaused: false)
+        if let template = countdownUsdzEntity {
+            let usdzEntityClone = template.clone(recursive: true)
+            usdzEntityClone.scale = SIMD3(repeating: scale)
+            anchor.addChild(usdzEntityClone)
+            if let animationResource = usdzEntityClone.availableAnimations.first {
+                usdzEntityClone.playAnimation(animationResource, transitionDuration: 0.0, startsPaused: false)
+            }
         }
     }
 

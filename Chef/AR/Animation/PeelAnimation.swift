@@ -25,7 +25,7 @@ class PeelAnimation: Animation {
             fatalError("❌ 找不到 peel.usdz")
         }
         do {
-            self.peelModel = try Entity.load(contentsOf: url)
+            self.peelModel = try AnimationModelCache.entity(for: url)
         } catch {
             fatalError("❌ 無法載入 peel.usdz：\(error)")
         }

@@ -116,7 +116,7 @@ class AnimationManager {
         }
         ```
         """
-        print("📨 發送 Prompt：\(promptText)")
+        // no verbose logging
         let textPart = ModelContent.Part.text(promptText)
         let imagePart = ModelContent.Part.png(screenshot.pngData()!)
         do {
@@ -156,27 +156,17 @@ class AnimationManager {
                 return nil
             }
             let container = result.container.flatMap { Container(rawValue: $0) }
-            let params = AnimationParams(
-                coordinate:  result.coordinate,
-                container:   container,
-                ingredient:  result.ingredient,
-                color:       result.color,
-                time:        result.time,
-                temperature: result.temperature,
-                flameLevel:  result.flameLevel
-            )
-            lastStep = step
-            lastResult = (animationType, params)
-            do {
-                let jsonData = try JSONEncoder().encode(params)
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    print("✅ 選擇類型：\(animationType)，參數 JSON：\(jsonString)")
-                } else {
-                    print("✅ 選擇類型：\(animationType)，參數無法轉成 JSON")
-                }
-            } catch {
-                print("✅ 選擇類型：\(animationType)，參數 JSON 編碼失敗：\(error)")
-            }
+           let params = AnimationParams(
+               coordinate:  result.coordinate,
+               container:   container,
+               ingredient:  result.ingredient,
+               color:       result.color,
+               time:        result.time,
+               temperature: result.temperature,
+               flameLevel:  result.flameLevel
+           )
+           lastStep = step
+           lastResult = (animationType, params)
             return (animationType, params)
         } catch {
             print("❌ 解析參數失敗：\(error)")
