@@ -8,21 +8,15 @@ class StirAnimation: Animation {
     private let model: Entity
     private var boundingBoxRect: CGRect?
 
-    /// 簡易 LRUCache: 每個子類可維護自己的快取
-    private static let modelCache = LRUCache<URL, Entity>(capacity: 10)
-
     init(container: Container,
          scale: Float = 1.0,
          isRepeat: Bool = true) {
         self.container = container
-        // 快取或載入 USDZ 模型
         let url = Bundle.main.url(forResource: "stir", withExtension: "usdz")!
-        if let cached = StirAnimation.modelCache[url] {
+        if let cached = try? AnimationModelCache.entity(for: url) {
             model = cached
         } else {
-            let loaded = try! Entity.load(contentsOf: url)
-            StirAnimation.modelCache[url] = loaded
-            model = loaded
+            model = ModelEntity()
         }
         super.init(type: .stir, scale: scale, isRepeat: isRepeat)
     }

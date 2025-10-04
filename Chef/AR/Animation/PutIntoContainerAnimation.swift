@@ -13,9 +13,6 @@ class PutIntoContainerAnimation: Animation {
     override var requiresContainerDetection: Bool { true }
     override var containerType: Container? { container }
 
-    /// USDZ 實體快取
-    private static let cache = LRUCache<URL, Entity>(capacity: 10)
-
     private let container: Container
     private let model: Entity
     private weak var arViewRef: ARView?
@@ -32,64 +29,59 @@ class PutIntoContainerAnimation: Animation {
          container: Container,
          scale: Float = 1.0,
          isRepeat: Bool = false) {
-        // 載入模型或 fallback
-        if let url = Bundle.main.url(forResource: ingredientName, withExtension: "usdz"),
-           let cached = PutIntoContainerAnimation.cache[url] {
-            model = cached
-        } else if let url = Bundle.main.url(forResource: ingredientName, withExtension: "usdz") {
+        self.container = container
+        self.model = PutIntoContainerAnimation.resolveModel(
+            ingredientName: ingredientName,
+            scale: scale
+        )
+        super.init(type: .putIntoContainer, scale: scale, isRepeat: isRepeat)
+    }
+
+    private static func resolveModel(ingredientName: String, scale: Float) -> Entity {
+        if let url = Bundle.main.url(forResource: ingredientName, withExtension: "usdz") {
             do {
-                let loaded = try Entity.load(contentsOf: url)
-                PutIntoContainerAnimation.cache[url] = loaded
-                model = loaded
+                return try AnimationModelCache.entity(for: url)
             } catch {
                 print("⚠️ 載入 \(ingredientName).usdz 失敗：\(error)，改用預設")
-                let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz")!
-                model = (try? Entity.load(contentsOf: fallbackURL)) ?? ModelEntity()
             }
-        } else if let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz"),
-                  let baseModel = try? Entity.load(contentsOf: fallbackURL) {
-              // 1. 取得模型底部 Y 座標
-              let bounds = baseModel.visualBounds(relativeTo: baseModel)
-              let bottomY = bounds.min.y
+        }
+        return makeFallbackModel(ingredientName: ingredientName, scale: scale)
+    }
 
-              // 2. 建立文字 Mesh（食材名稱）
-              let textMesh = MeshResource.generateText(
-                  ingredientName,
-                  extrusionDepth: 0.01,
-                  font: .systemFont(ofSize: 10),
-                  containerFrame: .zero,
-                  alignment: .center,
-                  lineBreakMode: .byWordWrapping
-              )
-              let textMaterial = SimpleMaterial(color: .white, isMetallic: false)
-              let textEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
+    private static func makeFallbackModel(ingredientName: String, scale: Float) -> Entity {
+        if let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz"),
+           let base = try? AnimationModelCache.entity(for: fallbackURL).clone(recursive: true) {
+            let bounds = base.visualBounds(relativeTo: base)
+            let bottomY = bounds.min.y
 
-              // 3. 把文字放在模型頂部（距底部 +5cm）
+            let textMesh = MeshResource.generateText(
+                ingredientName,
+                extrusionDepth: 0.01,
+                font: .systemFont(ofSize: 10),
+                containerFrame: .zero,
+                alignment: .center,
+                lineBreakMode: .byWordWrapping
+            )
+            let textMaterial = SimpleMaterial(color: .white, isMetallic: false)
+            let textEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
             textEntity.position = SIMD3<Float>(-0.5, bottomY + 2, 0)
-              textEntity.scale = SIMD3<Float>(repeating: scale)
+            textEntity.scale = SIMD3<Float>(repeating: scale)
+            base.addChild(textEntity)
+            return base
+        }
 
-              // 4. 掛在 baseModel 上
-              baseModel.addChild(textEntity)
-
-              // 5. 指定為最終的 model
-              model = baseModel
-          }
-          // ingredient.usdz 也不存在時，純文字 fallback
-        else {
-                let textMesh = MeshResource.generateText(
-                    ingredientName,
-                    extrusionDepth: 0.01,
-                    font: .systemFont(ofSize: 20),
-                    containerFrame: .zero,
-                    alignment: .center,
-                    lineBreakMode: .byWordWrapping
-                )
-                let mat = SimpleMaterial(color: .white, isMetallic: false)
-                model = ModelEntity(mesh: textMesh, materials: [mat])
-            }
-
-        self.container = container
-        super.init(type: .putIntoContainer, scale: scale, isRepeat: isRepeat)
+        let textMesh = MeshResource.generateText(
+            ingredientName,
+            extrusionDepth: 0.01,
+            font: .systemFont(ofSize: 20),
+            containerFrame: .zero,
+            alignment: .center,
+            lineBreakMode: .byWordWrapping
+        )
+        let mat = SimpleMaterial(color: .white, isMetallic: false)
+        let entity = ModelEntity(mesh: textMesh, materials: [mat])
+        entity.scale = SIMD3<Float>(repeating: scale)
+        return entity
     }
 
     /// 新增：掉落動畫輔助
