@@ -5,13 +5,16 @@ import RealityKit
 /// 攪拌（Stir）動畫：在容器偵測後，在容器內部位置執行攪拌動作
 class StirAnimation: Animation {
     private let container: Container
+    private let ingredient: String?
     private let model: Entity
     private var boundingBoxRect: CGRect?
 
     init(container: Container,
+         ingredient: String? = nil,
          scale: Float = 1.0,
          isRepeat: Bool = true) {
         self.container = container
+        self.ingredient = ingredient
         let url = Bundle.main.url(forResource: "stir", withExtension: "usdz")!
         if let cached = try? AnimationModelCache.entity(for: url) {
             model = cached
@@ -32,6 +35,9 @@ class StirAnimation: Animation {
         instance.position.x += 0.5
         instance.position.z -= 1
         instance.position.y -= 0.5
+        if let name = ingredient, !name.isEmpty {
+            _ = ARText.addLabel(text: name, to: instance)
+        }
         anchor.addChild(instance)
         if let res = instance.availableAnimations.first {
             instance.playAnimation(res,

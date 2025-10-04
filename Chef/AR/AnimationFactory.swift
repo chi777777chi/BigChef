@@ -15,6 +15,7 @@ struct AnimationFactory {
         case .stir:
             return StirAnimation(
                 container: params.container ?? .pan,
+                ingredient: params.ingredient,
                 scale: 0.2,
                 isRepeat: true
             )
@@ -22,6 +23,7 @@ struct AnimationFactory {
             let uiColor = UIColor(named: params.color ?? "") ?? .white
             return PourLiquidAnimation(
                 container: params.container ?? .pan,
+                ingredient: params.ingredient,
                 color: uiColor,
                 scale: 0.05,
                 isRepeat: true
@@ -29,6 +31,7 @@ struct AnimationFactory {
         case .flipPan, .flip:
             return FlipAnimation(
                 container: params.container ?? .pan,
+                ingredient: params.ingredient,
                 scale: 0.1,
                 isRepeat: true
             )
@@ -50,6 +53,7 @@ struct AnimationFactory {
         case .sprinkle:
             return SprinkleAnimation(
                 container: params.container ?? .pan,
+                ingredient: params.ingredient,
                 scale: 0.05,
                 isRepeat: true
             )
@@ -68,13 +72,13 @@ struct AnimationFactory {
             )
         case .torch:
             return TorchAnimation(
-                ingredient: params.ingredient ?? "",
+                ingredient: params.ingredient,
                 scale: 1.0,
                 isRepeat: true
             )
         case .peel:
             return PeelAnimation(
-                ingredient: params.ingredient ?? "",
+                ingredient: params.ingredient,
                 scale: 0.5,
                 isRepeat: true
             )

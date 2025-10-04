@@ -10,15 +10,18 @@ class PourLiquidAnimation: Animation {
     override var containerType: Container? { container }
 
     private let container: Container
+    private let ingredient: String?
     private let color: UIColor
     private let model: Entity
     private weak var arViewRef: ARView?
 
     init(container: Container,
+         ingredient: String? = nil,
          color: UIColor = .white,
          scale: Float = 1.0,
          isRepeat: Bool = false) {
         self.container = container
+        self.ingredient = ingredient
         self.color = color
         if let url = Bundle.main.url(forResource: "pourLiquid", withExtension: "usdz"),
            let template = try? AnimationModelCache.entity(for: url) {
@@ -38,29 +41,16 @@ class PourLiquidAnimation: Animation {
         }
         entity.scale = SIMD3<Float>(repeating: scale)
         anchor.addChild(entity)
-        // --- Add ingredient label above the model ---
-        // Use the container's rawValue as the ingredient name
-        let textMesh = MeshResource.generateText(
-            container.rawValue,
-            extrusionDepth: 0.01,
-            font: .systemFont(ofSize: 0.2, weight: .bold),
-            containerFrame: .zero,
-            alignment: .center,
-            lineBreakMode: .byWordWrapping
-        )
-        let textMaterial = UnlitMaterial(color: .white)
-        let textEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
-        // Scale down the text
-        textEntity.scale = SIMD3<Float>(repeating: 0.05)
-        // Calculate position: just above the model's top in local space
-        let bounds = entity.visualBounds(relativeTo: nil)
-        let topY = bounds.max.y
-        let padding: Float = 0.02 * scale
-        textEntity.position = SIMD3<Float>(0, topY + padding, 0)
-        // Make the text always face the camera
-        textEntity.components.set(BillboardComponent())
-        // Add the text entity as a child of the model entity
-        entity.addChild(textEntity)
+        let labelText: String
+        if let ingredient, !ingredient.isEmpty {
+            labelText = ingredient
+        } else {
+            labelText = container.rawValue
+        }
+
+        if !labelText.isEmpty {
+            _ = ARText.addLabel(text: labelText, to: entity)
+        }
         if let anim = entity.availableAnimations.first {
             let resource = isRepeat
                 ? anim.repeat(duration: .infinity)

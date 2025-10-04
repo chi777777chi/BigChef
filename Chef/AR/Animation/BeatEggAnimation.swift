@@ -11,6 +11,7 @@ class BeatEggAnimation: Animation {
     private var containerBBox: CGRect?
     private var beatEggPosition: SIMD3<Float>?
     private var containerPosition: SIMD3<Float>?
+    private weak var currentAnchor: AnchorEntity?
     
     init(container: Container,scale: Float = 1.0, isRepeat: Bool = false) {
         self.container = container
@@ -79,6 +80,7 @@ class BeatEggAnimation: Animation {
     }
     
     private func runBeatEgg(on arView: ARView, at position: SIMD3<Float>) {
+        currentAnchor?.removeFromParent()
         let anchor = AnchorEntity(world: position)
         let dropHeight: Float = 0.3
         let beatEgg = beatEggTemplate.clone(recursive: true)
@@ -93,6 +95,7 @@ class BeatEggAnimation: Animation {
         let finalScale = min(self.scale, scaleFactor)
         beatEgg.setScale(SIMD3<Float>(repeating: finalScale), relativeTo: anchor)
         arView.scene.addAnchor(anchor)
+        currentAnchor = anchor
 
         // Try to play embedded animation clips from beatEgg.usdz
         let clips = beatEgg.availableAnimations
@@ -110,5 +113,15 @@ class BeatEggAnimation: Animation {
     override func play(on arView: ARView, reuseAnchor: Bool = false) {
         // BeatEggAnimation 先做容器偵測；完成後由 runBeatEgg(on:at:) 建立 / 重用 anchor
         attemptContinuousDetection(in: arView)
+    }
+
+    override func stop() {
+        super.stop()
+        currentAnchor?.removeFromParent()
+        currentAnchor = nil
+    }
+
+    deinit {
+        currentAnchor?.removeFromParent()
     }
 }

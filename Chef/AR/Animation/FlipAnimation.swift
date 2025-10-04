@@ -8,6 +8,7 @@ class FlipAnimation: Animation {
     private let model: Entity
     /// 指定要偵測的容器
     private let container: Container
+    private let ingredient: String?
     private var boundingBoxRect: CGRect?
 
     override var requiresContainerDetection: Bool { true }
@@ -15,9 +16,11 @@ class FlipAnimation: Animation {
 
     /// 現在把 container 拿進來，初始化時設定
     init(container: Container,
+         ingredient: String? = nil,
          scale: Float = 1,
          isRepeat: Bool = false) {
         self.container = container
+        self.ingredient = ingredient
 
         // 載入 flip.usdz
         guard let url = Bundle.main.url(forResource: "flip", withExtension: "usdz") else {
@@ -35,6 +38,9 @@ class FlipAnimation: Animation {
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
         let entity = model.clone(recursive: true)
         entity.scale = SIMD3<Float>(repeating: scale)
+        if let name = ingredient, !name.isEmpty {
+            _ = ARText.addLabel(text: name, to: entity)
+        }
         anchor.addChild(entity)
 
         // 將 anchor 移動到相機前方 0.3 米處

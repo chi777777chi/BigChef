@@ -9,13 +9,16 @@ class SprinkleAnimation: Animation {
     override var containerType: Container? { container }
 
     private let container: Container
+    private let ingredient: String?
     private let model: Entity
     private weak var arViewRef: ARView?
 
     init(container: Container,
+         ingredient: String? = nil,
          scale: Float = 1.0,
          isRepeat: Bool = false) {
         self.container = container
+        self.ingredient = ingredient
         if let url = Bundle.main.url(forResource: "sprinkle", withExtension: "usdz"),
            let template = try? AnimationModelCache.entity(for: url) {
             self.model = template
@@ -30,6 +33,9 @@ class SprinkleAnimation: Animation {
         self.arViewRef = arView
         let entity = model.clone(recursive: true)
         entity.scale = SIMD3<Float>(repeating: scale)
+        if let name = ingredient, !name.isEmpty {
+            _ = ARText.addLabel(text: name, to: entity)
+        }
         anchor.addChild(entity)
         if let animation = entity.availableAnimations.first {
             let resource = isRepeat

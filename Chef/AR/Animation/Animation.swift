@@ -50,6 +50,13 @@ class Animation {
 
     /// 需要同步 2D 偵測框時覆寫此方法
     func updateBoundingBox(rect: CGRect) { }
+
+    /// 停止並移除目前的 anchor，子類可覆寫補充額外清理
+    @MainActor
+    func stop() {
+        anchorEntity?.removeFromParent()
+        anchorEntity = nil
+    }
 }
 
 enum AnimationType: String, CaseIterable {

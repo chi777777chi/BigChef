@@ -25,6 +25,9 @@ class PutIntoContainerAnimation: Animation {
     /// 掉落持續時間
     private let dropDuration: TimeInterval = 2
 
+    private static var fallbackTextCache: [String: Entity] = [:]
+    private static let fallbackTextLock = NSLock()
+
     init(ingredientName: String,
          container: Container,
          scale: Float = 1.0,
@@ -49,40 +52,31 @@ class PutIntoContainerAnimation: Animation {
     }
 
     private static func makeFallbackModel(ingredientName: String, scale: Float) -> Entity {
-        if let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz"),
-           let template = try? AnimationModelCache.entity(for: fallbackURL) {
-            let base = template.clone(recursive: true)
-            let bounds = base.visualBounds(relativeTo: base)
-            let bottomY = bounds.min.y
+        fallbackTextLock.lock()
+        defer { fallbackTextLock.unlock() }
 
-            let textMesh = MeshResource.generateText(
-                ingredientName,
-                extrusionDepth: 0.01,
-                font: .systemFont(ofSize: 10),
-                containerFrame: .zero,
-                alignment: .center,
-                lineBreakMode: .byWordWrapping
-            )
-            let textMaterial = SimpleMaterial(color: .white, isMetallic: false)
-            let textEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
-            textEntity.position = SIMD3<Float>(-0.5, bottomY + 2, 0)
-            textEntity.scale = SIMD3<Float>(repeating: scale)
-            base.addChild(textEntity)
-            return base
+        if let cached = fallbackTextCache[ingredientName] {
+            return cached.clone(recursive: true)
         }
 
-        let textMesh = MeshResource.generateText(
-            ingredientName,
-            extrusionDepth: 0.01,
-            font: .systemFont(ofSize: 20),
-            containerFrame: .zero,
-            alignment: .center,
-            lineBreakMode: .byWordWrapping
-        )
-        let mat = SimpleMaterial(color: .white, isMetallic: false)
-        let entity = ModelEntity(mesh: textMesh, materials: [mat])
-        entity.scale = SIMD3<Float>(repeating: scale)
-        return entity
+        let template: Entity
+        if let fallbackURL = Bundle.main.url(forResource: "ingredient", withExtension: "usdz"),
+           let baseTemplate = try? AnimationModelCache.entity(for: fallbackURL) {
+            let base = baseTemplate.clone(recursive: true)
+            _ = ARText.addLabel(text: ingredientName, to: base, padding: 0.03, maxWidthRatio: 0.85)
+            template = base
+        } else {
+            let holder = Entity()
+            let halfExtents = SIMD3<Float>(0.15, 0.05, 0.05)
+            let bounds = BoundingBox(min: -halfExtents, max: halfExtents)
+            _ = ARText.addLabel(text: ingredientName, to: holder, padding: 0.02, maxWidthRatio: 1.0, boundingOverride: bounds)
+            template = holder
+        }
+
+        fallbackTextCache[ingredientName] = template
+        let instance = template.clone(recursive: true)
+        instance.scale = SIMD3<Float>(repeating: scale)
+        return instance
     }
 
     /// 新增：掉落動畫輔助

@@ -47,6 +47,18 @@ final class CookCoordinator: Coordinator {
     }
 
     func start(with steps: [RecipeStep], dishName: String = "料理") {
+        let loadingVC = CookLoadingViewController(steps: steps, dishName: dishName)
+        loadingVC.hidesBottomBarWhenPushed = true
+        loadingVC.onReady = { [weak self] preparedSteps in
+            self?.showCookView(steps: preparedSteps, dishName: dishName)
+        }
+        loadingVC.onFailed = { [weak self] _ in
+            self?.navigationController.popViewController(animated: true)
+        }
+        navigationController.pushViewController(loadingVC, animated: true)
+    }
+
+    private func showCookView(steps: [RecipeStep], dishName: String) {
         let vc = CookViewController(
             steps: steps,
             dishName: dishName,
@@ -54,8 +66,15 @@ final class CookCoordinator: Coordinator {
                 self?.handleCompletion()
             }
         )
-        vc.hidesBottomBarWhenPushed = true  // AR 模式隱藏 tab bar
-        navigationController.pushViewController(vc, animated: true)
+        vc.hidesBottomBarWhenPushed = true
+
+        var stack = navigationController.viewControllers
+        if stack.isEmpty {
+            navigationController.setViewControllers([vc], animated: true)
+        } else {
+            stack[stack.count - 1] = vc
+            navigationController.setViewControllers(stack, animated: true)
+        }
     }
 
     private func handleCompletion() {

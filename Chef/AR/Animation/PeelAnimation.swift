@@ -41,28 +41,7 @@ class PeelAnimation: Animation {
         anchor.addChild(model)
 
         if let ingredient = ingredient {
-            // Compute model bounds height to place the label right above the model
-            let bounds = model.visualBounds(relativeTo: nil)
-            let modelHeight = bounds.extents.y
-            
-            let textMesh = MeshResource.generateText(
-                ingredient,
-                extrusionDepth: 0.01,
-                font: .systemFont(ofSize: 0.3),
-                containerFrame: .zero,
-                alignment: .center,
-                lineBreakMode: .byWordWrapping
-            )
-            let textMaterial = UnlitMaterial()
-            let textEntity = ModelEntity(mesh: textMesh, materials: [textMaterial])
-            // Scale relative to animation scale so label size stays proportional to the model
-            textEntity.scale = SIMD3<Float>(repeating: max(0.05 * scale, 0.02))
-            // Position just above the model's top bound, add a small padding
-            let padding: Float = 0.06 * scale
-            textEntity.position = SIMD3<Float>(0, (modelHeight * 0.5) + padding, 0)
-            textEntity.components.set(BillboardComponent())
-            // Parent the label to the model so it moves with it
-            model.addChild(textEntity)
+            _ = ARText.addLabel(text: ingredient, to: model, padding: 0.04)
         }
 
         // 以相機為基準的錨點；重用同一個 camera anchor

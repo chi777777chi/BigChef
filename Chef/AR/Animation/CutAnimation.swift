@@ -14,9 +14,6 @@ class CutAnimation: Animation {
     /// 預載入的 USDZ 模型
     private let model: Entity
 
-    /// 用於顯示 ingredient 的 3D 文字
-    private let textEntity: ModelEntity
-
     /// 單一實例的節點參考（避免重複建立）
     private var rootAnchor: AnchorEntity?
     private var holder: Entity?
@@ -40,19 +37,6 @@ class CutAnimation: Animation {
         let url = Bundle.main.url(forResource: "cut", withExtension: "usdz")!
         self.model = (try? AnimationModelCache.entity(for: url)) ?? ModelEntity()
 
-        // 構建 3D 文字
-        let textMesh = MeshResource.generateText(
-            self.ingredient,
-            extrusionDepth: 0.01,
-            font: .systemFont(ofSize: 0.36),
-            containerFrame: .zero,
-            alignment: .center,
-            lineBreakMode: .byWordWrapping
-        )
-        let textMat  = SimpleMaterial()
-        self.textEntity = ModelEntity(mesh: textMesh, materials: [textMat])
-        self.textEntity.generateCollisionShapes(recursive: false)
-
         super.init(type: .cut, scale: scale, isRepeat: isRepeat)
     }
 
@@ -60,42 +44,33 @@ class CutAnimation: Animation {
     /// - 位置策略：放在鏡頭前方約 0.35m，並讓文字位於模型上方一點
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
         // 若已建立就直接重用，不再新增第二個
-        if let existing = rootAnchor {
-            if existing.parent == nil { arView.scene.addAnchor(existing) }
-            return
-        }
+        rootAnchor?.removeFromParent()
 
-        // 依模式建立 anchor：跟隨鏡頭 or 世界座標
         let parentAnchor: AnchorEntity
         if followCamera {
-            // 相機錨點 — 永遠在畫面中
             parentAnchor = AnchorEntity(.camera)
         } else {
-            // 世界錨點 — 之後靠 updatePosition 移動
             parentAnchor = AnchorEntity(world: .zero)
         }
         self.anchorEntity = parentAnchor
         arView.scene.addAnchor(parentAnchor)
         self.rootAnchor = parentAnchor
 
-        // 建立 holder，若為跟隨模式就放在鏡頭前方固定距離
         let holder = Entity()
-        holder.position = SIMD3<Float>(0, 0, -followDistance) // 鏡頭前方
+        holder.position = SIMD3<Float>(0, 0, -followDistance)
         parentAnchor.addChild(holder)
         self.holder = holder
 
-        // 佈署 cut 模型（單一實例）
         let entity = model.clone(recursive: true)
         entity.scale = SIMD3<Float>(repeating: scale)
         holder.addChild(entity)
         self.modelInstance = entity
 
-        // 佈署 ingredient 文字（在模型上方）
-        let label = textEntity.clone(recursive: true)
-        label.scale = SIMD3<Float>(repeating: max(0.5 * scale, 0.05))
-        label.position = SIMD3<Float>(-0.5 * scale, 0.5 * scale, 0)
-        holder.addChild(label)
-        self.labelInstance = label
+        labelInstance?.removeFromParent()
+        if !ingredient.isEmpty {
+            let label = ARText.addLabel(text: ingredient, to: entity, padding: 0.06)
+            self.labelInstance = label
+        }
 
         // 播放 USDZ 內建動畫（若存在）
         if let animation = entity.availableAnimations.first {
@@ -121,5 +96,14 @@ class CutAnimation: Animation {
         if followCamera {
             holder?.position.z = -followDistance
         }
+    }
+
+    override func stop() {
+        super.stop()
+        rootAnchor?.removeFromParent()
+        rootAnchor = nil
+        holder = nil
+        modelInstance = nil
+        labelInstance = nil
     }
 }

@@ -38,6 +38,9 @@ class TorchAnimation: Animation {
     override func applyAnimation(to anchor: AnchorEntity, on arView: ARView) {
         let model = torchModel.clone(recursive: true)
         model.scale = SIMD3<Float>(repeating: scale)
+        if let name = ingredient, !name.isEmpty {
+            _ = ARText.addLabel(text: name, to: model)
+        }
         anchor.position = SIMD3<Float>(0, -0.5, -distance)
         anchor.addChild(model)
 

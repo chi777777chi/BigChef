@@ -191,8 +191,15 @@ final class CookViewController: UIViewController, ARGestureDelegate {
         nextBtn.isHidden = isLastStep
     }
 
-    @objc private func prevStep() { currentIndex -= 1 }
-    @objc private func nextStep() { currentIndex += 1 }
+    @objc private func prevStep() {
+        guard currentIndex > 0 else { return }
+        currentIndex -= 1
+    }
+
+    @objc private func nextStep() {
+        guard currentIndex < steps.count - 1 else { return }
+        currentIndex += 1
+    }
 
     @objc private func completeRecipe() {
         // 顯示完成頁面

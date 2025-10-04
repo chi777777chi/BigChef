@@ -53,17 +53,21 @@ struct CookingARView: UIViewRepresentable {
         context.coordinator.arView  = arView
         context.coordinator.overlay = overlay
 
-        context.coordinator.renderSubscription = arView.scene.subscribe(to: SceneEvents.Update.self) { _ in
-            guard let currentFrame = context.coordinator.arView?.session.currentFrame else { return }
-            let coor = context.coordinator
-            coor.session(coor.arView!.session, didUpdate: currentFrame)
+        if sessionAdapter == nil {
+            context.coordinator.renderSubscription = arView.scene.subscribe(to: SceneEvents.Update.self) { _ in
+                guard let currentFrame = context.coordinator.arView?.session.currentFrame else { return }
+                let coor = context.coordinator
+                coor.session(coor.arView!.session, didUpdate: currentFrame)
 
-            if let anim = coor.lastAnimation,
-               anim.requiresContainerDetection,
-               let smoothed = coor.lastSmoothedPosition,
-               let anchor = anim.anchorEntity {
-                anchor.position = smoothed
+                if let anim = coor.lastAnimation,
+                   anim.requiresContainerDetection,
+                   let smoothed = coor.lastSmoothedPosition,
+                   let anchor = anim.anchorEntity {
+                    anchor.position = smoothed
+                }
             }
+        } else {
+            context.coordinator.renderSubscription = nil
         }
 
         ObjectDetector.shared.configure(overlay: overlay)
@@ -81,21 +85,10 @@ struct CookingARView: UIViewRepresentable {
         }
 
         // 2) 同一步驟避免重建（用 step_number: Int）
-        if context.coordinator.lastStepNumber == stepModel.step_number {
+        let stepNumber = stepModel.step_number
+        if context.coordinator.lastStepNumber == stepNumber {
             return
         }
-
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        let paramsJSON = (try? encoder.encode(apiParams)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
-        print("🔁 [CookingARView] Step \(stepModel.step_number) arType=\(apiType.rawValue), arParameters=\(paramsJSON)")
-
-        // 3) 清場
-        context.coordinator.lastStepNumber = stepModel.step_number
-        context.coordinator.lastAnimation  = nil
-        context.coordinator.resetDetectionState()
-        ObjectDetector.shared.clear()
-        uiView.scene.anchors.removeAll()
 
         // 4) 後端枚舉字串 → 前端 AnimationType（rawValue 必須一致）
         guard let animType = AnimationType(rawValue: apiType.rawValue) else {
@@ -103,38 +96,59 @@ struct CookingARView: UIViewRepresentable {
             return
         }
 
-        // 5) container 映射（若命名不同可在此做 mapping）
-        let containerEnum: Container? = apiParams.container.flatMap { Container(rawValue: $0) }
+        func buildEntry(from source: ARAnimationParams) -> (AnimationParams, String, String) {
+            let containerEnum: Container? = source.container.flatMap { Container(rawValue: $0) }
+            let converted = AnimationParams(
+                coordinate:  source.coordinate?.map { Float($0) },
+                container:   containerEnum,
+                ingredient:  source.ingredient,
+                color:       source.color,
+                time:        source.time.map { Float($0) },
+                temperature: source.temperature.map { Float($0) },
+                flameLevel:  source.flameLevel
+            )
 
-        // 6) 參數轉換（Double → Float，Array<Double> → [Float]）
-        let params = AnimationParams(
-            coordinate:  apiParams.coordinate?.map { Float($0) },
-            container:   containerEnum,
-            ingredient:  apiParams.ingredient,
-            color:       apiParams.color,
-            time:        apiParams.time.map { Float($0) },
-            temperature: apiParams.temperature.map { Float($0) },
-            flameLevel:  apiParams.flameLevel
-        )
+            var details: [String] = []
+            details.append("container=\(source.container ?? "nil")")
+            details.append("ingredient=\(source.ingredient ?? "nil")")
+            if let coordinate = source.coordinate {
+                let coords = coordinate.map { String(format: "%.2f", $0) }.joined(separator: ",")
+                details.append("coordinate=[\(coords)]")
+            }
+            if let color = source.color { details.append("color=\(color)") }
+            if let time = source.time { details.append("time=\(String(format: "%.1f", time))") }
+            if let temperature = source.temperature { details.append("temperature=\(String(format: "%.1f", temperature))") }
+            if let flame = source.flameLevel { details.append("flame=\(flame)") }
+            let summary = details.joined(separator: ", ")
 
-        var details: [String] = []
-        let containerDesc = apiParams.container ?? "nil"
-        let ingredientDesc = apiParams.ingredient ?? "nil"
-        details.append("container=\(containerDesc)")
-        details.append("ingredient=\(ingredientDesc)")
-        if let coordinate = apiParams.coordinate {
-            let coords = coordinate.map { String(format: "%.2f", $0) }.joined(separator: ",")
-            details.append("coordinate=[\(coords)]")
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.sortedKeys]
+            let paramsJSON = (try? encoder.encode(source)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+
+            return (converted, summary, paramsJSON)
         }
-        if let color = apiParams.color { details.append("color=\(color)") }
-        if let time = apiParams.time { details.append("time=\(String(format: "%.1f", time))") }
-        if let temperature = apiParams.temperature { details.append("temperature=\(String(format: "%.1f", temperature))") }
-        if let flame = apiParams.flameLevel { details.append("flame=\(flame)") }
-        let summary = details.joined(separator: ", ")
-        print("▶️ [CookingARView] 步驟 \(stepModel.step_number) → \(animType.rawValue) (\(summary))")
+
+        let entry: (params: AnimationParams, summary: String, json: String)
+        if let cached = context.coordinator.paramsCache[stepNumber] {
+            entry = cached
+        } else {
+            let built = buildEntry(from: apiParams)
+            context.coordinator.paramsCache[stepNumber] = built
+            entry = built
+        }
+
+        print("🔁 [CookingARView] Step \(stepNumber) arType=\(apiType.rawValue), arParameters=\(entry.json)")
+        print("▶️ [CookingARView] 步驟 \(stepNumber) → \(animType.rawValue) (\(entry.summary))")
+
+        // 3) 清場
+        context.coordinator.lastStepNumber = stepNumber
+        context.coordinator.cleanupCurrentAnimation()
+        context.coordinator.lastAnimation  = nil
+        context.coordinator.resetDetectionState()
+        ObjectDetector.shared.clear()
 
         // 7) 建立與播放動畫（不再呼叫 AnimationManager）
-        let animation = AnimationFactory.make(type: animType, params: params)
+        let animation = AnimationFactory.make(type: animType, params: entry.params)
         context.coordinator.lastAnimation = animation
 
         context.coordinator.isDetectionActive = !animation.requiresContainerDetection ? true : context.coordinator.isDetectionActive
@@ -177,6 +191,7 @@ struct CookingARView: UIViewRepresentable {
         private var staticRemovalWorkItem: DispatchWorkItem?
         var renderSubscription: Cancellable?
         private var containerCompletionObserver: NSObjectProtocol?
+        var paramsCache: [Int: (params: AnimationParams, summary: String, json: String)] = [:]
 
         init(_ parent: CookingARView) {
             super.init()
@@ -200,10 +215,18 @@ struct CookingARView: UIViewRepresentable {
             resetDetectionState()
             renderSubscription?.cancel()
             renderSubscription = nil
-            arView?.scene.anchors.removeAll()
+            cleanupCurrentAnimation()
             overlay?.removeFromSuperview()
             arView = nil
             overlay = nil
+            lastAnimation = nil
+            paramsCache.removeAll()
+        }
+
+        func cleanupCurrentAnimation() {
+            if let animation = lastAnimation {
+                Task { @MainActor in animation.stop() }
+            }
             lastAnimation = nil
         }
 
@@ -406,9 +429,16 @@ struct CookingARView: UIViewRepresentable {
 extension AnimationType {
     var requiresContainerDetection: Bool {
         switch self {
-        case .putIntoContainer, .stir, .pourLiquid, .flipPan,
-             .flip, .countdown, /*.temperature,*/ .flame,
-             .sprinkle: /* .beatEgg:*/
+        case .putIntoContainer,
+             .stir,
+             .pourLiquid,
+             .flipPan,
+             .flip,
+             .countdown,
+             .temperature,
+             .flame,
+             .sprinkle,
+             .beatEgg:
             return true
         default:
             return false
