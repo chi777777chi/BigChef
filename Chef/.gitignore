@@ -1,0 +1,122 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspace
+*.xccheckout
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Xcode Patch
+*.xcodeproj/
+
+# Swift Package Manager
+Packages/
+.swiftpm/
+.build/
+Package.resolved
+
+# CocoaPods
+Pods/
+*.xcworkspace
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+
+# Accio dependency management
+Dependencies/
+.accio/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+iOSInjectionProject/
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*.swo
+*~
+
+# Firebase - secrets should not be version controlled
+GoogleService-Info.plist
+**/GoogleService-Info.plist
+Firebase-Config.plist
+**/Firebase-Config.plist
+
+# Configuration files with sensitive data
+Config.plist
+**/Config.plist
+APIConfig.plist
+**/APIConfig.plist
+Secrets.plist
+**/Secrets.plist
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.env
+
+# API Keys and secrets
+api-keys.plist
+secrets.plist
+**/api-keys.plist
+**/secrets.plist
+
+# Certificates and provisioning profiles
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
+
+# Archive and export files
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Injection V
+iOSInjectionProject/
