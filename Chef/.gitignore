@@ -120,3 +120,6 @@ secrets.plist
 
 # Injection V
 iOSInjectionProject/
+
+# Claude AI
+.claude/
