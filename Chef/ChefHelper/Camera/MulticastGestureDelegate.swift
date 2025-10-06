@@ -26,6 +26,10 @@ final class MulticastGestureDelegate: ARGestureDelegate {
         cleanupDeallocatedDelegates()
     }
 
+    func removeAllDelegates() {
+        delegates.removeAll()
+    }
+
     private func cleanupDeallocatedDelegates() {
         delegates.removeAll { $0.value == nil }
     }

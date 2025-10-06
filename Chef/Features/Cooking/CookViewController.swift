@@ -21,13 +21,13 @@ final class CookViewController: UIViewController, ARGestureDelegate {
     private let stepViewModel = StepViewModel()
     private var currentIndex = 0 {
         didSet {
+            print("🔄 [CookViewController] currentIndex changed: \(oldValue) -> \(currentIndex)")
             updateStepLabel()
             stepViewModel.currentDescription = steps[currentIndex].description
-            // 重新設定 rootView 以強制 SwiftUI 更新
-            arContainer.rootView = CookingARView(
-                stepModel: steps[currentIndex],
-                sessionAdapter: gestureSession
-            )
+
+            // 🔄 更新 stepViewModel 的當前步驟，讓 SwiftUI 自動重新創建 CookingARView
+            print("📝 [CookViewController] 更新 stepViewModel.currentStepModel to step \(steps[currentIndex].step_number)")
+            stepViewModel.currentStepModel = steps[currentIndex]
         }
     }
 
@@ -41,7 +41,7 @@ final class CookViewController: UIViewController, ARGestureDelegate {
     private let gestureStatusLabel = UILabel()
     private let hoverProgressView  = UIProgressView()
 
-    private var arContainer: UIHostingController<CookingARView>!
+    private var arContainer: UIHostingController<CookingARViewWrapper>!
     private var stepBinding: Binding<String>!
 
     // 菜名（用於完成頁面）
@@ -59,22 +59,67 @@ final class CookViewController: UIViewController, ARGestureDelegate {
     }
     required init?(coder: NSCoder) { fatalError() }
 
+    // MARK: - Cleanup
+    private func cleanupARContainer() {
+        print("🧹 [CookViewController.cleanupARContainer] 開始")
+        guard arContainer != nil else {
+            print("⚠️ [CookViewController.cleanupARContainer] arContainer 已經是 nil")
+            return
+        }
+
+        // ✅ 先清空 stepViewModel 以中斷 SwiftUI 的引用鏈
+        print("🧹 [CookViewController.cleanupARContainer] 清空 stepViewModel")
+        stepViewModel.currentStepModel = nil
+        stepViewModel.currentDescription = ""
+
+        // 清空 stepBinding
+        stepBinding = nil
+
+        // 手動觸發 SwiftUI 的清理
+        arContainer?.willMove(toParent: nil)
+        arContainer?.view.removeFromSuperview()
+        arContainer?.removeFromParent()
+        arContainer = nil
+
+        print("✅ [CookViewController.cleanupARContainer] 完成")
+    }
+
+    deinit {
+        print("🧹 [CookViewController] deinit - 開始清理資源 (dishName: \(dishName))")
+
+        // 確保 AR container 被清理
+        cleanupARContainer()
+
+        // 清理 gesture session
+        gestureSession.removeGestureDelegate(self)
+        gestureSession.setGestureEnabled(false)
+        gestureSession.stop()
+
+        print("🧹 [CookViewController] deinit - 完成")
+    }
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
 
         stepViewModel.currentDescription = steps[currentIndex].description
+        stepViewModel.currentStepModel = steps[currentIndex]
         updateStepLabel()
+        // ⚠️ 使用 [weak self] 避免循環引用
         stepBinding = Binding<String>(
-            get: { self.stepViewModel.currentDescription },
-            set: { self.stepViewModel.currentDescription = $0 }
+            get: { [weak self] in
+                self?.stepViewModel.currentDescription ?? ""
+            },
+            set: { [weak self] newValue in
+                self?.stepViewModel.currentDescription = newValue
+            }
         )
 
-        // ✅ CookingARView 使用共享的 gestureSession
+        // ✅ 使用 stepViewModel 來動態更新 CookingARView
         arContainer = UIHostingController(
-            rootView: CookingARView(
-                stepModel: steps[currentIndex],
+            rootView: CookingARViewWrapper(
+                stepViewModel: stepViewModel,
                 sessionAdapter: gestureSession
             )
         )
@@ -170,14 +215,40 @@ final class CookViewController: UIViewController, ARGestureDelegate {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        print("👋 [CookViewController] viewWillDisappear - isBeingDismissed=\(isBeingDismissed), isMovingFromParent=\(isMovingFromParent)")
+        print("👋 [CookViewController] viewWillDisappear - navigationController.viewControllers.count=\(navigationController?.viewControllers.count ?? -1)")
+        print("👋 [CookViewController] viewWillDisappear - parent=\(parent != nil)")
 
         // 移除 delegate 並停用手勢辨識
         gestureSession.removeGestureDelegate(self)
         gestureSession.setGestureEnabled(false)
         gestureSession.stop()
+
+        // ✅ 如果正在被移除（pop），立即清理 arContainer
+        if isMovingFromParent {
+            print("🧹 [CookViewController] 即將被 pop，開始清理 arContainer")
+            cleanupARContainer()
+        }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("💤 [CookViewController] viewDidDisappear - isBeingDismissed=\(isBeingDismissed), isMovingFromParent=\(isMovingFromParent)")
+        print("💤 [CookViewController] viewDidDisappear - navigationController.viewControllers.count=\(navigationController?.viewControllers.count ?? -1)")
+        print("💤 [CookViewController] viewDidDisappear - parent=\(parent != nil)")
+
+        // 🔍 檢查是否有任何強引用仍在保持這個 VC
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            if self != nil {
+                print("⚠️ [CookViewController] 2 秒後仍未被釋放！存在記憶體洩漏")
+            } else {
+                print("✅ [CookViewController] 已成功釋放")
+            }
+        }
     }
     
     // MARK: - Helpers
+
     private func updateStepLabel() {
         guard !steps.isEmpty else { stepLabel.text = "無步驟"; return }
         let step = steps[currentIndex]
@@ -193,11 +264,13 @@ final class CookViewController: UIViewController, ARGestureDelegate {
 
     @objc private func prevStep() {
         guard currentIndex > 0 else { return }
+        print("⬅️ [CookViewController] prevStep: \(currentIndex) -> \(currentIndex - 1)")
         currentIndex -= 1
     }
 
     @objc private func nextStep() {
         guard currentIndex < steps.count - 1 else { return }
+        print("➡️ [CookViewController] nextStep: \(currentIndex) -> \(currentIndex + 1)")
         currentIndex += 1
     }
 
@@ -263,6 +336,26 @@ final class CookViewController: UIViewController, ARGestureDelegate {
     private func updateHoverProgressUI(_ progress: Float) {
         DispatchQueue.main.async { [weak self] in
             self?.hoverProgressView.progress = max(0, min(progress, 1))
+        }
+    }
+}
+
+// MARK: - CookingARViewWrapper
+/// SwiftUI Wrapper，讓 CookingARView 根據 stepViewModel 自動更新
+private struct CookingARViewWrapper: View {
+    @ObservedObject var stepViewModel: StepViewModel
+    let sessionAdapter: ARSessionAdapter
+
+    var body: some View {
+        Group {
+            if let stepModel = stepViewModel.currentStepModel {
+                CookingARView(
+                    stepModel: stepModel,
+                    sessionAdapter: sessionAdapter
+                )
+                // ✅ 移除 .id() - 讓 SwiftUI 重用同一個 UIView，只透過 updateUIView 更新
+                // 這樣可以避免每次切換步驟都重新創建 ARView，減少記憶體消耗
+            }
         }
     }
 }

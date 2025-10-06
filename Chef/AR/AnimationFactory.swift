@@ -4,6 +4,7 @@ import UIKit
 
 struct AnimationFactory {
     static func make(type: AnimationType, params: AnimationParams) -> Animation {
+        print("🏭 [AnimationFactory] 創建動畫: type=\(type.rawValue)")
         switch type {
         case .putIntoContainer:
             return PutIntoContainerAnimation(

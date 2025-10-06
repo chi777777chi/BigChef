@@ -39,17 +39,18 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     override init() {
         previewView = sceneView
         super.init()
+        print("🆕 [ARSessionAdapter] init - 創建新實例")
         sceneView.automaticallyUpdatesLighting = true
-        
+
         // ✅ 關鍵修正：使用多重 delegate
         sceneView.session.delegate = multicastDelegate
-        
+
         // 將自己加入多重 delegate，以接收手勢辨識相關事件
         multicastDelegate.addDelegate(self)
-        
+
         // 設定手勢檢測
         setupGestureDetection()
-        
+
         // ✅ 設定 HandGestureRecognizer 的 delegate 以接收狀態更新
         handDetectionManager.gestureRecognizer.delegate = self
     }
@@ -73,8 +74,23 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     }
     
     deinit {
+        print("🧹 ARSessionAdapter: deinit - 開始清理資源")
+
+        // 停止 AR session
+        sceneView.session.pause()
+        sceneView.session.delegate = nil
+
         // 清理通知監聽
         NotificationCenter.default.removeObserver(self)
+
+        // 清理多重委託
+        multicastDelegate.removeAllDelegates()
+        multicastGestureDelegate.removeAllDelegates()
+
+        // 清理手勢檢測
+        handDetectionManager.setGestureEnabled(false)
+
+        print("🧹 ARSessionAdapter: deinit - 完成")
     }
 
     // MARK: - CameraSession
@@ -91,9 +107,11 @@ final class ARSessionAdapter: NSObject, CameraSession, ARSessionDelegate {
     }
 
     func stop() {
+        print("🛑 [ARSessionAdapter] stop - 開始停止")
         sceneView.session.pause()
         // 停用手勢檢測
         setGestureEnabled(false)
+        print("✅ [ARSessionAdapter] stop - 完成")
     }
     
     // MARK: - 手勢檢測控制

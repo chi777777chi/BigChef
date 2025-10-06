@@ -24,7 +24,12 @@ final class MulticastARSessionDelegate: NSObject, ARSessionDelegate {
     func removeDelegate(_ delegate: ARSessionDelegate) {
         delegates.removeAll { $0.value === delegate || $0.value == nil }
     }
-    
+
+    /// 移除所有 delegates
+    func removeAllDelegates() {
+        delegates.removeAll()
+    }
+
     /// 清理已釋放的 delegate
     private func cleanup() {
         delegates.removeAll { $0.value == nil }

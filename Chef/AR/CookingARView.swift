@@ -12,9 +12,13 @@ struct CookingARView: UIViewRepresentable {
     /// 共享的 ARSessionAdapter（用於手勢辨識）
     let sessionAdapter: ARSessionAdapter?
 
-    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    func makeCoordinator() -> Coordinator {
+        print("🆕 [CookingARView] makeCoordinator 被調用")
+        return Coordinator(self)
+    }
 
     func makeUIView(context: Context) -> ARView {
+        print("🆕 [CookingARView.makeUIView] 被調用 - stepModel.step_number=\(stepModel.step_number)")
         let arView = ARView(frame: .zero)
         arView.automaticallyConfigureSession = false
 
@@ -76,19 +80,24 @@ struct CookingARView: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: ARView, context: Context) {
+        let stepNumber = stepModel.step_number
+        print("📱 [CookingARView.updateUIView] 被調用 - stepModel.step_number=\(stepNumber), lastStepNumber=\(context.coordinator.lastStepNumber ?? -1)")
+
         // 1) arType / arParameters 必須存在才啟動動畫
         guard let apiType   = stepModel.arType,
               let apiParams = stepModel.arParameters
         else {
-            print("⚠️ [CookingARView] 步驟 \(stepModel.step_number) 無 AR 動畫資料")
+            print("⚠️ [CookingARView] 步驟 \(stepNumber) 無 AR 動畫資料")
             return
         }
 
         // 2) 同一步驟避免重建（用 step_number: Int）
-        let stepNumber = stepModel.step_number
-        if context.coordinator.lastStepNumber == stepNumber {
+        print("🔍 [CookingARView.updateUIView] 檢查是否需要更新")
+        if let lastStep = context.coordinator.lastStepNumber, lastStep == stepNumber {
+            print("⏭️ [CookingARView.updateUIView] 步驟相同（\(stepNumber)），跳過更新")
             return
         }
+        print("🔄 [CookingARView.updateUIView] 步驟改變: \(context.coordinator.lastStepNumber ?? -1) -> \(stepNumber)")
 
         // 4) 後端枚舉字串 → 前端 AnimationType（rawValue 必須一致）
         guard let animType = AnimationType(rawValue: apiType.rawValue) else {
@@ -141,22 +150,32 @@ struct CookingARView: UIViewRepresentable {
         print("▶️ [CookingARView] 步驟 \(stepNumber) → \(animType.rawValue) (\(entry.summary))")
 
         // 3) 清場
+        print("🧹 [CookingARView.updateUIView] 開始清理舊動畫...")
         context.coordinator.lastStepNumber = stepNumber
         context.coordinator.cleanupCurrentAnimation()
         context.coordinator.lastAnimation  = nil
         context.coordinator.resetDetectionState()
         ObjectDetector.shared.clear()
+        print("✅ [CookingARView.updateUIView] 清理完成")
 
         // 7) 建立與播放動畫（不再呼叫 AnimationManager）
+        print("🎬 [CookingARView.updateUIView] 創建新動畫: \(animType.rawValue)")
         let animation = AnimationFactory.make(type: animType, params: entry.params)
         context.coordinator.lastAnimation = animation
+        print("📦 [CookingARView.updateUIView] animation.requiresContainerDetection=\(animation.requiresContainerDetection)")
 
-        context.coordinator.isDetectionActive = !animation.requiresContainerDetection ? true : context.coordinator.isDetectionActive
+        // ✅ 修正：對於不需要容器偵測的動畫，直接設為 true；需要容器偵測的，也設為 true 讓偵測流程啟動
+        context.coordinator.isDetectionActive = true
+        print("🔓 [CookingARView.updateUIView] isDetectionActive 設為 true")
 
+        print("▶️ [CookingARView.updateUIView] 呼叫 playAnimationLoop()")
         context.coordinator.playAnimationLoop()
+        print("✅ [CookingARView.updateUIView] updateUIView 完成")
     }
 
     static func dismantleUIView(_ uiView: ARView, coordinator: Coordinator) {
+        print("🗑️ [CookingARView.dismantleUIView] 開始清理 - step=\(coordinator.lastStepNumber ?? -1)")
+
         if let adapter = coordinator.sessionAdapter {
             adapter.removeSessionDelegate(coordinator)
             adapter.removeGestureDelegate(coordinator)
@@ -169,6 +188,8 @@ struct CookingARView: UIViewRepresentable {
         ObjectDetector.shared.clear()
         coordinator.teardown()
         coordinator.ownsARSession = false
+
+        print("✅ [CookingARView.dismantleUIView] 清理完成")
     }
 
     // MARK: - Coordinator
@@ -212,6 +233,7 @@ struct CookingARView: UIViewRepresentable {
         }
 
         func teardown() {
+            print("🧹 [Coordinator.teardown] 開始...")
             resetDetectionState()
             renderSubscription?.cancel()
             renderSubscription = nil
@@ -221,22 +243,35 @@ struct CookingARView: UIViewRepresentable {
             overlay = nil
             lastAnimation = nil
             paramsCache.removeAll()
+            print("✅ [Coordinator.teardown] 完成")
         }
 
         func cleanupCurrentAnimation() {
             if let animation = lastAnimation {
+                print("🛑 [Coordinator.cleanupCurrentAnimation] 停止動畫: \(animation.type.rawValue)")
                 Task { @MainActor in animation.stop() }
             }
             lastAnimation = nil
         }
 
         func session(_ session: ARSession, didUpdate frame: ARFrame) {
+            // 每 60 幀打印一次診斷
+            let frameID = Int(frame.timestamp * 60) % 60
+            if frameID == 0 {
+                print("📸 [Coordinator.session] didUpdate frame - lastAnimation=\(lastAnimation != nil), requiresContainerDetection=\(lastAnimation?.requiresContainerDetection ?? false)")
+            }
+
             guard
                 let animation = lastAnimation,
                 animation.requiresContainerDetection,
                 let container = animation.containerType,
                 let arView    = arView
-            else { return }
+            else {
+                if frameID == 0 && lastAnimation != nil && !(lastAnimation?.requiresContainerDetection ?? true) {
+                    print("⏭️ [Coordinator.session] 動畫不需要容器偵測，跳過")
+                }
+                return
+            }
 
             ObjectDetector.shared.clear()
 
@@ -335,29 +370,40 @@ struct CookingARView: UIViewRepresentable {
 
         @MainActor
         func playAnimationLoop() {
+            print("🎮 [Coordinator.playAnimationLoop] 被調用")
+            print("   - isAnimationPlaying: \(isAnimationPlaying)")
+            print("   - arView: \(arView != nil)")
+            print("   - lastAnimation: \(lastAnimation != nil)")
+            print("   - isDetectionActive: \(isDetectionActive)")
 
             guard
                 !isAnimationPlaying,
                 let arView    = arView,
                 let animation = lastAnimation
             else {
+                print("❌ [Coordinator.playAnimationLoop] Guard 失敗，無法播放")
                 return
             }
 
             if !animation.requiresContainerDetection {
                 isDetectionActive = true
+                print("✅ [Coordinator.playAnimationLoop] 不需容器偵測，isDetectionActive 設為 true")
             }
 
             guard isDetectionActive else {
+                print("⚠️ [Coordinator.playAnimationLoop] isDetectionActive=false，等待偵測...")
                 return
             }
 
+            print("▶️ [Coordinator.playAnimationLoop] 開始播放動畫")
             isAnimationPlaying = true
             playbackSubscription?.cancel()
             staticRemovalWorkItem?.cancel()
 
             let reuse = animation.requiresContainerDetection
+            print("🎬 [Coordinator.playAnimationLoop] animation.play(reuseAnchor: \(reuse))")
             animation.play(on: arView, reuseAnchor: reuse)
+            print("✅ [Coordinator.playAnimationLoop] animation.play 完成")
 
             guard let anchor = animation.anchorEntity else { return }
             let modelEntity = anchor.children.first

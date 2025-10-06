@@ -428,6 +428,10 @@ final class RecipeRecommendationViewModel: ObservableObject {
         }
 
         print("🍳 RecipeRecommendationViewModel: 開始食譜推薦")
+
+        // 🧹 清除舊的推薦結果，釋放記憶體
+        recommendationResult = nil
+
         updateState(.loading)
         if case .success = state {
             // Don't reset retry count if re-recommending from success state
