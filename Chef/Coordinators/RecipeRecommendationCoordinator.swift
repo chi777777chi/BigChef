@@ -20,6 +20,10 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     private var viewModel: RecipeRecommendationViewModel?
     private var hostingController: UIHostingController<AnyView>?
 
+    // MARK: - State Management
+    private var currentRecipeResult: RecipeRecommendationResponse?  // 儲存當前食譜
+    private var currentCookCoordinator: CookCoordinator?  // 儲存當前 AR Coordinator
+
     // MARK: - Init
     init(navigationController: UINavigationController, parentCoordinator: MainTabCoordinator? = nil) {
         self.navigationController = navigationController
@@ -100,6 +104,17 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     func showRecipeDetail(_ recipe: RecipeRecommendationResponse) {
         print("📄 RecipeRecommendationCoordinator: 顯示食譜詳細信息 - \(recipe.dishName)")
 
+        // ⚠️ 檢查是否有舊的食譜，如果有則清除相關資源
+        if let oldRecipe = currentRecipeResult {
+            print("🗑️ RecipeRecommendationCoordinator: 偵測到舊食譜，準備覆蓋")
+            print("   舊食譜：\(oldRecipe.dishName)")
+            clearOldRecipeResources()
+        }
+
+        // 儲存新食譜
+        currentRecipeResult = recipe
+        print("✅ RecipeRecommendationCoordinator: 新食譜已儲存 - \(recipe.dishName)")
+
         let detailView = RecipeDetailView(
             recommendationResult: recipe,
             showNavigationBar: false,  // 使用系統導航欄，保持 tab bar 顯示
@@ -133,6 +148,10 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
     func startARCooking(with steps: [RecipeStep], dishName: String = "料理") {
         print("🥽 RecipeRecommendationCoordinator: 啟動 AR 烹飪模式 - \(dishName)")
 
+        // 生成推薦 tab 的食譜 ID
+        let recipeID = "recommendation_\(dishName)"
+        print("📌 RecipeRecommendationCoordinator: 推薦食譜 ID - \(recipeID)")
+
         let cookCoordinator = CookCoordinator(
             navigationController: navigationController,
             parentCoordinator: self
@@ -140,9 +159,46 @@ final class RecipeRecommendationCoordinator: Coordinator, ObservableObject {
         cookCoordinator.onComplete = { [weak self] in
             // 烹飪完成後，返回到首頁（tab bar 的根頁面）
             self?.navigationController.popToRootViewController(animated: true)
+
+            // 清除 AR Coordinator 引用
+            self?.currentCookCoordinator = nil
         }
+
+        // 儲存當前 CookCoordinator
+        currentCookCoordinator = cookCoordinator
+
         childCoordinators.append(cookCoordinator)
         cookCoordinator.start(with: steps, dishName: dishName)
+
+        print("⚠️ AR 動畫註冊將在首次載入時自動完成（食譜ID: \(recipeID)）")
+    }
+
+    /// 清除舊食譜的 AR 快取資源（選擇性清除，不影響辨識 tab）
+    private func clearOldRecipeResources() {
+        guard let oldRecipe = currentRecipeResult else {
+            print("ℹ️ RecipeRecommendationCoordinator: 沒有舊食譜需要清除")
+            return
+        }
+
+        print("🧹 RecipeRecommendationCoordinator: 開始清除舊食譜資源")
+        print("   舊食譜 ID: \(oldRecipe.dishName)")
+
+        // 1. 清除舊的 CookCoordinator（如果還在運行）
+        if let oldCookCoordinator = currentCookCoordinator {
+            print("   - 移除舊的 CookCoordinator")
+            removeChildCoordinator(oldCookCoordinator)
+            currentCookCoordinator = nil
+        }
+
+        // 2. ✅ 只清除此食譜的 AR 動畫快取（不影響辨識 tab）
+        print("   - 清除推薦 tab 食譜的 AR 動畫快取")
+        let recipeID = "recommendation_\(oldRecipe.dishName)"  // 推薦 tab 前綴
+        AnimationModelCache.clearAnimations(forRecipe: recipeID)
+
+        // 3. 清除舊食譜引用
+        currentRecipeResult = nil
+
+        print("✅ RecipeRecommendationCoordinator: 舊食譜資源清除完成（辨識 tab 快取保留）")
     }
 
     /// 顯示錯誤提示

@@ -42,9 +42,6 @@ xcuserdata/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 
-# Xcode Patch
-*.xcodeproj/
-
 # Swift Package Manager
 Packages/
 .swiftpm/
