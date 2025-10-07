@@ -38,14 +38,6 @@ final class MainTabCoordinator: Coordinator, ObservableObject {
                 Label("首頁", systemImage: "house.fill")
             }
 
-            // Scanning Tab
-            NavigationStack {
-                ScanningTabView(coordinator: self)
-            }
-            .tabItem {
-                Label("食譜", systemImage: "camera.fill")
-            }
-
             // Food Recognition Tab
             NavigationStack {
                 FoodRecognitionTabView(coordinator: self)
@@ -171,35 +163,36 @@ private struct HomeTabView: View {
     }
 }
 
-private struct ScanningTabView: View {
-    @ObservedObject var coordinator: MainTabCoordinator
-    @State private var scanningCoordinator: ScanningCoordinator?
-
-    var body: some View {
-        Group {
-            if let scanningCoordinator = scanningCoordinator {
-                let state = ScanningState()
-                let viewModel = ScanningViewModel(
-                    state: state,
-                    onNavigateToRecipe: { recipe in
-                        coordinator.showRecipeDetail(recipe)
-                    }
-                )
-                ScanningView(
-                    state: state,
-                    viewModel: viewModel,
-                    coordinator: scanningCoordinator
-                )
-            } else {
-                ProgressView()
-                    .onAppear {
-                        scanningCoordinator = ScanningCoordinator(navigationController: coordinator.navigationController)
-                        coordinator.addChildCoordinator(scanningCoordinator!)
-                    }
-            }
-        }
-    }
-}
+// 已移除 ScanningTabView - 食譜 Tab 已從主 TabBar 中刪除
+// private struct ScanningTabView: View {
+//     @ObservedObject var coordinator: MainTabCoordinator
+//     @State private var scanningCoordinator: ScanningCoordinator?
+//
+//     var body: some View {
+//         Group {
+//             if let scanningCoordinator = scanningCoordinator {
+//                 let state = ScanningState()
+//                 let viewModel = ScanningViewModel(
+//                     state: state,
+//                     onNavigateToRecipe: { recipe in
+//                         coordinator.showRecipeDetail(recipe)
+//                     }
+//                 )
+//                 ScanningView(
+//                     state: state,
+//                     viewModel: viewModel,
+//                     coordinator: scanningCoordinator
+//                 )
+//             } else {
+//                 ProgressView()
+//                     .onAppear {
+//                         scanningCoordinator = ScanningCoordinator(navigationController: coordinator.navigationController)
+//                         coordinator.addChildCoordinator(scanningCoordinator!)
+//                     }
+//             }
+//         }
+//     }
+// }
 
 private struct FoodRecognitionTabView: View {
     @ObservedObject var coordinator: MainTabCoordinator
