@@ -159,13 +159,8 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         let confirmationView = IngredientConfirmationView(
             recognitionResult: result,
             onConfirm: { [weak self] selectedIngredients, selectedEquipment in
-                // 獲取辨識出的主要食物名稱，用於生成特定食譜
-                let recognizedFoodName = result.recognizedFoods.first?.name
-                self?.generateAndShowRecipe(
-                    ingredients: selectedIngredients,
-                    equipment: selectedEquipment,
-                    recognizedFoodName: recognizedFoodName
-                )
+                // 此回調不再使用，因為 ViewModel 內部處理生成
+                print("⚠️ FoodRecognitionCoordinator: onConfirm 回調已棄用")
             },
             onCancel: { [weak self] in
                 self?.goBack()
@@ -179,81 +174,6 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         hostingController.hidesBottomBarWhenPushed = false
 
         navigationController.pushViewController(hostingController, animated: true)
-    }
-
-    /// 生成食譜並直接顯示詳細頁面（不經過推薦頁面）
-    private func generateAndShowRecipe(
-        ingredients: [String],
-        equipment: [String],
-        recognizedFoodName: String?
-    ) {
-        print("🧑‍🍳 FoodRecognitionCoordinator: 開始生成食譜")
-        print("  辨識食物：\(recognizedFoodName ?? "未知")")
-        print("  確認食材：\(ingredients)")
-        print("  確認器具：\(equipment)")
-
-        // ⚠️ 檢查是否有舊的食譜，如果有則清除相關資源
-        if let oldRecipe = currentRecipeResult {
-            print("🗑️ FoodRecognitionCoordinator: 偵測到舊食譜，準備覆蓋")
-            print("   舊食譜：\(oldRecipe.dishName)")
-            clearOldRecipeResources()
-        }
-
-        // 顯示載入指示器
-        showLoadingIndicator()
-
-        // 使用 RecipeRecommendationService 生成食譜
-        let service = RecipeRecommendationService()
-
-        let availableIngredients = ingredients.map { ingredient in
-            AvailableIngredient(
-                name: ingredient,
-                type: "食材",
-                amount: "適量",
-                unit: "",
-                preparation: ""
-            )
-        }
-
-        let availableEquipment = equipment.map { equip in
-            AvailableEquipment(
-                name: equip,
-                type: "器具",
-                size: "中等",
-                material: "",
-                powerSource: "無"
-            )
-        }
-
-        let preference = RecommendationPreference(
-            cookingMethod: recognizedFoodName.map { "製作 \($0)" },
-            dietaryRestrictions: [],
-            servingSize: "2人份",
-            recipeDescription: nil
-        )
-
-        Task { @MainActor in
-            do {
-                let result = try await service.recommendRecipe(
-                    ingredients: availableIngredients,
-                    equipment: availableEquipment,
-                    preference: preference
-                )
-
-                hideLoadingIndicator()
-
-                // 儲存新食譜
-                self.currentRecipeResult = result
-                print("✅ FoodRecognitionCoordinator: 新食譜已儲存 - \(result.dishName)")
-
-                // 直接顯示食譜詳情頁面
-                self.showRecipeRecommendationDetail(result)
-
-            } catch {
-                hideLoadingIndicator()
-                showError(error)
-            }
-        }
     }
 
     /// 清除舊食譜的 AR 快取資源（選擇性清除，不影響推薦 tab）
@@ -284,27 +204,6 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
         print("✅ FoodRecognitionCoordinator: 舊食譜資源清除完成（推薦 tab 快取保留）")
     }
 
-    /// 顯示載入指示器
-    private func showLoadingIndicator() {
-        let loadingAlert = UIAlertController(
-            title: nil,
-            message: "正在生成食譜...",
-            preferredStyle: .alert
-        )
-
-        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-        loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.style = .medium
-        loadingIndicator.startAnimating()
-
-        loadingAlert.view.addSubview(loadingIndicator)
-        navigationController.present(loadingAlert, animated: true)
-    }
-
-    /// 隱藏載入指示器
-    private func hideLoadingIndicator() {
-        navigationController.dismiss(animated: true)
-    }
 
     /// 從食物辨識結果導航到食譜生成（已廢棄，保留向後兼容）
     func navigateToRecipeGeneration(with result: FoodRecognitionResponse) {
@@ -315,22 +214,14 @@ final class FoodRecognitionCoordinator: Coordinator, ObservableObject {
     }
 
     /// 基於辨識食物名稱直接生成食譜（跳過確認步驟）
+    /// 注意：此方法已廢棄，現在由 IngredientConfirmationViewModel 處理
     func navigateToRecipeGenerationWithFoodName(
         ingredients: [String],
         equipment: [String],
         recognizedFoodName: String? = nil
     ) {
-        print("🧑‍🍳 FoodRecognitionCoordinator: 基於辨識食物直接生成食譜（跳過確認）")
-        print("  辨識食物：\(recognizedFoodName ?? "未知")")
-        print("  食材：\(ingredients)")
-        print("  器具：\(equipment)")
-
-        // 直接生成食譜，跳過確認步驟
-        generateAndShowRecipe(
-            ingredients: ingredients,
-            equipment: equipment,
-            recognizedFoodName: recognizedFoodName
-        )
+        print("⚠️ FoodRecognitionCoordinator: navigateToRecipeGenerationWithFoodName 已廢棄")
+        print("  現在由 IngredientConfirmationViewModel 內部處理食譜生成")
     }
 
     /// 顯示錯誤提示

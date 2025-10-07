@@ -167,7 +167,9 @@ final class CookViewController: UIViewController, ARGestureDelegate {
         completeBtn.translatesAutoresizingMaskIntoConstraints = false
         completeBtn.addTarget(self, action: #selector(completeRecipe), for: .touchUpInside)
         completeBtn.isHidden = true
-        view.addSubview(completeBtn)
+
+        // 將完成按鈕也加入 hStack（這樣可以和上一步按鈕並排）
+        hStack.addArrangedSubview(completeBtn)
 
         // 設定手勢狀態 UI
         setupGestureStatusUI()
@@ -188,12 +190,7 @@ final class CookViewController: UIViewController, ARGestureDelegate {
             hoverProgressView.heightAnchor.constraint(equalToConstant: 4),
 
             hStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            hStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-
-            completeBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            completeBtn.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            completeBtn.widthAnchor.constraint(equalToConstant: 200),
-            completeBtn.heightAnchor.constraint(equalToConstant: 50)
+            hStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
 
         updateStepLabel()
@@ -254,12 +251,20 @@ final class CookViewController: UIViewController, ARGestureDelegate {
         let step = steps[currentIndex]
         stepLabel.text = "步驟 \(step.step_number)：\(step.title)\n\(step.description)"
         prevBtn.isEnabled = currentIndex > 0
-        nextBtn.isEnabled = currentIndex < steps.count - 1
 
         // 判斷是否為最後一步
         let isLastStep = currentIndex == steps.count - 1
-        completeBtn.isHidden = !isLastStep
+        let isFirstStep = currentIndex == 0
+
+        // 上一步按鈕：第一步不顯示，其他步驟都顯示
+        prevBtn.isHidden = isFirstStep
+
+        // 下一步按鈕：最後一步不顯示，其他步驟都顯示
         nextBtn.isHidden = isLastStep
+        nextBtn.isEnabled = currentIndex < steps.count - 1
+
+        // 完成按鈕：只在最後一步顯示
+        completeBtn.isHidden = !isLastStep
     }
 
     @objc private func prevStep() {
@@ -365,9 +370,18 @@ extension CookViewController {
     func didRecognizeGesture(_ gestureType: GestureType) {
         print("🎯 [CookViewController] 接收到手勢: \(gestureType.description)")
         DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             switch gestureType {
-            case .previousStep: self?.prevStep()
-            case .nextStep:     self?.nextStep()
+            case .previousStep:
+                self.prevStep()
+            case .nextStep:
+                // 如果在最後一步，比「下一步」手勢應該進入完成頁面
+                if self.currentIndex == self.steps.count - 1 {
+                    print("✅ [CookViewController] 最後一步手勢觸發，進入完成頁面")
+                    self.completeRecipe()
+                } else {
+                    self.nextStep()
+                }
             }
         }
     }

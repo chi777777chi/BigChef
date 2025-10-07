@@ -199,43 +199,8 @@ struct FoodRecognitionView: View {
     }
 
     private func resultStateView(_ response: FoodRecognitionResponse) -> some View {
-        FoodRecognitionResultView(
-            result: response,
-            selectedImage: viewModel.selectedImage,
-            onRetry: {
-                viewModel.retryRecognition()
-            },
-            onGenerateRecipe: {
-                // 直接導航到食譜推薦頁面，跳過食材器具確認步驟
-                handleDirectRecipeGeneration(from: response)
-            }
-        )
-    }
-
-    // MARK: - Helper Methods
-
-    /// 處理直接生成食譜功能（跳過食材器具確認步驟）
-    private func handleDirectRecipeGeneration(from response: FoodRecognitionResponse) {
-        print("🚀 直接生成食譜按鈕被點擊，跳過食材器具確認步驟")
-        print("辨識出的食物：\(response.recognizedFoods.map { $0.name }.joined(separator: ", "))")
-
-        // 提取所有辨識出的食材和器具名稱
-        let allIngredients = response.allIngredients.map { $0.name }
-        let allEquipment = response.allEquipment.map { $0.name }
-
-        // 獲取主要辨識食物的名稱
-        let recognizedFoodName = response.recognizedFoods.first?.name
-
-        print("📋 準備使用食材：\(allIngredients)")
-        print("🔧 準備使用器具：\(allEquipment)")
-        print("🍽️ 主要食物：\(recognizedFoodName ?? "未知")")
-
-        // 直接導航到食譜推薦頁面，跳過食材確認
-        coordinator.navigateToRecipeGenerationWithFoodName(
-            ingredients: allIngredients,
-            equipment: allEquipment,
-            recognizedFoodName: recognizedFoodName
-        )
+        RecipeGenerationFlowView(recognitionResponse: response)
+            .environmentObject(coordinator)
     }
 
 

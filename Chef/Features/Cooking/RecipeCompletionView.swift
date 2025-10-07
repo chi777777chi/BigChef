@@ -87,24 +87,6 @@ struct RecipeCompletionView: View {
 
                 // 按鈕組
                 VStack(spacing: 16) {
-                    // 分享成果按鈕（暫時隱藏，未來功能）
-                    // Button(action: {
-                    //     // TODO: 實作分享功能
-                    //     print("分享成果")
-                    // }) {
-                    //     HStack {
-                    //         Image(systemName: "square.and.arrow.up")
-                    //             .font(.title3)
-                    //         Text("分享我的成果")
-                    //             .fontWeight(.semibold)
-                    //     }
-                    //     .frame(maxWidth: .infinity)
-                    //     .padding(.vertical, 16)
-                    //     .background(Color.brandOrange)
-                    //     .foregroundColor(.white)
-                    //     .cornerRadius(12)
-                    // }
-
                     // 返回首頁按鈕
                     Button(action: onDismiss) {
                         HStack {
@@ -115,8 +97,8 @@ struct RecipeCompletionView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color.brandOrange.opacity(0.15))
-                        .foregroundColor(.brandOrange)
+                        .background(Color.brandOrange)
+                        .foregroundColor(.white)
                         .cornerRadius(12)
                     }
                 }

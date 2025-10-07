@@ -21,21 +21,26 @@ struct IngredientConfirmationView: View {
     @State private var showingEquipmentScan = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                headerSection
-                ingredientsSection
-                equipmentSection
-                actionButtons
+        Group {
+            switch viewModel.generationState {
+            case .configuring:
+                configurationView
+            case .loading:
+                loadingView
+            case .success(let result):
+                successView(result)
+            case .error(let error):
+                errorView(error)
             }
-            .padding()
         }
-        .navigationTitle("確認食材器具")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button("取消") {
-                    onCancel()
+                if case .configuring = viewModel.generationState {
+                    Button("取消") {
+                        onCancel()
+                    }
                 }
             }
         }
@@ -57,6 +62,31 @@ struct IngredientConfirmationView: View {
                     viewModel.addScannedEquipment(equip.name)
                 }
             }
+        }
+    }
+
+    private var navigationTitle: String {
+        switch viewModel.generationState {
+        case .configuring:
+            return "確認食材器具"
+        case .loading:
+            return "生成食譜中"
+        case .success:
+            return "食譜生成完成"
+        case .error:
+            return "生成失敗"
+        }
+    }
+
+    private var configurationView: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                headerSection
+                ingredientsSection
+                equipmentSection
+                actionButtons
+            }
+            .padding()
         }
     }
 
@@ -317,7 +347,9 @@ struct IngredientConfirmationView: View {
     private var actionButtons: some View {
         VStack(spacing: 12) {
             Button(action: {
-                onConfirm(viewModel.totalSelectedIngredients, viewModel.totalSelectedEquipment)
+                Task {
+                    await viewModel.generateRecipe()
+                }
             }) {
                 HStack {
                     Image(systemName: "arrow.right.circle.fill")
@@ -336,6 +368,85 @@ struct IngredientConfirmationView: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
+    }
+
+    // MARK: - Loading View
+    private var loadingView: some View {
+        RecommendationLoadingView(onCancel: {
+            viewModel.cancelGeneration()
+        })
+    }
+
+    // MARK: - Success View
+    private func successView(_ result: RecipeRecommendationResponse) -> some View {
+        RecipeDetailView(
+            recommendationResult: result,
+            showNavigationBar: false,
+            onStartCooking: {
+                coordinator.startARCooking(with: result.recipe, dishName: result.dishName)
+            },
+            onBack: {
+                viewModel.backToConfiguration()
+            },
+            onFavorite: {
+                print("❤️ 收藏食譜：\(result.dishName)")
+            }
+        )
+    }
+
+    // MARK: - Error View
+    private func errorView(_ error: Error) -> some View {
+        VStack(spacing: 24) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.red)
+
+            Text("食譜生成失敗")
+                .font(.title2)
+                .fontWeight(.semibold)
+
+            Text(error.localizedDescription)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            VStack(spacing: 12) {
+                Button(action: {
+                    Task {
+                        await viewModel.retryGeneration()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                        Text("重試")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+
+                Button(action: {
+                    viewModel.backToConfiguration()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.left")
+                        Text("返回修改")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(12)
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding()
     }
 }
 

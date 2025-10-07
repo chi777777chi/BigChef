@@ -12,7 +12,8 @@ struct FoodRecognitionResultView: View {
     let result: FoodRecognitionResponse
     let selectedImage: UIImage?
     let onRetry: () -> Void
-    let onGenerateRecipe: (() -> Void)?  // 新增：直接生成食譜的回調
+    let onAdjustIngredients: (() -> Void)?  // 調整食材的回調
+    let onGenerateRecipe: (() -> Void)?     // 直接生成食譜的回調
 
     @State private var expandedFoodIds: Set<UUID> = []
 
@@ -20,11 +21,13 @@ struct FoodRecognitionResultView: View {
         result: FoodRecognitionResponse,
         selectedImage: UIImage?,
         onRetry: @escaping () -> Void,
+        onAdjustIngredients: (() -> Void)? = nil,
         onGenerateRecipe: (() -> Void)? = nil
     ) {
         self.result = result
         self.selectedImage = selectedImage
         self.onRetry = onRetry
+        self.onAdjustIngredients = onAdjustIngredients
         self.onGenerateRecipe = onGenerateRecipe
     }
 
@@ -192,14 +195,26 @@ struct FoodRecognitionResultView: View {
     private var actionButtonsSection: some View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
-                // 生成食譜按鈕 - 直接跳轉到食譜推薦頁面
+                // 生成食譜按鈕
                 ActionButtonView.primary(
-                    title: "確認食材",
-                    icon: "chef.hat",
+                    title: "生成食譜",
+                    icon: "sparkles",
                     action: {
-                        print("生成食譜按鈕被點擊，直接導航到食譜推薦頁面")
+                        print("生成食譜按鈕被點擊")
                         if let generateRecipe = onGenerateRecipe {
                             generateRecipe()
+                        }
+                    }
+                )
+
+                // 調整食材按鈕
+                ActionButtonView.secondary(
+                    title: "調整食材",
+                    icon: "slider.horizontal.3",
+                    action: {
+                        print("調整食材按鈕被點擊")
+                        if let adjustIngredients = onAdjustIngredients {
+                            adjustIngredients()
                         }
                     }
                 )
