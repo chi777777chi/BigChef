@@ -14,6 +14,7 @@ struct EquipmentInputView: View {
     @State private var selectedMaterial = ""
     @State private var selectedPowerSource = "無"
     @State private var validationErrors: [String] = []
+    @FocusState private var focusedField: Field?
 
     let equipmentTypes = ["鍋具", "刀具", "電器", "餐具", "其他"]
     let sizes = ["小型", "中等", "大型"]
@@ -23,6 +24,10 @@ struct EquipmentInputView: View {
     let editingEquipment: AvailableEquipment?
     let onSave: (AvailableEquipment) -> Void
     @Environment(\.dismiss) private var dismiss
+
+    enum Field {
+        case name
+    }
 
     var isEditing: Bool {
         editingEquipment != nil
@@ -69,6 +74,7 @@ struct EquipmentInputView: View {
 
                             TextField("例如：平底鍋", text: $name)
                                 .textFieldStyle(PlainTextFieldStyle())
+                                .focused($focusedField, equals: .name)
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
@@ -200,6 +206,14 @@ struct EquipmentInputView: View {
             }
             .navigationTitle(isEditing ? "編輯器具" : "新增器具")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                // 如果是新增模式，自動聚焦到名稱欄位
+                if !isEditing {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        focusedField = .name
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("取消") {
